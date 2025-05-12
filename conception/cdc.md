@@ -174,19 +174,13 @@ L'architecture choisie est une architecture MVC (Modèle-Vue-Contrôleur) implé
 
 ### User Stories
 
-| ID  | En tant que...            | Je veux...                                  | Afin de...                                                     | Critères d'acceptation | Priorité |
-| --- | ------------------------- | ------------------------------------------- | -------------------------------------------------------------- | ---------------------- | -------- |
-| 1   | Utilisateur non-connecté  | Accéder à la page d'accueil                 | Consulter les défis                                            |                        |
-| 2   | Utilisateur non-connecté  | Accéder à la page d'acccueil                | Consulter le classement                                        |                        |          |
-| 3   | Utilisateur non-connecté  | Accéder à la page détails des défis         | Voir la description, les règles et les videos des participants |
-| 4   | Utilisateur non-connectée | Accéder à la page d'inscription / connexion | Créer un compte ou se connecter                                |
-| 5   | Utilisateur connecté      | Poster un challenge                         | Afin de soumettre un défi                                      |
-| 6   | Utilisateur connecté      | Acc                                         |
-
-    Page d'accueil : présentation de GamerChallenges, des défis en cours et populaires.
-    Système d'inscription et de connexion : gestion des utilisateurs.
-    Proposition de challenge : les utilisateurs peuvent soumettre des défis à réaliser.
-    Page de détail d'un challenge : description, règles et vidéos des participations
-    Votations : possibilité de voter pour les défis proposés et les meilleures participations.
-    Soumission de participations : les utilisateurs peuvent envoyer leurs vidéos pour prouver la réalisation des challenges.
-    Tableau des leaders : affichage des utilisateurs ayant réalisé le plus de défis et obtenu le plus de votes.
+| ID  | En tant que...           | Je veux...                                  | Afin de...                                                                            | Critères d'acceptation | Priorité |
+| --- | ------------------------ | ------------------------------------------- | ------------------------------------------------------------------------------------- | ---------------------- | -------- |
+| 1   | Utilisateur non-connecté | Accéder à la page d'accueil                 | Consulter les défis                                                                   |                        |
+| 2   | Utilisateur non-connecté | Accéder à la page d'acccueil                | Consulter le classement des utilisateurs ayant le + de vote                           |                        |          |
+| 3   | Utilisateur non-connecté | Accéder à la page détails des défis         | Voir la description, les règles et les videos des participants                        |
+| 4   | Utilisateur non-connecté | Accéder à la page d'inscription / connexion | Créer un compte ou se connecter                                                       |
+| 5   | Utilisateur non-connecté | Accéder au tableau des leaders              | Pour consulter utilisateurs ayant réalisé le plus de défis et obtenu le plus de votes |
+| 6   | Utilisateur connecté     | Poster un challenge                         | soumettre un défi                                                                     |
+| 7   | Utilisateur connecté     | Voter                                       | Élir les meilleurs défis et participations                                            |
+| 8   | Utilisateur connecté     | Soumettre une participation (format vidéo)  | prouver la réalisation d'un challenge                                                 |
