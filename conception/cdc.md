@@ -174,13 +174,27 @@ L'architecture choisie est une architecture MVC (Modèle-Vue-Contrôleur) implé
 
 ### User Stories
 
-| ID  | En tant que...           | Je veux...                                  | Afin de...                                                                            | Critères d'acceptation | Priorité |
-| --- | ------------------------ | ------------------------------------------- | ------------------------------------------------------------------------------------- | ---------------------- | -------- |
-| 1   | Utilisateur non-connecté | Accéder à la page d'accueil                 | Consulter les défis                                                                   |                        |
-| 2   | Utilisateur non-connecté | Accéder à la page d'acccueil                | Consulter le classement des utilisateurs ayant le + de vote                           |                        |          |
-| 3   | Utilisateur non-connecté | Accéder à la page détails des défis         | Voir la description, les règles et les videos des participants                        |
-| 4   | Utilisateur non-connecté | Accéder à la page d'inscription / connexion | Créer un compte ou se connecter                                                       |
-| 5   | Utilisateur non-connecté | Accéder au tableau des leaders              | Pour consulter utilisateurs ayant réalisé le plus de défis et obtenu le plus de votes |
-| 6   | Utilisateur connecté     | Poster un challenge                         | soumettre un défi                                                                     |
-| 7   | Utilisateur connecté     | Voter                                       | Élir les meilleurs défis et participations                                            |
-| 8   | Utilisateur connecté     | Soumettre une participation (format vidéo)  | prouver la réalisation d'un challenge                                                 |
+| ID  | En tant que...           | Je veux...                                  | Afin de...                                                                                | Critères d'acceptation | Priorité |
+| --- | ------------------------ | ------------------------------------------- | ----------------------------------------------------------------------------------------- | ---------------------- | -------- |
+| 1   | Utilisateur non-connecté | Accéder à la page d'accueil                 | Consulter les défis                                                                       |                        |
+| 2   | Utilisateur non-connecté | Accéder à la page d'acccueil                | Consulter le classement des utilisateurs ayant le + de vote                               |                        |          |
+| 3   | Utilisateur non-connecté | Accéder à la page détails des défis         | Voir la description, les règles et les videos des participants                            |
+| 4   | Utilisateur non-connecté | Accéder à la page d'inscription / connexion | Créer un compte ou se connecter                                                           |
+| 5   | Utilisateur non-connecté | Accéder au tableau des leaders              | Pour consulter les utilisateurs ayant réalisé le plus de défis et obtenu le plus de votes |
+| 6   | Utilisateur connecté     | Poster un challenge                         | soumettre un défi                                                                         |
+| 7   | Utilisateur connecté     | Voter                                       | Élir les meilleurs défis                                                                  |
+| 8   | Utilisateur connecté     | Voter                                       | Élir les meilleures participations pour chaque défi                                       |
+| 9   | Utilisateur connecté     | Soumettre une participation (format vidéo)  | prouver la réalisation d'un challenge                                                     |
+
+## 9. Arborescence
+
+/ (Page d’accueil)
+├── /leaderboard → Tableau des leaders
+├── /featured → Défis en vedette
+├── /challenge/:id (Page détail d’un challenge)
+│ ├── /details → Description, règles, etc.
+│ ├── /voter → Voter pour le challenge ou les participations
+│ └── /soumettre → Soumission de participation (vidéo)
+├── /challenge/nouveau → Création d’un nouveau challenge
+├── /inscription → Page d’inscription
+├── /connexion → Page de connexion

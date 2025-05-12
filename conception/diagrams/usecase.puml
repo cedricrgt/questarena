@@ -1,0 +1,33 @@
+@startuml usecase
+
+left to right direction
+
+actor "Utilisateur non connecté" as Visitor
+actor "Utilisateur connecté" as User
+
+User --|> Visitor
+
+rectangle "Site Web Gamer Challenge" {
+    usecase "Accéder à la page d'accueil" as UC1
+    usecase "Consulter le classement des utilisateurs les plus votés" as UC2
+    usecase "Accéder à la page détails des défis" as UC3
+    usecase "Accéder au tableau des leaders" as UC5
+    usecase "Accéder à la page inscription / connexion" as UC4
+    usecase "Poster un challenge" as UC6
+    usecase "Voter pour un défi" as UC7
+    usecase "Soumettre une participation vidéo" as UC8
+}
+
+
+Visitor --> UC1
+Visitor --> UC2
+Visitor --> UC3
+Visitor --> UC5
+Visitor --> UC4
+
+
+User --> UC6
+User --> UC7
+User --> UC8
+
+@enduml

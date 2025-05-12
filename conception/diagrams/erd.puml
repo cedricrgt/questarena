@@ -1,0 +1,51 @@
+@startuml erd
+
+entity User{
+    *id: string 
+    --- 
+    *username: string
+    *email: string 
+    *password: string
+    image : string
+    *created_at: datetime
+}
+
+entity Challenge{
+    *id : string
+    --- 
+    *title : sttring 
+    *description : string
+    *rules : string
+    *game : string
+    difficulty : string
+    *created_by : foreign_key 
+    validated : boolean
+    *created_at: datetime
+}
+
+entity Participation{
+    *id: string 
+    --- 
+    *users_id: FK 
+    *video_url: string 
+    *description: string
+    validated : boolean
+    *created_at: datetime
+}
+
+entity Vote{
+  *id: string
+  ---
+  *user_id: FK
+  target_id: salt
+  created_at: datetime
+}
+
+User ||--o{ Challenge: "crée"
+User ||--o{ Participation: "soumet"
+User ||--o{ Vote: "dépose"}
+Challenge ||--o{ Participation: "possède"
+Challenge ||--o{ Vote: "possède"
+Participation ||--o{ Vote: "possède"
+
+@enduml

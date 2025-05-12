@@ -1,0 +1,42 @@
+@startuml sequence_diagram
+
+actor User
+participant "System" as S
+participant "Challenge" as C
+participant "Participation" as P
+participant "Vote" as V
+
+User -> S: Se connecter 
+activate S
+S --> User: Connexion réussie
+deactivate S
+
+
+User -> S: Créer un défi
+activate S
+S -> C: Créer un nouveau défi
+activate C
+C --> S: Défi créé
+deactivate C
+S --> User: Défi créé avec succès
+deactivate S
+
+User -> S: Particper à un défi
+activate S
+S -> P: Créer une nouvelle participation
+activate P
+P --> S: Participation créée
+deactivate P
+S --> User: Participation envoyée avec succès
+deactivate S
+
+User -> S: Voter pour une participation ou un défi
+activate S
+S -> V: Créer un nouveau vote
+activate V
+V --> S: Vote enregistré
+deactivate V
+S --> User: Vote enregistré avec succès
+deactivate S
+
+@enduml
