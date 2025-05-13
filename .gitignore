@@ -1,0 +1,40 @@
+# Node modules
+node_modules/
+
+# Build outputs
+dist/
+build/
+
+# Logs
+npm-debug.log*
+
+# Dependency directories
+.pnpm/
+.cache/
+.vite/
+.next/
+out/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDEs / Editors
+.vscode/
+# Testing
+coverage/
+*.lcov
+
+# Environment variables
+.env
+.env.*.local
+
+# Misc
+*.local
+*.log
+*.lock
+*.tgz
+package-lock.json
+
+# Optional: TypeScript
+*.tsbuildinfo
