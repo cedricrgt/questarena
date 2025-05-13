@@ -1,3 +1,18 @@
 @startuml activity
+start
 
+:Accéder à la page d'accueil;
+:Choisir un défi;
+:Aller à la page du défi;
+:Lire les règles;
+
+if (Connecté ?) then (non)
+  :Se connecter ou créer un compte;
+endif
+
+:Soumettre lien vidéo et description;
+:Confirmer la participation;
+
+stop
 @enduml
+
