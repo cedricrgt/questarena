@@ -1,42 +1,109 @@
 @startuml sequence_diagram
 
 actor User
-participant "System" as S
-participant "Challenge" as C
-participant "Participation" as P
-participant "Vote" as V
+participant "Frontend" as FE
+participant "Backend" as BE
+participant "AuthService" as Auth
+participant "ChallengeService" as CS
+participant "ParticipationService" as PS
+participant "VoteService" as VS
+database "Database" as DB
 
-User -> S: Se connecter 
-activate S
-S --> User: Connexion réussie
-deactivate S
+User -> FE: Accéder à la page d'accueil
+FE -> BE: Charger les défis en vedette
+activate BE
+BE -> CS: Récupérer les défis en vedette
+activate CS
+CS -> DB: Récupérer les défis en vedette
+activate DB
+DB --> CS: Défis en vedette
+deactivate DB
+CS --> BE: Défis en vedette
+deactivate CS
+BE --> FE: Afficher les défis en vedette
+deactivate BE
 
+User -> FE: Accéder à la page de détail d'un défi
+FE -> BE: Charger les détails du défi
+activate BE
+BE -> CS: Récupérer les détails du défi
+activate CS
+CS -> DB: Récupérer les détails du défi
+activate DB
+DB --> CS: Détails du défi
+deactivate DB
+CS --> BE: Détails du défi
+deactivate CS
+BE --> FE: Afficher les détails du défi
+deactivate BE
 
-User -> S: Créer un défi
-activate S
-S -> C: Créer un nouveau défi
-activate C
-C --> S: Défi créé
-deactivate C
-S --> User: Défi créé avec succès
-deactivate S
+User -> FE: Voter pour un défi ou une participation
+FE -> BE: Enregistrer le vote
+activate BE
+BE -> Auth: Vérifier le token
+activate Auth
+Auth --> BE: Token valide
+deactivate Auth
+BE -> VS: Enregistrer le vote
+activate VS
+VS -> DB: Sauvegarder le vote
+activate DB
+DB --> VS: Vote sauvegardé
+deactivate DB
+VS --> BE: Vote enregistré
+deactivate VS
+BE --> FE: Vote enregistré avec succès
+FE --> User: Vote enregistré avec succès
+deactivate BE
 
-User -> S: Particper à un défi
-activate S
-S -> P: Créer une nouvelle participation
-activate P
-P --> S: Participation créée
-deactivate P
-S --> User: Participation envoyée avec succès
-deactivate S
+User -> FE: Soumettre une participation
+FE -> BE: Enregistrer la participation
+activate BE
+BE -> Auth: Vérifier le token
+activate Auth
+Auth --> BE: Token valide
+deactivate Auth
+BE -> PS: Enregistrer la participation
+activate PS
+PS -> DB: Sauvegarder la participation
+activate DB
+DB --> PS: Participation sauvegardée
+deactivate DB
+PS --> BE: Participation enregistrée
+deactivate PS
+BE --> FE: Participation enregistrée avec succès
+FE --> User: Participation enregistrée avec succès
+deactivate BE
 
-User -> S: Voter pour une participation ou un défi
-activate S
-S -> V: Créer un nouveau vote
-activate V
-V --> S: Vote enregistré
-deactivate V
-S --> User: Vote enregistré avec succès
-deactivate S
+User -> FE: Créer un nouveau défi
+FE -> BE: Enregistrer le nouveau défi
+activate BE
+BE -> Auth: Vérifier le token
+activate Auth
+Auth --> BE: Token valide
+deactivate Auth
+BE -> CS: Enregistrer le nouveau défi
+activate CS
+CS -> DB: Sauvegarder le nouveau défi
+activate DB
+DB --> CS: Nouveau défi sauvegardé
+deactivate DB
+CS --> BE: Nouveau défi enregistré
+deactivate CS
+BE --> FE: Nouveau défi enregistré avec succès
+FE --> User: Nouveau défi enregistré avec succès
+deactivate BE
+
+User -> FE: Accéder à la page d'inscription
+FE -> BE: Charger le formulaire d'inscription
+activate BE
+BE --> FE: Afficher le formulaire d'inscription
+deactivate BE
+
+User -> FE: Accéder à la page de connexion
+FE -> BE: Charger le formulaire de connexion
+activate BE
+BE --> FE: Afficher le formulaire de connexion
+deactivate BE
 
 @enduml
