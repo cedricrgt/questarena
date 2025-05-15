@@ -1,0 +1,26 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            Int      @id @default(autoincrement())
+  userName      String   @unique
+  email         String   @unique
+  password_hash String
+  created_at    DateTime @default(now())
+}
+
+model Challenge {
+  id          Int    @id @default(autoincrement())
+  title       String
+  description String
+  rules       String
+  game        String
+  difficulty  String
+}
