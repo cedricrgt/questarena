@@ -42,7 +42,7 @@ model Challenge {
   validated   Boolean
   created_at  DateTime   @default(now())
   creator     User       @relation("CreatedChallenges", fields: [created_by], references: [id])
-  votes       Vote[]     @relation("ChallengeVotes")
+  votes       Vote[]    
 }
 
 model Participation {
@@ -54,18 +54,19 @@ model Participation {
   validated    Boolean
   created_at   DateTime @default(now())
   user         User     @relation(fields: [users_id], references: [id])
-  votes        Vote[]   @relation("ParticipationVotes")
+  votes        Vote[]  
 }
 
 model Vote {
   id            String         @id @default(uuid())
   users_id      String
-  target_id     String
+  challenge_id      String?        // FK vers Challenge
+  participation_id  String?        // FK vers Participation
   target_type   TargetType
   created_at    DateTime       @default(now())
   user          User           @relation(fields: [users_id], references: [id])
-  challenge     Challenge?     @relation("ChallengeVotes", fields: [target_id], references: [id], map: "Vote_challenge_fkey")
-  participation Participation? @relation("ParticipationVotes", fields: [target_id], references: [id], map: "Vote_participation_fkey") //Avoid fk name conflict for postgreSQL
+  challenge     Challenge?     @relation(fields: [challenge_id], references: [id])
+  participation Participation? @relation(fields: [participation_id], references: [id])
 
-  @@unique([users_id, target_id, target_type])
+  
 }
