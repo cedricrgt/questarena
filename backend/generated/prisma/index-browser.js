@@ -20,12 +20,12 @@ exports.Prisma = Prisma
 exports.$Enums = {}
 
 /**
- * Prisma Client JS version: 6.7.0
- * Query Engine version: 3cff47a7f5d65c3ea74883f1d736e41d68ce91ed
+ * Prisma Client JS version: 6.8.0
+ * Query Engine version: 2060c79ba17c6bb9f5823312b6f6b7f4a845738e
  */
 Prisma.prismaVersion = {
-  client: "6.7.0",
-  engine: "3cff47a7f5d65c3ea74883f1d736e41d68ce91ed"
+  client: "6.8.0",
+  engine: "2060c79ba17c6bb9f5823312b6f6b7f4a845738e"
 }
 
 Prisma.PrismaClientKnownRequestError = () => {
@@ -120,9 +120,76 @@ exports.Prisma.TransactionIsolationLevel = makeStrictEnum({
   Serializable: 'Serializable'
 });
 
+exports.Prisma.UserScalarFieldEnum = {
+  id: 'id',
+  userName: 'userName',
+  email: 'email',
+  password_hash: 'password_hash',
+  avatar_url: 'avatar_url',
+  created_at: 'created_at'
+};
+
+exports.Prisma.ChallengeScalarFieldEnum = {
+  id: 'id',
+  title: 'title',
+  description: 'description',
+  rules: 'rules',
+  game: 'game',
+  difficulty: 'difficulty',
+  created_by: 'created_by',
+  validated: 'validated',
+  created_at: 'created_at'
+};
+
+exports.Prisma.ParticipationScalarFieldEnum = {
+  id: 'id',
+  users_id: 'users_id',
+  challenge_id: 'challenge_id',
+  video_url: 'video_url',
+  description: 'description',
+  validated: 'validated',
+  created_at: 'created_at'
+};
+
+exports.Prisma.VoteScalarFieldEnum = {
+  id: 'id',
+  users_id: 'users_id',
+  challenge_id: 'challenge_id',
+  participation_id: 'participation_id',
+  target_type: 'target_type',
+  created_at: 'created_at'
+};
+
+exports.Prisma.SortOrder = {
+  asc: 'asc',
+  desc: 'desc'
+};
+
+exports.Prisma.QueryMode = {
+  default: 'default',
+  insensitive: 'insensitive'
+};
+
+exports.Prisma.NullsOrder = {
+  first: 'first',
+  last: 'last'
+};
+exports.Difficulty = exports.$Enums.Difficulty = {
+  EASY: 'EASY',
+  MEDIUM: 'MEDIUM',
+  HARD: 'HARD'
+};
+
+exports.TargetType = exports.$Enums.TargetType = {
+  CHALLENGE: 'CHALLENGE',
+  PARTICIPATION: 'PARTICIPATION'
+};
 
 exports.Prisma.ModelName = {
-
+  User: 'User',
+  Challenge: 'Challenge',
+  Participation: 'Participation',
+  Vote: 'Vote'
 };
 
 /**
