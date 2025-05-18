@@ -1,6 +1,5 @@
 generator client {
   provider = "prisma-client-js"
-  output   = "../generated/prisma"
 }
 
 datasource db {
@@ -60,8 +59,8 @@ model Participation {
 model Vote {
   id            String         @id @default(uuid())
   users_id      String
-  challenge_id      String?        // FK vers Challenge
-  participation_id  String?        // FK vers Participation
+  challenge_id      String?        
+  participation_id  String?        
   target_type   TargetType
   created_at    DateTime       @default(now())
   user          User           @relation(fields: [users_id], references: [id])

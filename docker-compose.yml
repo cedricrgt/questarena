@@ -1,22 +1,10 @@
 services:
-  frontend:
-    build:
-      context: ./frontend
-    volumes:
-      - ./frontend:/app/frontend
-      - /app/frontend/node_modules
-    ports: 
-      - 5173:5173
-    depends_on:
-      - backend
-    tty: true
-    
   backend:
     build:
       context: ./backend
     volumes:
       - ./backend:/usr/src/backend
-      - /user/src/backend/node_modules
+      - /ur/src/backend/node_modules
     ports:
       - 3000:3000
     tty: true
