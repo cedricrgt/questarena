@@ -14,7 +14,7 @@ export class CreateUserDto {
   })
   @IsString()
   @IsNotEmpty()
-  userName: String;
+  userName: string;
 
   @ApiProperty({
     description: "L\'adresse email unique de l\'utilisateur'",

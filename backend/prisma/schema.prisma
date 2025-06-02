@@ -1,6 +1,5 @@
 generator client {
   provider = "prisma-client-js"
-  output   = "../generated/prisma"
 }
 
 datasource db {
@@ -41,8 +40,8 @@ model Challenge {
   created_by  String
   validated   Boolean
   created_at  DateTime   @default(now())
-  creator     User       @relation("CreatedChallenges", fields: [created_by], references: [id])
-  votes       Vote[]     @relation("ChallengeVotes")
+  creator     User       @relation("CreatedChallenges", fields: [created_by], references: [id], onDelete: Cascade)
+  votes       Vote[]
 }
 
 model Participation {
@@ -53,19 +52,18 @@ model Participation {
   description  String
   validated    Boolean
   created_at   DateTime @default(now())
-  user         User     @relation(fields: [users_id], references: [id])
-  votes        Vote[]   @relation("ParticipationVotes")
+  user         User     @relation(fields: [users_id], references: [id], onDelete: Cascade)
+  votes        Vote[]
 }
 
 model Vote {
-  id            String         @id @default(uuid())
-  users_id      String
-  target_id     String
-  target_type   TargetType
-  created_at    DateTime       @default(now())
-  user          User           @relation(fields: [users_id], references: [id])
-  challenge     Challenge?     @relation("ChallengeVotes", fields: [target_id], references: [id], map: "Vote_challenge_fkey")
-  participation Participation? @relation("ParticipationVotes", fields: [target_id], references: [id], map: "Vote_participation_fkey") //Avoid fk name conflict for postgreSQL
-
-  @@unique([users_id, target_id, target_type])
+  id               String         @id @default(uuid())
+  users_id         String
+  challenge_id     String?
+  participation_id String?
+  target_type      TargetType
+  created_at       DateTime       @default(now())
+  user             User           @relation(fields: [users_id], references: [id], onDelete: Cascade)
+  challenge        Challenge?     @relation(fields: [challenge_id], references: [id])
+  participation    Participation? @relation(fields: [participation_id], references: [id])
 }
