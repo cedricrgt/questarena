@@ -70,9 +70,9 @@ export class AuthentificationService {
 
   decodeToken(token: string) {
     try {
-      return this.jwtService.decode(token);
+      return this.jwtService.verify(token);
     } catch (err) {
-      throw new UnauthorizedException('Invalid token');
+      throw new UnauthorizedException('Invalid or expired token');
     }
   }
 }

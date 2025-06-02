@@ -2,7 +2,7 @@ import { Body, Controller, Headers, HttpCode, HttpStatus, Post, UnauthorizedExce
 import { CreateUserDto } from "src/user/dto/create-user.dto";
 import { SignInDto } from "./dto/sign-in.dto";
 import { AuthentificationService } from "./authentification.service";
-import { ApiBody, ApiResponse } from "@nestjs/swagger";
+import { ApiBearerAuth, ApiBody, ApiResponse } from "@nestjs/swagger";
 
 @Controller('auth')
 export class AuthentificationController {
@@ -35,6 +35,7 @@ export class AuthentificationController {
   }
 
   @HttpCode(HttpStatus.OK)
+  @ApiBearerAuth()
   @ApiResponse({
     description: 'Returns the decoded payload of the JWT',
     type: 'object'
