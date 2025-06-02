@@ -25,5 +25,5 @@ interface LoginData {
 }
 
 interface SignupData extends LoginData {
-  name: string;
+  userName: string;
 }

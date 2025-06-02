@@ -7,7 +7,7 @@ import Link from "next/link";
 
 export default function SignUpPage() {
   const { signup } = useAuth();
-  const [name, setName] = useState("");
+  const [userName, setUserName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -17,8 +17,8 @@ export default function SignUpPage() {
     e.preventDefault();
     setError("");
     try {
-      await signup({ name, email, password });
-      router.push("/dashboard");
+      await signup({ userName, email, password });
+      router.push("/account/dashboard");
     } catch (err: any) {
       setError(err.message);
     }
@@ -54,14 +54,14 @@ export default function SignUpPage() {
 
         <div>
           <label htmlFor="name" className="block text-sm text-gray-600 mb-1">
-            Nom
+            Nom d'utilisateur
           </label>
           <input
             id="name"
             type="text"
             required
-            value={name}
-            onChange={(e) => setName(e.target.value)}
+            value={userName}
+            onChange={(e) => setUserName(e.target.value)}
             className="block w-full border border-gray-200 rounded px-4 py-3"
           />
         </div>
