@@ -1,12 +1,12 @@
-// src/app/auth/signup/page.tsx
 "use client";
 
 import { useState } from "react";
+import { useAuth } from "@/lib/auth-context";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { signup } from "@/lib/auth";
 
 export default function SignUpPage() {
+  const { signup } = useAuth();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
