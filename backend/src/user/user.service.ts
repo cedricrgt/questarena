@@ -17,7 +17,7 @@ export class UserService {
         userName: createUserDto.userName,
         email: createUserDto.email,
         password_hash: hashedPassword,
-        avatar_url: createUserDto.avatar_url,
+        avatar_url: 'https://placehold.co/10',
       },
     });
 
