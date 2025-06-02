@@ -104,4 +104,8 @@ export class UserService {
     const { password_hash, ...result } = user;
     return result as UserEntity;
   }
+  async findByEmailWithPassword(email: string): Promise<UserEntity | null> {
+    return this.prisma.user.findUnique({ where: { email } });
+  }
+
 }

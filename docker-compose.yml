@@ -14,9 +14,10 @@ services:
   backend:
     build:
       context: ./backend
+      dockerfile: Dockerfile
     volumes:
       - ./backend:/usr/src/backend
-      - /ur/src/backend/node_modules
+      - /usr/src/backend/node_modules
     ports:
       - 3000:3000
     tty: true
