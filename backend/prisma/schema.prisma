@@ -40,8 +40,8 @@ model Challenge {
   created_by  String
   validated   Boolean
   created_at  DateTime   @default(now())
-  creator     User       @relation("CreatedChallenges", fields: [created_by], references: [id])
-  votes       Vote[]    
+  creator     User       @relation("CreatedChallenges", fields: [created_by], references: [id], onDelete: Cascade)
+  votes       Vote[]
 }
 
 model Participation {
@@ -52,20 +52,18 @@ model Participation {
   description  String
   validated    Boolean
   created_at   DateTime @default(now())
-  user         User     @relation(fields: [users_id], references: [id])
-  votes        Vote[]  
+  user         User     @relation(fields: [users_id], references: [id], onDelete: Cascade)
+  votes        Vote[]
 }
 
 model Vote {
-  id            String         @id @default(uuid())
-  users_id      String
-  challenge_id      String?        
-  participation_id  String?        
-  target_type   TargetType
-  created_at    DateTime       @default(now())
-  user          User           @relation(fields: [users_id], references: [id])
-  challenge     Challenge?     @relation(fields: [challenge_id], references: [id])
-  participation Participation? @relation(fields: [participation_id], references: [id])
-
-  
+  id               String         @id @default(uuid())
+  users_id         String
+  challenge_id     String?
+  participation_id String?
+  target_type      TargetType
+  created_at       DateTime       @default(now())
+  user             User           @relation(fields: [users_id], references: [id], onDelete: Cascade)
+  challenge        Challenge?     @relation(fields: [challenge_id], references: [id])
+  participation    Participation? @relation(fields: [participation_id], references: [id])
 }
