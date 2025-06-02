@@ -1,4 +1,4 @@
-import { Body, Controller, Headers, HttpCode, HttpStatus, Post, UnauthorizedException } from "@nestjs/common";
+import { Body, Controller, Get, Headers, HttpCode, HttpStatus, Post, UnauthorizedException } from "@nestjs/common";
 import { CreateUserDto } from "src/user/dto/create-user.dto";
 import { SignInDto } from "./dto/sign-in.dto";
 import { AuthentificationService } from "./authentification.service";
@@ -34,6 +34,7 @@ export class AuthentificationController {
     return this.authentificationService.signUp(data);
   }
 
+  @Get('me')
   @HttpCode(HttpStatus.OK)
   @ApiBearerAuth()
   @ApiResponse({

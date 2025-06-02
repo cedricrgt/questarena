@@ -48,7 +48,7 @@ export class AuthentificationService {
     const user = await this.usersService.create(newUser);
     const payload = {name: user.userName, email: user.email};
     return {
-      access_token: await this.jwtService.signAsync(payload),
+      accessToken: await this.jwtService.signAsync(payload),
     };
   }
 
@@ -64,7 +64,7 @@ export class AuthentificationService {
     }
     const payload = { name: user.userName, email: user.email};
     return {
-      access_token: await this.jwtService.signAsync(payload),
+      accessToken: await this.jwtService.signAsync(payload),
     };
   }
 
