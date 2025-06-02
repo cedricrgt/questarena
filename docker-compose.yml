@@ -1,4 +1,16 @@
 services:
+  frontend:
+    build:
+      context: ./frontend
+    volumes:
+      - ./frontend:/app/frontend
+      - /app/frontend/node_modules
+    ports:
+      - 5173:5173
+    depends_on:
+      - backend
+    tty: true
+
   backend:
     build:
       context: ./backend
@@ -11,9 +23,13 @@ services:
     depends_on:
       database:
         condition: service_healthy
-    command: ["bash", "-c", "./wait-for-it.sh database:5432 -- npx prisma migrate dev --name init &&  npx prisma generate && npm run seed && npm run start:dev"]
-  
-  
+    command:
+      [
+        "bash",
+        "-c",
+        "./wait-for-it.sh database:5432 -- npx prisma migrate dev --name init &&  npx prisma generate && npm run seed && npm run start:dev",
+      ]
+
   database:
     image: postgres:17-alpine
     container_name: database
@@ -41,4 +57,3 @@ services:
     depends_on:
       database:
         condition: service_healthy
-   
