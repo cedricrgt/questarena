@@ -1,4 +1,5 @@
 import ChallengeCard from './components/challengeCard/challengeCard';
+import Leaderboard from './components/leaderboard/leaderboard';
 import ParticipationCard from './components/participationCard/participationCard';
 
 const challenges = [
@@ -46,6 +47,24 @@ const challenges = [
   },
 ];
 
+  const leaderboardData = [
+  {
+    imageUser: "https://randomuser.me/api/portraits/men/32.jpg",
+    username: "NinjaSlayer42",
+    score: 247,
+  },
+  {
+    imageUser: "https://randomuser.me/api/portraits/women/45.jpg",
+    username: "ShadowFox",
+    score: 198,
+  },
+  {
+    imageUser: "https://randomuser.me/api/portraits/men/76.jpg",
+    username: "DragonFury",
+    score: 175,
+  }
+];
+
 export default function Home() {
   return (
     <section>
@@ -67,7 +86,12 @@ export default function Home() {
           challenge={item.challenge}
           userId={item.userId}
         />
+
       ))}
+      </div>
+      <h2 className="text-xl font-bold mb-4 mt-10">Leaderboard</h2>
+      <div className="container">
+        <Leaderboard leaderboard={leaderboardData} color='text-gray-600' backgroundColor='bg-white' centered={false}/>
       </div>     
     </section>
 
