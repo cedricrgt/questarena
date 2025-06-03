@@ -4,7 +4,10 @@ import { AppModule } from './app.module';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-
+  app.enableCors({
+    origin: 'http://localhost:5173',
+    credentials: true, 
+  });
   const config = new DocumentBuilder()
     .setTitle('API Challenge Gaming')
     .setDescription('API pour la plateforme de challenges de jeux vidéo')
