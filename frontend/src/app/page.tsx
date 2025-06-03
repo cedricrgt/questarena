@@ -1,24 +1,26 @@
-import ChallengeCard from './components/challengeCard/challengeCard';
+import Button from "./components/button/button";
+import Hero from "./components/hero/Hero";
+import ChallengeCard from "./components/challengeCard/challengeCard";
 import Leaderboard from './components/leaderboard/leaderboard';
 import ParticipationCard from './components/participationCard/participationCard';
 
 const challenges = [
   {
-    imageSrc: '/images/voidbreaker.jpg',
-    game: 'Voidbreaker',
-    title: 'Speedrun Boss Rush',
+    imageSrc: "/images/home/voidbreaker.webp",
+    game: "Voidbreaker",
+    title: "Speedrun Boss Rush",
     participants: 50,
   },
   {
-    imageSrc: '/images/mythra.jpg',
-    game: 'Myhra',
-    title: 'No Hit Run',
+    imageSrc: "/images/home/mythra.webp",
+    game: "Myhra",
+    title: "No Hit Run",
     participants: 32,
   },
   {
-    imageSrc: '/images/ashe.jpg',
-    game: 'Ashe',
-    title: 'Score Max',
+    imageSrc: "/images/home/ashes-cover.webp",
+    game: "Ashe",
+    title: "Score Max",
     participants: 87,
   },
 ];
@@ -67,16 +69,18 @@ const challenges = [
 
 export default function Home() {
   return (
-    <section>
-      <h2 className="text-xl font-bold mb-4">Défis tendances</h2>
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        {challenges.map((challenge, i) => (
-          <ChallengeCard key={i} {...challenge} />
-        ))}
+    <>
+      <Hero />
+      <section className="w-4/5 mx-auto  my-11">
+        <h2 className="text-xl font-bold mb-4">Défis tendances</h2>
+        <div className="grid grid-cols-1 md:grid-cols-3 justify-center gap-6">
+          {challenges.map((challenge, i) => (
+            <ChallengeCard key={i} {...challenge} />
+          ))}
       </div>
 
       <h2 className="text-xl font-bold mb-4 mt-10">Les participations récentes</h2>
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 ">
+      <div className="grid grid-cols-1 md:grid-cols-3 justify-center gap-6 ">
         {fakeParticipations.map((item, index) => (
         <ParticipationCard
           key={index}
@@ -92,9 +96,10 @@ export default function Home() {
       <h2 className="text-xl font-bold mb-4 mt-10">Leaderboard</h2>
       <div className="container">
         <Leaderboard leaderboard={leaderboardData} color='text-gray-600' backgroundColor='bg-white' centered={false}/>
-      </div>     
-    </section>
+        </div>     
+      </section>
 
   
+    </>
   );
 }
