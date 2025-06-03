@@ -45,5 +45,5 @@ export class CreateParticipationDto {
   validated?: boolean = false;
 
   @IsOptional()
-  users_id?: string;
+  users_id: string;
 }

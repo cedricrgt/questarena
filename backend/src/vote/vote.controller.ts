@@ -12,7 +12,8 @@ export class VoteController {
   @Post()
   @UseGuards(JwtAuthGuard)
   create(@Body() createVoteDto: CreateVoteDto, @Req() req) {
-    return this.voteService.create({ ...createVoteDto, userId: req.user.id });
+    const userId = req.user.id;
+    return this.voteService.create(createVoteDto, userId);
   }
 
   @Get()

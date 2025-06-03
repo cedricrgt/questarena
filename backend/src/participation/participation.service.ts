@@ -8,8 +8,18 @@ export class ParticipationService {
   constructor(private prisma: PrismaService) {}
 
   create(createParticipationDto: CreateParticipationDto) {
+    const { users_id, ...rest } = createParticipationDto;
+
     return this.prisma.participation.create({
-      data: createParticipationDto,
+      data: {
+        ...rest,
+        validated: rest.validated ?? false,
+        user: {
+          connect: {
+            id: users_id,
+          },
+        },
+      },
     });
   }
 
