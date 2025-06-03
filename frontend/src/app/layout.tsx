@@ -1,14 +1,12 @@
-import './globals.css';
-import type { ReactNode } from 'react';
-import Header from './components/header/header';
-import Footer from './components/footer/footer';
-import type { Metadata } from "next";
-import { AuthProvider } from "@/lib/auth-context";
+import "./globals.css";
+import type { ReactNode } from "react";
+import Header from "./components/header/header";
+import Footer from "./components/footer/footer";
 
 
 export const metadata = {
-  title: 'Mon site',
-  description: 'Bienvenue sur mon site',
+  title: "Mon site",
+  description: "Bienvenue sur mon site",
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {
@@ -18,9 +16,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
       <AuthProvider>
 
         <Header />
-        <main className="flex-grow container mx-auto p-4">
-          {children}
-        </main>
+        <main className="">{children}</main>
         <Footer />
       </AuthProvider>
 

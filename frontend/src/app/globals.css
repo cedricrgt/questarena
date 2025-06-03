@@ -1,14 +1,17 @@
 @import "tailwindcss";
+@import url("https://fonts.googleapis.com/css2?family=Pacifico&family=Raleway:ital,wght@0,100..900;1,100..900&family=Roboto+Mono:ital,wght@0,100..700;1,100..700&display=swap");
 
 :root {
   --background: #ffffff;
   --foreground: #171717;
-  --primary: #4A2040;
-  --secondary: #A96FFF;
-  --cta: #E9B872;
-  --blanc: #E5FCFF;
-  --noir: #0E060C;
-
+  --primary: #4a2040;
+  --secondary: #a96fff;
+  --cta: #e9b872;
+  --blanc: #e5fcff;
+  --noir: #0e060c;
+  --font-logo: var(--font-logo, "Pacifico", cursive);
+  --font-primary: var(--font-primary);
+  --font-secondary: var(--font-secondary);
 }
 
 @theme inline {
@@ -21,6 +24,9 @@
   --color-cta: var(--cta);
   --color-blanc: var(--blanc);
   --color-noir: var(--noir);
+  --font-primary: "Raleway", sans-serif;
+  --font-secondary: "Roboto Mono", monospace;
+  --font-logo: "Pacifico", cursive;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -34,4 +40,19 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+}
+
+h1:not(header h1, footer h1),
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-primary);
+}
+
+p,
+span,
+div {
+  font-family: var(--font-secondary);
 }
