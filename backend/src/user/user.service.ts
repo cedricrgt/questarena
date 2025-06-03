@@ -17,7 +17,7 @@ export class UserService {
         userName: createUserDto.userName,
         email: createUserDto.email,
         password_hash: hashedPassword,
-        avatar_url: createUserDto.avatar_url,
+        avatar_url: 'https://placehold.co/10',
       },
     });
 
@@ -104,4 +104,8 @@ export class UserService {
     const { password_hash, ...result } = user;
     return result as UserEntity;
   }
+  async findByEmailWithPassword(email: string): Promise<UserEntity | null> {
+    return this.prisma.user.findUnique({ where: { email } });
+  }
+
 }

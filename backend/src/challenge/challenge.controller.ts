@@ -1,13 +1,15 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
 import { ChallengeService } from './challenge.service';
 import { CreateChallengeDto } from './dto/create-challenge.dto';
 import { UpdateChallengeDto } from './dto/update-challenge.dto';
+import { JwtAuthGuard } from 'src/auth-guard/jwt-auth.guard';
 
 @Controller('challenge')
 export class ChallengeController {
   constructor(private readonly challengeService: ChallengeService) {}
 
   @Post()
+  @UseGuards(JwtAuthGuard)
   create(@Body() createChallengeDto: CreateChallengeDto) {
     return this.challengeService.create(createChallengeDto);
   }
