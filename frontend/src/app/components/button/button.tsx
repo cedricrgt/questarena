@@ -1,12 +1,9 @@
 "use client";
-
-import { useRouter } from "next/navigation";
-import React from "react";
+import Link from "next/link";
 
 type ButtonProps = {
   label: string;
   href?: string;
-  onClick?: () => void;
   variant?: "primary" | "cta" | "white";
   className?: string;
 };
@@ -14,17 +11,9 @@ type ButtonProps = {
 const Button = ({
   label,
   href,
-  onClick,
   variant = "primary",
   className,
 }: ButtonProps) => {
-  const router = useRouter();
-
-  const handleClick = () => {
-    if (onClick) return onClick();
-    if (href) router.push(href);
-  };
-
   const baseStyle = `
     px-4 py-2 rounded transition
     transform duration-200 ease-in-out
@@ -38,11 +27,8 @@ const Button = ({
   };
 
   return (
-    <button
-      className={`${baseStyle} ${variants[variant]} ${className || ""}`}
-      onClick={handleClick}
-    >
-      {label}
+    <button className={`${baseStyle} ${variants[variant]} ${className || ""}`}>
+      <Link href={href || "#"}>{label}</Link>
     </button>
   );
 };

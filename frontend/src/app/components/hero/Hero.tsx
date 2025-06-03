@@ -14,6 +14,11 @@ const Hero = () => {
           variant="cta"
           className="rounded-2xl px-11 my-4 self-center"
         />
+        <Button
+          label="Découvrir les défis"
+          variant="cta"
+          className="rounded-2xl px-11 my-4 self-center"
+        />
       </div>
     </section>
   );
