@@ -1,8 +1,9 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Req } from '@nestjs/common';
 import { VoteService } from './vote.service';
 import { CreateVoteDto } from './dto/create-vote.dto';
 import { UpdateVoteDto } from './dto/update-vote.dto';
 import { JwtAuthGuard } from 'src/auth-guard/jwt-auth.guard';
+import { VoteOwnershipGuard } from './vote-ownership.guard';
 
 @Controller('vote')
 export class VoteController {
@@ -10,8 +11,8 @@ export class VoteController {
 
   @Post()
   @UseGuards(JwtAuthGuard)
-  create(@Body() createVoteDto: CreateVoteDto) {
-    return this.voteService.create(createVoteDto);
+  create(@Body() createVoteDto: CreateVoteDto, @Req() req) {
+    return this.voteService.create({ ...createVoteDto, userId: req.user.id });
   }
 
   @Get()
@@ -21,16 +22,18 @@ export class VoteController {
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.voteService.findOne(+id);
+    return this.voteService.findOne(id);
   }
 
   @Patch(':id')
+  @UseGuards(JwtAuthGuard, VoteOwnershipGuard)
   update(@Param('id') id: string, @Body() updateVoteDto: UpdateVoteDto) {
-    return this.voteService.update(+id, updateVoteDto);
+    return this.voteService.update(id, updateVoteDto);
   }
 
   @Delete(':id')
+  @UseGuards(JwtAuthGuard, VoteOwnershipGuard)
   remove(@Param('id') id: string) {
-    return this.voteService.remove(+id);
+    return this.voteService.remove(id);
   }
 }

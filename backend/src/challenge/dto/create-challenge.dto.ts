@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsEnum, IsNotEmpty, IsString, IsBoolean } from 'class-validator';
+import { IsEnum, IsNotEmpty, IsString, IsBoolean, IsOptional } from 'class-validator';
 
 enum Difficulty {
   EASY = 'EASY',
@@ -57,4 +57,7 @@ export class CreateChallengeDto {
   })
   @IsBoolean()
   validated: boolean = false;
+
+  @ApiProperty({ description: 'ID of the creator' })
+  created_by: string;
 }
