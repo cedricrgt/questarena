@@ -8,7 +8,8 @@ const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   return (
-    <div className="bg-primary relative">
+  
+    <div className="bg-primary relative z-50" >
       <header className="flex justify-between items-center px-8 py-4">
         <h1 className="text-blanc text-2xl font-bold font-logo">
           GamerChallenges
