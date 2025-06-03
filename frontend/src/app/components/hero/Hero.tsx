@@ -2,23 +2,26 @@ import Button from "../button/button";
 
 const Hero = () => {
   return (
-    <section className="w-full h-[50vh] bg-[url(/hero/hero.webp)] bg-no-repeat bg-cover bg-center md:bg-left grid grid-cols-1 md:grid-cols-2 items-center justify-center relative">
-      <div className="span-col-1 items-center justify-center w-4/5 md:w-full max-w-[90rem] mx-auto px-4 relative z-5 bg-secondary/25 backdrop-blur-sm py-6 ">
-        <h1 className="text-3xl text-center pb-2 text-shadow-lg">
+    <section className="w-full h-[50vh] bg-[url(/hero/hero.webp)] bg-no-repeat bg-cover bg-center md:bg-left grid grid-cols-1 md:grid-cols-2 items-center justify-center md:relative md:px-11 lg:px-20">
+      <div className="md:col-start-2 items-center justify-center w-[95%] md:w-full md:max-w-[45rem] mx-auto px-11 relative z-5 bg-secondary/25 backdrop-blur-sm py-6">
+        <h1 className="text-2xl md:text-2xl lg:text-5xl text-center pb-2 text-shadow-lg">
           Relevez le défi !
         </h1>
-        <p className="flex wrap">Rejoignez la communauté des gamers</p>
-        <p>et prouvez vos compétences</p>
-        <Button
-          label="Créer un défi"
-          variant="cta"
-          className="rounded-2xl px-11 my-4 self-center"
-        />
-        <Button
-          label="Découvrir les défis"
-          variant="cta"
-          className="rounded-2xl px-11 my-4 self-center"
-        />
+        <p className="text-xl md:text-2xl lg:text-3xl lg:py-11 flex justify-center items-center text-center w-full">
+          Rejoignez la communauté des gamers et prouvez vos compétences
+        </p>
+        <div className="flex flex-col lg:flex-row items-center justify-center gap-4 mt-11">
+          <Button
+            label="Créer un défi"
+            variant="cta"
+            className="rounded-2xl w-40"
+          />
+          <Button
+            label="Découvrir les défis"
+            variant="cta"
+            className="rounded-2xl"
+          />
+        </div>
       </div>
     </section>
   );
