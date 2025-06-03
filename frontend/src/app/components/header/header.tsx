@@ -4,8 +4,10 @@ import Button from '../button/button';
 import Link from 'next/link';
 
 const Header = () => {
+  console.log("Coucou")
   return (
-    <div className="bg-primary">
+  
+    <div className="bg-primary z-50" >
       <header className="flex justify-between items-center px-8 py-4">
         <div className="text-blanc text-xl font-bold">GamerChallenges</div>
         
