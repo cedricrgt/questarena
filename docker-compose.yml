@@ -28,7 +28,7 @@ services:
       [
         "bash",
         "-c",
-        "./wait-for-it.sh database:5432 -- npx prisma migrate reset --schema=./prisma/schema.prisma --force && npx prisma migrate dev --name init &&  npx prisma generate && npm run seed && npm run start:dev",
+        "./wait-for-it.sh database:5432 -- npx prisma migrate deploy && npx prisma generate && npm run seed && npm run start:dev",
       ]
 
   database:

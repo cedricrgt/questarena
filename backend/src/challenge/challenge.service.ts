@@ -8,8 +8,19 @@ export class ChallengeService {
   constructor(private prisma: PrismaService) {}
 
   create(createChallengeDto: CreateChallengeDto) {
+    const { created_by, ...rest } = createChallengeDto;
+   
     return this.prisma.challenge.create({
-      data: createChallengeDto,
+      
+      data: {
+        ...rest,
+        creator: {
+          connect: {
+            id: created_by,
+          },
+        },
+      }
+      
     });
   }
 
