@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsEnum, IsNotEmpty, IsUUID } from 'class-validator';
+import { IsEnum, IsNotEmpty, IsUUID, IsOptional } from 'class-validator';
 
 enum TargetType {
   CHALLENGE = 'CHALLENGE',

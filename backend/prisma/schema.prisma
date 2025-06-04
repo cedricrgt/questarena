@@ -62,6 +62,7 @@ model Vote {
   challenge_id     String?
   participation_id String?
   target_type      TargetType
+  userId           String?
   created_at       DateTime       @default(now())
   user             User           @relation(fields: [users_id], references: [id], onDelete: Cascade)
   challenge        Challenge?     @relation(fields: [challenge_id], references: [id])

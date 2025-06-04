@@ -43,4 +43,7 @@ export class CreateParticipationDto {
   @IsBoolean()
   @IsOptional()
   validated?: boolean = false;
+
+  @IsOptional()
+  users_id: string;
 }

@@ -1,26 +1,38 @@
 import { Injectable } from '@nestjs/common';
+import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateChallengeDto } from './dto/create-challenge.dto';
 import { UpdateChallengeDto } from './dto/update-challenge.dto';
 
 @Injectable()
 export class ChallengeService {
+  constructor(private prisma: PrismaService) {}
+
   create(createChallengeDto: CreateChallengeDto) {
-    return 'This action adds a new challenge';
+    return this.prisma.challenge.create({
+      data: createChallengeDto,
+    });
   }
 
   findAll() {
-    return `This action returns all challenge`;
+    return this.prisma.challenge.findMany();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} challenge`;
+  findOne(id: string) {
+    return this.prisma.challenge.findUnique({
+      where: { id },
+    });
   }
 
-  update(id: number, updateChallengeDto: UpdateChallengeDto) {
-    return `This action updates a #${id} challenge`;
+  update(id: string, updateChallengeDto: UpdateChallengeDto) {
+    return this.prisma.challenge.update({
+      where: { id },
+      data: updateChallengeDto,
+    });
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} challenge`;
+  remove(id: string) {
+    return this.prisma.challenge.delete({
+      where: { id },
+    });
   }
 }
