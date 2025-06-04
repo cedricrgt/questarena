@@ -1,8 +1,9 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Req } from '@nestjs/common';
 import { ParticipationService } from './participation.service';
 import { CreateParticipationDto } from './dto/create-participation.dto';
 import { UpdateParticipationDto } from './dto/update-participation.dto';
 import { JwtAuthGuard } from 'src/auth-guard/jwt-auth.guard';
+import { ParticipationOwnershipGuard } from './participation-ownership.guard';
 
 @Controller('participation')
 export class ParticipationController {
@@ -10,8 +11,8 @@ export class ParticipationController {
 
   @Post()
   @UseGuards(JwtAuthGuard)
-  create(@Body() createParticipationDto: CreateParticipationDto) {
-    return this.participationService.create(createParticipationDto);
+  create(@Body() createParticipationDto: CreateParticipationDto, @Req() req) {
+    return this.participationService.create({ ...createParticipationDto, users_id: req.user.id });
   }
 
   @Get()
@@ -21,16 +22,18 @@ export class ParticipationController {
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.participationService.findOne(+id);
+    return this.participationService.findOne(id);
   }
 
   @Patch(':id')
+  @UseGuards(JwtAuthGuard, ParticipationOwnershipGuard)
   update(@Param('id') id: string, @Body() updateParticipationDto: UpdateParticipationDto) {
-    return this.participationService.update(+id, updateParticipationDto);
+    return this.participationService.update(id, updateParticipationDto);
   }
 
   @Delete(':id')
+  @UseGuards(JwtAuthGuard, ParticipationOwnershipGuard)
   remove(@Param('id') id: string) {
-    return this.participationService.remove(+id);
+    return this.participationService.remove(id);
   }
 }

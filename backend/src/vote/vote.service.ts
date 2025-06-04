@@ -1,26 +1,45 @@
 import { Injectable } from '@nestjs/common';
+import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateVoteDto } from './dto/create-vote.dto';
 import { UpdateVoteDto } from './dto/update-vote.dto';
 
 @Injectable()
 export class VoteService {
-  create(createVoteDto: CreateVoteDto) {
-    return 'This action adds a new vote';
+  constructor(private prisma: PrismaService) {}
+
+  create(createVoteDto: CreateVoteDto, userId: string) {
+    return this.prisma.vote.create({
+      data: {
+        ...createVoteDto,
+        user: {
+          connect: {
+            id: userId,
+          },
+        },
+      },
+    });
   }
 
   findAll() {
-    return `This action returns all vote`;
+    return this.prisma.vote.findMany();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} vote`;
+  findOne(id: string) {
+    return this.prisma.vote.findUnique({
+      where: { id },
+    });
   }
 
-  update(id: number, updateVoteDto: UpdateVoteDto) {
-    return `This action updates a #${id} vote`;
+  update(id: string, updateVoteDto: UpdateVoteDto) {
+    return this.prisma.vote.update({
+      where: { id },
+      data: updateVoteDto,
+    });
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} vote`;
+  remove(id: string) {
+    return this.prisma.vote.delete({
+      where: { id },
+    });
   }
 }

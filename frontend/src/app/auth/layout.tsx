@@ -4,37 +4,6 @@ import { ReactNode } from "react";
 export default function AuthLayout({ children }: { children: ReactNode }) {
   return (
     <div className="min-h-screen flex flex-col bg-primary">
-      {/* Header with Logo and Navigation */}
-      <header className="flex justify-between items-center px-8 py-4">
-        <div className="text-blanc text-xl font-bold">GamerChallenges</div>
-        <nav className="flex space-x-6">
-          <a href="/" className="text-blanc hover:text-secondary">
-            Accueil
-          </a>
-          <a href="/challenges" className="text-blanc hover:text-secondary">
-            Challenges
-          </a>
-          <a href="/leaderboard" className="text-blanc hover:text-secondary">
-            Leaderboard
-          </a>
-          <a href="/affronter" className="text-blanc hover:text-secondary">
-            Affronter
-          </a>
-        </nav>
-        <div className="flex space-x-2">
-          <a href="/auth/signin">
-            <button className="bg-cta text-noir px-4 py-2 rounded font-medium">
-              Connexion
-            </button>
-          </a>
-          <a href="/auth/signup">
-            <button className="bg-white text-noir px-4 py-2 rounded font-medium">
-              Inscription
-            </button>
-          </a>
-        </div>
-      </header>
-
       {/* Main Content */}
       <div className="bg-white flex-1 flex items-center justify-center ">
         <div className="w-full max-w-6xl mx-8 overflow-hidden flex">
@@ -83,21 +52,6 @@ export default function AuthLayout({ children }: { children: ReactNode }) {
           </div>
         </div>
       </div>
-
-      {/* Footer */}
-      <footer className="mt-auto border-t border-primary-600 py-4 px-8">
-        <div className="flex justify-between items-center">
-          <div className="text-blanc font-bold">GamerChallenges</div>
-          <div className="flex space-x-4">
-            <a href="/mentions-legales" className="text-blanc hover:text-secondary text-sm">
-              Mentions légales
-            </a>
-            <a href="/confidentialite" className="text-blanc hover:text-secondary text-sm">
-              Politique de confidentialité
-            </a>
-          </div>
-        </div>
-      </footer>
     </div>
   );
 }

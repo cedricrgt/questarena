@@ -46,7 +46,8 @@ export class AuthentificationService {
 
     const newUser = { ...data};
     const user = await this.usersService.create(newUser);
-    const payload = {name: user.userName, email: user.email};
+    const apiUser = await this.usersService.findByEmail(data.email);
+    const payload = {id: apiUser?.id, name: user.userName, email: user.email};
     return {
       accessToken: await this.jwtService.signAsync(payload),
     };

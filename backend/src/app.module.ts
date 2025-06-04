@@ -8,21 +8,26 @@ import { VoteModule } from './vote/vote.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AuthentificationModule } from './authentification/authentification.module';
 import { JwtModule } from '@nestjs/jwt';
+import { PrismaModule } from './prisma/prisma.module';
 
 @Module({
-  imports: [UserModule, ChallengeModule, ParticipationModule, VoteModule, AuthentificationModule, ConfigModule.forRoot({
-      isGlobal: true, 
-    }),
+  imports: [
+    PrismaModule, // now available globally
+    UserModule, 
+    ChallengeModule, 
+    ParticipationModule, 
+    VoteModule, 
+    AuthentificationModule, 
+    ConfigModule.forRoot({ isGlobal: true }),
     JwtModule.registerAsync({
-        global: true,
-        imports: [ConfigModule],
-        useFactory: async (configService: ConfigService) => ({
-          secret: configService.get<string>('JWT_SECRET'),
-          signOptions: { expiresIn: '1h' },
-        }),
-        inject: [ConfigService],
-      })
-  
+      global: true,
+      imports: [ConfigModule],
+      useFactory: async (configService: ConfigService) => ({
+        secret: configService.get<string>('JWT_SECRET'),
+        signOptions: { expiresIn: '1h' },
+      }),
+      inject: [ConfigService],
+    }),
   ],
   controllers: [AppController],
   providers: [AppService],
