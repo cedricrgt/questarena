@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import Image from 'next/image';
+import Image from "next/image";
 
 type ChallengeCardProps = {
   imageSrc: string;
@@ -9,9 +9,14 @@ type ChallengeCardProps = {
   participants: number;
 };
 
-const ChallengeCard = ({ imageSrc, game, title, participants }: ChallengeCardProps) => {
+const ChallengeCard = ({
+  imageSrc,
+  game,
+  title,
+  participants,
+}: ChallengeCardProps) => {
   return (
-    <div className="bg-white rounded-xl shadow-md overflow-hidden w-full max-w-sm">
+    <div className="bg-white rounded-xl shadow-md overflow-hidden w-[95%] mx-auto max-w-sm">
       <div className="relative h-40 w-full">
         <Image src={imageSrc} alt={title} fill className="object-cover" />
       </div>
