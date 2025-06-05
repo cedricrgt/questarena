@@ -9,9 +9,8 @@ export class ChallengeService {
 
   create(createChallengeDto: CreateChallengeDto) {
     const { user_id, ...rest } = createChallengeDto;
-   
+
     return this.prisma.challenge.create({
-      
       data: {
         ...rest,
         creator: {
@@ -19,18 +18,27 @@ export class ChallengeService {
             id: user_id,
           },
         },
-      }
-      
+      },
     });
   }
 
   findAll() {
-    return this.prisma.challenge.findMany();
+    return this.prisma.challenge.findMany({
+      include: {
+        votes: true,
+        participations: true,
+      },
+    });
   }
 
   findOne(id: string) {
     return this.prisma.challenge.findUnique({
       where: { id },
+ 
+      include: {
+        votes: true,
+        participations: true,
+      }
     });
   }
 

@@ -36,4 +36,10 @@ export class VoteController {
   remove(@Param('id') id: string) {
     return this.voteService.remove(id);
   }
+
+   @Get('target/:id')
+  findByTargetId(@Param('id') id: string) {
+    return this.voteService.findByTargetId(id);
+  }
+
 }
