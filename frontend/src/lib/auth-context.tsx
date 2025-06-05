@@ -13,10 +13,15 @@ interface User {
 interface AuthContextValue {
   user: User | null;
   isLoading: boolean;
-  login( data: { email: string; password: string } ): Promise<void>;
-  signup( data: { userName: string; email: string; password: string } ): Promise<void>;
+  login(data: { email: string; password: string }): Promise<void>;
+  signup(data: {
+    userName: string;
+    email: string;
+    password: string;
+  }): Promise<void>;
   logout(): void;
   apiFetch: typeof baseApiFetch;
+  isLoggedIn: boolean;
 }
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
@@ -74,7 +79,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   //lorsque login,
   // store token, setUser(, et push le navigateur to /dashboard (la homepage devrait etre /dashboard).
   async function login(data: { email: string; password: string }) {
-    
     const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/login`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -85,16 +89,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       throw new Error(err.message || "Login failed");
     }
     const json = await res.json();
-   
+
     setToken(json.accessToken);
 
     // fetch “/auth/me” pour populate “user”
     const profile = await baseApiFetch("/auth/me", { method: "GET" });
     setUser({ name: profile.name, email: profile.email });
-    router.push("/account/dashboard");
   }
 
-  async function signup(data: { userName: string; email: string; password: string }) {
+  async function signup(data: {
+    userName: string;
+    email: string;
+    password: string;
+  }) {
     const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/signup`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -125,6 +132,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     signup,
     logout,
     apiFetch,
+    isLoggedIn: user !== null,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

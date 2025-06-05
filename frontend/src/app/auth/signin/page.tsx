@@ -30,9 +30,10 @@ export default function SignInPage() {
         <button className="bg-primary text-blanc px-4 py-2 rounded font-medium">
           CONNEXION
         </button>
-        <button 
-            onClick={() => router.push("/auth/signup")}
-            className="bg-white text-noir px-4 py-2 ml-2 font-medium">
+        <button
+          onClick={() => router.push("/auth/signup")}
+          className="bg-white text-noir px-4 py-2 ml-2 font-medium"
+        >
           INSCRIPTION
         </button>
       </div>
@@ -63,7 +64,10 @@ export default function SignInPage() {
           />
         </div>
         <div>
-          <label htmlFor="password" className="block text-sm text-gray-600 mb-1">
+          <label
+            htmlFor="password"
+            className="block text-sm text-gray-600 mb-1"
+          >
             Mot de passe
           </label>
           <input
