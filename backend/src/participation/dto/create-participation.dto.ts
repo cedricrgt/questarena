@@ -44,6 +44,10 @@ export class CreateParticipationDto {
   @IsOptional()
   validated?: boolean = false;
 
-  @IsOptional()
-  users_id: string;
+  @ApiProperty({
+    description: 'User qui poste la participation',
+    example:
+      "a4a52400-22b7-4318-b04d-3dc5a75c63f4",
+  })
+  user_id: string;
 }

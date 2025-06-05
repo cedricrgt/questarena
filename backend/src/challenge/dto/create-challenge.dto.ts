@@ -59,5 +59,5 @@ export class CreateChallengeDto {
   validated: boolean = false;
 
   @ApiProperty({ description: 'ID of the creator' })
-  created_by: string;
+  user_id: string;
 }

@@ -11,8 +11,8 @@ export class ChallengeController {
 
   @Post()
   @UseGuards(JwtAuthGuard)
-  create(@Body() createChallengeDto: CreateChallengeDto, @Req() req: Request & { user: { id: string } }) {
-    return this.challengeService.create({ ...createChallengeDto, created_by: req.user.id });
+  create(@Body() createChallengeDto: CreateChallengeDto) {
+    return this.challengeService.create({ ...createChallengeDto });
   }
 
   @Get()

@@ -1,4 +1,4 @@
-import { PrismaClient, Difficulty, TargetType } from '../generated/prisma';
+import { PrismaClient, Difficulty, TargetType } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
@@ -35,15 +35,15 @@ async function main() {
       game: "SuperFastGame",
       difficulty: Difficulty.MEDIUM,
       validated: true,
-      created_by: user1.id,
+      creator: { connect: { id: user1.id } },
     },
   });
 
 
   const participation1 = await prisma.participation.create({
     data: {
-      users_id: user2.id,
-      challenge_id: challenge1.id,
+      user: { connect: { id: user2.id } },           
+      challenge:{connect: {id: challenge1.id}},
       video_url: "https://example.com/videos/bob_speedrun.mp4",
       description: "My best run ever!",
       validated: false,
@@ -53,16 +53,16 @@ async function main() {
 
   await prisma.vote.create({
   data: {
-    users_id: user1.id,
-    participation_id: participation1.id,
+    user: { connect: { id: user1.id } },
+    participation: { connect: { id: participation1.id } },
     target_type: 'PARTICIPATION',
   },
 });
 
   await prisma.vote.create({
     data: {
-      users_id: user2.id,
-      challenge_id: challenge1.id,
+      challenge: { connect: { id: challenge1.id } },
+      user: { connect: { id: user2.id } },
       target_type: TargetType.CHALLENGE,
       
     },
