@@ -51,7 +51,7 @@ export class Challenge {
     description: "Identifiant de l'utilisateur créateur",
     example: '123e4567-e89b-12d3-a456-426614174000',
   })
-  created_by: string;
+  user_id: string;
 
   @ApiProperty({
     description: 'Statut de validation du challenge',
