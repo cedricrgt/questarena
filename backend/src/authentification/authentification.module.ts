@@ -10,6 +10,7 @@ import { AuthentificationController } from './authentification.controller';
   ],
   providers: [AuthentificationService],
   controllers: [AuthentificationController],
+  exports: [AuthentificationService], 
 
 })
 export class AuthentificationModule {}

@@ -8,20 +8,26 @@ export class ParticipationService {
   constructor(private prisma: PrismaService) {}
 
   create(createParticipationDto: CreateParticipationDto) {
-    const { users_id, ...rest } = createParticipationDto;
+  const { user_id, challenge_id, ...rest } = createParticipationDto;
 
-    return this.prisma.participation.create({
-      data: {
-        ...rest,
-        validated: rest.validated ?? false,
-        user: {
-          connect: {
-            id: users_id,
-          },
+  return this.prisma.participation.create({
+    data: {
+      ...rest,
+      validated: rest.validated ?? false,
+      challenge:{
+        connect:{
+          id:challenge_id
+        }
+      } , 
+      user: {
+        connect: {
+          id: user_id,
         },
       },
-    });
-  }
+      
+    },
+  });
+}
 
   findAll() {
     return this.prisma.participation.findMany();

@@ -8,7 +8,7 @@ export class ChallengeService {
   constructor(private prisma: PrismaService) {}
 
   create(createChallengeDto: CreateChallengeDto) {
-    const { created_by, ...rest } = createChallengeDto;
+    const { user_id, ...rest } = createChallengeDto;
    
     return this.prisma.challenge.create({
       
@@ -16,7 +16,7 @@ export class ChallengeService {
         ...rest,
         creator: {
           connect: {
-            id: created_by,
+            id: user_id,
           },
         },
       }

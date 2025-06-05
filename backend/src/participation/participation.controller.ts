@@ -12,7 +12,7 @@ export class ParticipationController {
   @Post()
   @UseGuards(JwtAuthGuard)
   create(@Body() createParticipationDto: CreateParticipationDto, @Req() req) {
-    return this.participationService.create({ ...createParticipationDto, users_id: req.user.id });
+    return this.participationService.create({ ...createParticipationDto, user_id: req.user.id });
   }
 
   @Get()

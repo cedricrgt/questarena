@@ -7,13 +7,14 @@ import { UpdateVoteDto } from './dto/update-vote.dto';
 export class VoteService {
   constructor(private prisma: PrismaService) {}
 
-  create(createVoteDto: CreateVoteDto, userId: string) {
+  create(createVoteDto: CreateVoteDto) {
+    const {user_id, ...rest} = createVoteDto
     return this.prisma.vote.create({
       data: {
-        ...createVoteDto,
+        ...rest,
         user: {
           connect: {
-            id: userId,
+            id: user_id,
           },
         },
       },

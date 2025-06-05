@@ -13,7 +13,7 @@ export class Participation {
     description: "Identifiant de l'utilisateur participant",
     example: '123e4567-e89b-12d3-a456-426614174000',
   })
-  users_id: string;
+  user_id: string;
 
   @ApiProperty({
     description: 'Identifiant du challenge concerné',
