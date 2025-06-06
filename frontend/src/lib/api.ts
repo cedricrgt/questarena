@@ -1,8 +1,13 @@
 import { getToken } from "@/lib/auth";
 
 export async function apiFetch(path: string, options: RequestInit = {}) {
-  const base = process.env.NEXT_PUBLIC_API_URL;
-  if (!base) throw new Error("NEXT_PUBLIC_API_URL is not defined");
+  const base =
+    typeof window === "undefined"
+      ? process.env.SERVER_API_URL
+      : process.env.NEXT_PUBLIC_API_URL;
+
+  console.log("→ calling API at:", base, path);
+  if (!base) throw new Error("API base URL is not defined");
 
   const token = getToken();
   const headers = {
