@@ -26,7 +26,7 @@ async function main() {
     },
   });
 
-  
+  const randomId = Math.floor(Math.random() * 50) + 1;
   const challenge1 = await prisma.challenge.create({
     data: {
       title: "Speedrun challenge",
@@ -35,12 +35,14 @@ async function main() {
       game: "SuperFastGame",
       difficulty: Difficulty.MEDIUM,
       validated: true,
+      image_url: `https://via.assets.so/game.webp?id=${randomId}`,
       creator: { connect: { id: user1.id } },
     },
   });
 
-
+  
   const participation1 = await prisma.participation.create({
+    
     data: {
       user: { connect: { id: user2.id } },           
       challenge:{connect: {id: challenge1.id}},

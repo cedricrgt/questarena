@@ -7,10 +7,11 @@ type ChallengeCardProps = {
   game: string;
   title: string;
   participations: any[];
+  image_url: string; 
 };
 
 const ChallengeCard = ({
-  // imageSrc,
+  image_url,
   game,
   title,
   participations,
@@ -19,7 +20,7 @@ const ChallengeCard = ({
   return (
     <div className="bg-white rounded-xl shadow-md overflow-hidden w-[95%] mx-auto max-w-sm">
       <div className="relative h-40 w-full">
-        {/* <Image src={imageSrc} alt={title} fill className="object-cover" /> */}
+         <Image src={image_url} alt={title} fill className="object-cover" />
       </div>
       <div className="p-4 space-y-1">
         <span className="inline-block bg-primary text-white text-xs px-2 py-1 rounded-full">
