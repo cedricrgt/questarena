@@ -3,27 +3,10 @@ import Hero from "./components/hero/Hero";
 import ChallengeCard from "./components/challengeCard/challengeCard";
 import Leaderboard from './components/leaderboard/leaderboard';
 import ParticipationCard from './components/participationCard/participationCard';
+import { Challenge } from "@/types";
+import { apiFetch } from "@/lib/api";
 
-const challenges = [
-  {
-    imageSrc: "/images/home/voidbreaker.webp",
-    game: "Voidbreaker",
-    title: "Speedrun Boss Rush",
-    participants: 50,
-  },
-  {
-    imageSrc: "/images/home/mythra.webp",
-    game: "Myhra",
-    title: "No Hit Run",
-    participants: 32,
-  },
-  {
-    imageSrc: "/images/home/ashes-cover.webp",
-    game: "Ashe",
-    title: "Score Max",
-    participants: 87,
-  },
-];
+const challenges: Challenge[] = await apiFetch("/challenge");
 
   const fakeParticipations = [
   {
