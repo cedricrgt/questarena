@@ -3,8 +3,8 @@
 import LeaderboardItem from "./leaderboardItem";
 
 type LeaderboardItem = {
-  imageUser: string;
-  username: string;
+  avatar_url: string;
+  userName: string;
   score: number;
 };
 
@@ -25,8 +25,8 @@ const Leaderboard = ({ leaderboard, color, backgroundColor, centered }: Leaderbo
           <thead>
           </thead>
           <tbody className={`divide-y divide-gray-200 ${color}`}>
-            {leaderboard.map(({ imageUser, username, score }, index) => (
-              <LeaderboardItem imageUser={imageUser} username={username} score={score} index={index} key={index}/>
+            {leaderboard.map(({ avatar_url, userName, score }, index) => (
+              <LeaderboardItem imageUser={avatar_url} username={userName} score={score} index={index} key={index}/>
             ))}
           </tbody>
         </table>

@@ -1,6 +1,7 @@
 export type Challenge = {
   game: string;
   title: string;
+  image_url: string;
   participations: Participation[];
 };
 
@@ -12,8 +13,8 @@ export type Participation = {
   user_id: number;
 };
 
-// export type LeaderboardEntry = {
-//   imageUser: string;
-//   username: string;
-//   score: number;
-// };
+export type LeaderboardType = {
+   userName: string;
+   avatar_url: string;
+   score: number;
+ };

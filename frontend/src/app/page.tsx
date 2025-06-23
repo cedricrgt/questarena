@@ -3,11 +3,11 @@ import Hero from "./components/hero/Hero";
 import ChallengeCard from "./components/challengeCard/challengeCard";
 import Leaderboard from './components/leaderboard/leaderboard';
 import ParticipationCard from './components/participationCard/participationCard';
-import { Challenge } from "@/types";
+import { Challenge, LeaderboardType } from "@/types";
 import { apiFetch } from "@/lib/api";
 
 const challenges: Challenge[] = await apiFetch("/challenge");
-
+const leaderboard: LeaderboardType[] = await apiFetch("/user/leaderboard?limit=3");
   const fakeParticipations = [
   {
     link: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
@@ -78,7 +78,7 @@ export default function Home() {
       </div>
       <h2 className="text-xl font-bold mb-4 mt-10">Leaderboard</h2>
       <div className="container">
-        <Leaderboard leaderboard={leaderboardData} color='text-gray-600' backgroundColor='bg-white' centered={false}/>
+        <Leaderboard leaderboard={leaderboard} color='text-gray-600' backgroundColor='bg-white' centered={false}/>
         </div>     
       </section>
 
