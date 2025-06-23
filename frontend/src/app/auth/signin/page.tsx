@@ -17,7 +17,7 @@ export default function SignInPage() {
     setError("");
     try {
       await login({ email, password });
-      router.replace("/account/dashboard");
+      router.replace("/");
     } catch (err: any) {
       setError(err.message);
     }
