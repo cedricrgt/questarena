@@ -138,12 +138,17 @@ useEffect(() => {
       const err = await res.json();
       throw new Error(err.message || "Signup failed");
     }
-    const json = await res.json();
-    setToken(json.accessToken);
+    const { accessToken } = await res.json();
+    setToken(accessToken);
     // Fetch “/auth/me”
     const profile = await baseApiFetch("/auth/me", { method: "GET" });
-    setUser({ id: json.id, name: json.name, email: json.email, created_at: json.created_at, avatar_url: json.avatar_url });
-    // router.push("/account/dashboard");
+    setUser({
+    id:         profile.id,
+    name:       profile.name,
+    email:      profile.email,
+    created_at: profile.created_at,
+    avatar_url: profile.avatar_url,
+  });
   }
 
   function logout() {

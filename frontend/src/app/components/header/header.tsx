@@ -70,15 +70,13 @@ export default function Header() {
                 onClick={() => setIsMenuOpen(!isMenuOpen)}
                 className="flex items-center text-blanc focus:outline-none"
               >
-                {user?.avatar_url ? (
+                
                   <img
                     src={user.avatar_url}
                     alt="Avatar"
                     className="w-8 h-8 rounded-full border-2 border-blanc"
                   />
-                ) : (
-                  <FiUser className="w-6 h-6" />
-                )}
+                
               </button>
               {isMenuOpen && (
                 <div className="absolute right-0 mt-2 w-40 bg-white rounded shadow-lg py-2">
