@@ -49,7 +49,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     baseApiFetch("/auth/me", { method: "GET" })
       .then((json) => {
         //backend envoie { name, email, ... }
-        setUser({ name: json.name, email: json.email });
+        setUser({ id: json.id, name: json.name, email: json.email });
       })
       .catch((err) => {
         console.error("Error fetching /auth/me:", err);
