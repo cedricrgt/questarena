@@ -53,6 +53,12 @@ export class Challenge {
   })
   user_id: string;
 
+   @ApiProperty({
+    description: "Image de couverture du challenge",
+    example: 'https://via.assets.so/game.webp?id=99',
+  })
+  image_url?: string;
+
   @ApiProperty({
     description: 'Statut de validation du challenge',
     example: true,

@@ -8,11 +8,12 @@ export class ChallengeService {
   constructor(private prisma: PrismaService) {}
 
   create(createChallengeDto: CreateChallengeDto) {
-    const { user_id, ...rest } = createChallengeDto;
-
+    const { user_id,image_url, ...rest } = createChallengeDto;
+     const finalImageUrl = image_url?.trim() || `https://via.assets.so/game.webp?id=${Math.floor(Math.random() * 50) + 1}`;
     return this.prisma.challenge.create({
       data: {
         ...rest,
+        image_url: finalImageUrl,
         creator: {
           connect: {
             id: user_id,

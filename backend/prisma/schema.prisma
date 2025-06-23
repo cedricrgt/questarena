@@ -43,6 +43,7 @@ model Challenge {
   creator     User       @relation("CreatedChallenges", fields: [user_id], references: [id], onDelete: Cascade)
   votes       Vote[]    
   participations Participation[]
+  image_url String?
 }
 
 model Participation {
