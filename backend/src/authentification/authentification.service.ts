@@ -63,7 +63,7 @@ export class AuthentificationService {
     if (!isPasswordValid) {
       throw new NotFoundException();
     }
-    const payload = { id: user.id, name: user.userName, email: user.email};
+    const payload = { id: user.id, name: user.userName, email: user.email, created_at: user.created_at, avatar_url: user.avatar_url };
     return {
       accessToken: await this.jwtService.signAsync(payload),
     };
