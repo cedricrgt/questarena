@@ -6,6 +6,7 @@ import {
   Patch,
   Param,
   Delete,
+  Query,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -15,6 +16,12 @@ import { UpdateUserDto } from './dto/update-user.dto';
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
+   @Get('leaderboard')
+  leaderboard(@Query('limit') limit?: string){
+    const top = limit ? parseInt(limit) : 10;
+    return this.userService.getLeaderboard(top)
+  }
+  
   @Post()
   create(@Body() createUserDto: CreateUserDto) {
     const userCreateInput = {
@@ -43,4 +50,6 @@ export class UserController {
   remove(@Param('id') id: string) {
     return this.userService.delete(id);
   }
+
+ 
 }

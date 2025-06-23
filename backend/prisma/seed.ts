@@ -11,7 +11,7 @@ async function main() {
       userName: "alice",
       email: "alice@example.com",
       password_hash: "hashalice123",
-      avatar_url: "https://example.com/avatar/alice.png",
+      avatar_url: "https://randomuser.me/api/portraits/women/32.jpg",
     },
   });
 
@@ -22,7 +22,7 @@ async function main() {
       userName: "bob",
       email: "bob@example.com",
       password_hash: "hashbob456",
-      avatar_url: "https://example.com/avatar/bob.png",
+      avatar_url: "https://randomuser.me/api/portraits/men/75.jpg",
     },
   });
 
