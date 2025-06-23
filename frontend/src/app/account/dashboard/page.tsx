@@ -8,22 +8,22 @@ export default function AccountDashboardPage() {
   const { user, isLoading, logout } = useAuth();
   const router = useRouter();
 
-  useEffect(() => {
-  if (!isLoading && !user) {
-      router.push("/auth/signin");
-  }
+  // redirect if they’re not supposed to see this…
+useEffect(() => {
+    if (!isLoading && user === null) {
+      router.replace("/auth/signin");
+    }
   }, [isLoading, user, router]);
 
-  if (isLoading) {
-    return <p>Loading...</p>;
-  }
+  if (isLoading) return <p>Loading…</p>;
+  if (!user)      return null;   // ← never try to do user.foo when user is null
 
   return (
     <main className="mt-[10%] w-full max-w-2xl mx-auto bg-blanc rounded-xl shadow-lg p-8 flex flex-col gap-8">
       {/* Profile */}
       <div className="flex items-center gap-6">
         <img
-          // src={user.avatar_url}
+          src={user.avatar_url}
           alt="Avatar"
           className="w-20 h-20 rounded-full border-4 border-primary shadow"
         />
@@ -40,7 +40,7 @@ export default function AccountDashboardPage() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="bg-background rounded-lg p-4 shadow flex flex-col gap-2">
           <span className="text-sm text-secondary font-semibold">Identifiant</span>
-          <span className="font-mono text-noir break-all">{user.id}</span>
+          <span className="font-mono text-white break-all">{user.id}</span>
         </div>
       </div>
 
