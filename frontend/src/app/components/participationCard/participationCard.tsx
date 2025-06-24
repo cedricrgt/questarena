@@ -1,6 +1,9 @@
 "use client";
+import { apiFetch } from "@/lib/api";
+
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHeart } from "@fortawesome/free-solid-svg-icons";
+
 type ParticipationCardProps = {
   link: string;
   title: string;
@@ -37,7 +40,6 @@ const ParticipationCard = ({
         </div>
       </div>
       <div className="p-4 space-y-1 mt-4">
-        {/* Affiche le challenge uniquement sur la page d'accueil, pas besoin de l'afficher sur la page de détail du challenge */}
         {challenge && (
           <span className="inline-block bg-primary text-white text-xs px-2 py-1 rounded-full">
             {challenge}

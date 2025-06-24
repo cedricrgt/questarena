@@ -6,8 +6,11 @@ import { getToken, setToken, removeToken } from "@/lib/auth";
 import { apiFetch as baseApiFetch } from "@/lib/api";
 
 interface User {
+  id: string;
   name: string;
   email: string;
+  created_at: string;
+  avatar_url: string;
 }
 
 interface AuthContextValue {
@@ -38,26 +41,41 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const router = useRouter();
 
   // 1. On mount, check for a token. If present, call /auth/me (or similar) to populate “user”.
-  useEffect(() => {
-    const token = getToken();
-    if (!token) {
-      setIsLoading(false);
-      return;
-    }
+  // 1) On mount, *only* fetch
+useEffect(() => {
+  const token = getToken();
+  if (!token) {
+    setIsLoading(false);
+    return;
+  }
 
-    // si token, fetch le current user
-    baseApiFetch("/auth/me", { method: "GET" })
-      .then((json) => {
-        //backend envoie { name, email, ... }
-        setUser({ name: json.name, email: json.email });
-      })
-      .catch((err) => {
-        console.error("Error fetching /auth/me:", err);
-        removeToken();
-        setUser(null);
-      })
-      .finally(() => setIsLoading(false));
-  }, []);
+  apiFetch("/auth/me", { method: "GET" })
+    .then(json => {
+      setUser({
+        id: json.id,
+        name: json.name,
+        email: json.email,
+        created_at: json.created_at,
+        avatar_url: json.avatar_url,
+      });
+    })
+    .catch(err => {
+      console.error("auth/me failed", err);
+      removeToken();
+      setUser(null);
+    })
+    .finally(() => {
+      setIsLoading(false);
+    });
+}, []); // ← only on first mount
+
+// 2) Once we know “loading is done & we got a user” → dashboard
+useEffect(() => {
+  if (!isLoading && user) {
+    // router.replace("/account/dashboard");
+  }
+}, [isLoading, user, router]);
+
 
   // 2. Wrap “apiFetch” so that if any call returns 401, we clear token & redirect
   async function apiFetch(path: string, options: RequestInit = {}) {
@@ -79,23 +97,32 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   //lorsque login,
   // store token, setUser(, et push le navigateur to /dashboard (la homepage devrait etre /dashboard).
   async function login(data: { email: string; password: string }) {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/login`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(data),
-    });
-    if (!res.ok) {
-      const err = await res.json();
-      throw new Error(err.message || "Login failed");
-    }
-    const json = await res.json();
-
-    setToken(json.accessToken);
-
-    // fetch “/auth/me” pour populate “user”
-    const profile = await baseApiFetch("/auth/me", { method: "GET" });
-    setUser({ name: profile.name, email: profile.email });
+  // 1) hit login → get the token
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/login`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data),
+  });
+  if (!res.ok) {
+    const err = await res.json();
+    throw new Error(err.message || "Login failed");
   }
+  const { accessToken } = await res.json();
+
+  // 2) store it
+  setToken(accessToken);
+
+  // 3) *now* fetch the real user profile
+  const profile = await baseApiFetch("/auth/me", { method: "GET" });
+  setUser({
+    id:         profile.id,
+    name:       profile.name,
+    email:      profile.email,
+    created_at: profile.created_at,
+    avatar_url: profile.avatar_url,
+  });
+}
+
 
   async function signup(data: {
     userName: string;
@@ -111,12 +138,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const err = await res.json();
       throw new Error(err.message || "Signup failed");
     }
-    const json = await res.json();
-    setToken(json.accessToken);
+    const { accessToken } = await res.json();
+    setToken(accessToken);
     // Fetch “/auth/me”
     const profile = await baseApiFetch("/auth/me", { method: "GET" });
-    setUser({ name: profile.name, email: profile.email });
-    router.push("/account/dashboard");
+    setUser({
+    id:         profile.id,
+    name:       profile.name,
+    email:      profile.email,
+    created_at: profile.created_at,
+    avatar_url: profile.avatar_url,
+  });
   }
 
   function logout() {
