@@ -4,9 +4,9 @@ import { useEffect, useState } from "react";
 import Button from "./components/button/button";
 import Hero from "./components/hero/Hero";
 import ChallengeCard from "./components/challengeCard/challengeCard";
-import Leaderboard from "./components/leaderboard/leaderboard";
-import ParticipationCard from "./components/participationCard/participationCard";
-import { Challenge } from "@/types";
+import Leaderboard from './components/leaderboard/leaderboard';
+import ParticipationCard from './components/participationCard/participationCard';
+import { Challenge, LeaderboardType } from "@/types";
 import { apiFetch } from "@/lib/api";
 
 export default function Home() {
@@ -48,6 +48,31 @@ export default function Home() {
     (ch) => ch.participations.length > 0
   );
   const visibleChallenges = filteredChallenges.slice(0, visibleCount);
+
+const leaderboard: LeaderboardType[] = await apiFetch("/user/leaderboard?limit=3");
+  const fakeParticipations = [
+  {
+    link: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+    title: 'Super combo de ouf 🔥',
+    nbVotes: 42,
+    challenge: 'Défi Combo Parfait',
+    userId: 2
+  },
+  {
+    link: 'https://youtu.be/3JZ_D3ELwOQ',
+    title: 'Victoire en 10 secondes',
+    nbVotes: 15,
+    challenge: 'Speedrun Éclair',
+    userId: 1
+  },
+  {
+    link: 'https://www.youtube.com/watch?v=oHg5SJYRHA0',
+    title: 'Clutch incroyable à la dernière seconde !',
+    nbVotes: 88,
+    challenge: 'Sauvetage Inespéré',
+    userId: 3
+  },
+];
 
   const leaderboardData = [
     {
@@ -97,7 +122,7 @@ export default function Home() {
         <h2 className="text-xl font-bold mb-4 mt-10">Leaderboard</h2>
         <div className="container">
           <Leaderboard
-            leaderboard={leaderboardData}
+            leaderboard={leaderboard}
             color="text-gray-600"
             backgroundColor="bg-white"
             centered={false}

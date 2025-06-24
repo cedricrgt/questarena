@@ -27,8 +27,8 @@ export type Challenge = {
   participations: Participation[];
 };
 
-// export type LeaderboardEntry = {
-//   imageUser: string;
-//   username: string;
-//   score: number;
-// };
+export type LeaderboardType = {
+   userName: string;
+   avatar_url: string;
+   score: number;
+ };
