@@ -1,4 +1,14 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Req } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  UseGuards,
+  Req,
+} from '@nestjs/common';
 import { ParticipationService } from './participation.service';
 import { CreateParticipationDto } from './dto/create-participation.dto';
 import { UpdateParticipationDto } from './dto/update-participation.dto';
@@ -12,7 +22,10 @@ export class ParticipationController {
   @Post()
   @UseGuards(JwtAuthGuard)
   create(@Body() createParticipationDto: CreateParticipationDto, @Req() req) {
-    return this.participationService.create({ ...createParticipationDto, user_id: req.user.id });
+    return this.participationService.create({
+      ...createParticipationDto,
+      user_id: req.user.id,
+    });
   }
 
   @Get()
@@ -27,7 +40,10 @@ export class ParticipationController {
 
   @Patch(':id')
   @UseGuards(JwtAuthGuard, ParticipationOwnershipGuard)
-  update(@Param('id') id: string, @Body() updateParticipationDto: UpdateParticipationDto) {
+  update(
+    @Param('id') id: string,
+    @Body() updateParticipationDto: UpdateParticipationDto,
+  ) {
     return this.participationService.update(id, updateParticipationDto);
   }
 

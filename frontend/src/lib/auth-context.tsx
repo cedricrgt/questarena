@@ -1,11 +1,12 @@
 "use client";
 
 import React, { createContext, useContext, useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useParams } from "next/navigation";
 import { getToken, setToken, removeToken } from "@/lib/auth";
 import { apiFetch as baseApiFetch } from "@/lib/api";
 
 interface User {
+  id: string;
   name: string;
   email: string;
 }
@@ -36,8 +37,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
+  const params = useParams();
+  const challengeId = params.id as string;
+  const [challenge, setChallenge] = useState(null);
 
-  // 1. On mount, check for a token. If present, call /auth/me (or similar) to populate “user”.
+  // 1. On mount, check for a token. If present, call /auth/me (or similar) to populate "user".
   useEffect(() => {
     const token = getToken();
     if (!token) {
@@ -49,7 +53,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     baseApiFetch("/auth/me", { method: "GET" })
       .then((json) => {
         //backend envoie { name, email, ... }
-        setUser({ name: json.name, email: json.email });
+        setUser({ id: json.id, name: json.name, email: json.email });
       })
       .catch((err) => {
         console.error("Error fetching /auth/me:", err);
@@ -59,12 +63,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       .finally(() => setIsLoading(false));
   }, []);
 
-  // 2. Wrap “apiFetch” so that if any call returns 401, we clear token & redirect
+  useEffect(() => {
+    if (!challengeId) return;
+    fetch(`http://localhost:3000/challenge/${challengeId}`)
+      .then((res) => res.json())
+      .then(setChallenge);
+  }, [challengeId]);
+
+  // 2. Wrap "apiFetch" so that if any call returns 401, we clear token & redirect
   async function apiFetch(path: string, options: RequestInit = {}) {
     try {
       return await baseApiFetch(path, options);
     } catch (error: any) {
-      // Naively detect “Unauthorized” by checking status text or including a custom field.
+      // Naively detect "Unauthorized" by checking status text or including a custom field.
       // If you modify baseApiFetch to throw an Error that contains status, use that.
       if (error.message.includes("401")) {
         //force logout
@@ -92,9 +103,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     setToken(json.accessToken);
 
-    // fetch “/auth/me” pour populate “user”
+    // fetch "/auth/me" pour populate "user"
     const profile = await baseApiFetch("/auth/me", { method: "GET" });
-    setUser({ name: profile.name, email: profile.email });
+    setUser({ id: profile.id, name: profile.name, email: profile.email });
   }
 
   async function signup(data: {
@@ -113,9 +124,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
     const json = await res.json();
     setToken(json.accessToken);
-    // Fetch “/auth/me”
+    // Fetch "/auth/me"
     const profile = await baseApiFetch("/auth/me", { method: "GET" });
-    setUser({ name: profile.name, email: profile.email });
+    setUser({ id: profile.id, name: profile.name, email: profile.email });
     router.push("/account/dashboard");
   }
 
