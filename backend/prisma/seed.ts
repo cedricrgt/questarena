@@ -46,7 +46,7 @@ async function main() {
     data: {
       user: { connect: { id: user2.id } },           
       challenge:{connect: {id: challenge1.id}},
-      video_url: "https://example.com/videos/bob_speedrun.mp4",
+      video_url: "https://www.youtube.com/watch?v=KEpjLAzTod8&ab_channel=olivierhorps",
       description: "My best run ever!",
       validated: false,
     },
