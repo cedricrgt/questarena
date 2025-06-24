@@ -16,6 +16,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         <AuthProvider>
           <Header />
           <main className="">{children}</main>
+          <div id="modal-root" />
           <Footer />
         </AuthProvider>
       </body>
