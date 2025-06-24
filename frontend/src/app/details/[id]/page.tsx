@@ -8,6 +8,7 @@ import { useRouter, useParams } from "next/navigation";
 import { apiFetch } from "@/lib/api";
 import type { Challenge } from "@/types";
 import ParticipationCard from "@/app/components/participationCard/participationCard";
+import { VoteButton } from "@/app/components/button/voteButton";
 
 export default function ChallengeDetailPage() {
   const params = useParams();
@@ -110,7 +111,7 @@ export default function ChallengeDetailPage() {
               <span className="font-bold font-secondary">247 contribs</span>
             </div>
             <div className="flex items-center gap-1">
-              <Heart size={16} className="text-secondary" />
+              <VoteButton targetId={challengeId} targetType="CHALLENGE"/>
               <span className="text-gray-600 font-secondary">Votes</span>
               <span className="font-bold font-secondary">1.800 likes</span>
             </div>
@@ -263,7 +264,7 @@ export default function ChallengeDetailPage() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {challenge?.participations &&
-            challenge.participations.length > 0 ? (
+              challenge.participations.length > 0 ? (
               challenge.participations.map((participation) => (
                 <ParticipationCard
                   key={participation.id}
@@ -272,6 +273,7 @@ export default function ChallengeDetailPage() {
                   nbVotes={participation.nb_votes}
                   challenge={null}
                   userId={participation.user_id}
+                  participationId={participation.id}
                 />
               ))
             ) : (
