@@ -6,6 +6,7 @@ import { getToken, setToken, removeToken } from "@/lib/auth";
 import { apiFetch as baseApiFetch } from "@/lib/api";
 
 interface User {
+  id: string;
   name: string;
   email: string;
 }
@@ -49,7 +50,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     baseApiFetch("/auth/me", { method: "GET" })
       .then((json) => {
         //backend envoie { name, email, ... }
-        setUser({ name: json.name, email: json.email });
+        setUser({ id: json.id, name: json.name, email: json.email });
       })
       .catch((err) => {
         console.error("Error fetching /auth/me:", err);
@@ -94,7 +95,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     // fetch “/auth/me” pour populate “user”
     const profile = await baseApiFetch("/auth/me", { method: "GET" });
-    setUser({ name: profile.name, email: profile.email });
+    setUser({id: profile.id, name: profile.name, email: profile.email });
   }
 
   async function signup(data: {
@@ -115,7 +116,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setToken(json.accessToken);
     // Fetch “/auth/me”
     const profile = await baseApiFetch("/auth/me", { method: "GET" });
-    setUser({ name: profile.name, email: profile.email });
+    setUser({id: profile.id, name: profile.name, email: profile.email });
     router.push("/account/dashboard");
   }
 
