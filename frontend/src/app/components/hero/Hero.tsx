@@ -14,7 +14,7 @@ const Hero = () => {
           Rejoignez la communauté des gamers et prouvez vos compétences
         </p>
 
-        <div className="flex flex-col lg:flex-row items-center justify-center gap-4 mt-11">
+        <div className="flex flex-col lg:flex-row font-semibold items-center justify-center gap-4 mt-11">
         <CreateChallengeModal
           label="Créer un défi"
           className="rounded-2xl w-40"

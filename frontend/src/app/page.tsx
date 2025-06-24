@@ -9,13 +9,19 @@ import ParticipationCard from './components/participationCard/participationCard'
 import { Challenge, LeaderboardType } from "@/types";
 import { apiFetch } from "@/lib/api";
 
-const leaderboard: LeaderboardType[] = await apiFetch("/user/leaderboard?limit=3");
 export default function Home() {
+  const [leaderboard, setLeaderboard] = useState<LeaderboardType[]>([]);
   const [challenges, setChallenges] = useState<Challenge[]>([]);
   const [visibleCount, setVisibleCount] = useState(6);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    apiFetch("/user/leaderboard")
+      .then((data) => setLeaderboard(data))
+      .finally(() => setLoading(false));
+  }, []);
+
+  useEffect(() => {     
     setLoading(true);
     apiFetch("/challenge")
       .then((data) => setChallenges(data))

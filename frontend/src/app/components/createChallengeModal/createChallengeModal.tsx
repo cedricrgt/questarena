@@ -4,7 +4,6 @@ import { useState } from 'react'
 import { useAuth } from '@/lib/auth-context'
 import { createPortal } from "react-dom";
 import { useRouter } from "next/navigation";
-import { getToken } from "@/lib/auth";
 import { apiFetch } from '@/lib/api'
 
 
@@ -16,6 +15,13 @@ type Props = {
 
 export default function CreateChallengeModal({ label = 'Créer un challenge', className = '' }: Props) {
   const { user } = useAuth()
+  const [submitError, setSubmitError] = useState("");
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [rules, setRules] = useState("");
+  const [game, setGame] = useState("");
+  const [difficulty, setDifficulty] = useState("EASY");
+
   const [isOpen, setIsOpen] = useState(false)
   const [form, setForm] = useState({
     title: '',
@@ -35,49 +41,31 @@ export default function CreateChallengeModal({ label = 'Créer un challenge', cl
 
   const router = useRouter();
 
-  const handleSubmit = async () => {
-    console.log(user)
-    if (!user?.id) {
-      console.error('Utilisateur non connecté')
-      return
-    }
-
-    setLoading(true)
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setSubmitError("")
     try {
-      const response = await apiFetch('/challenge', {
+      const challenge = await apiFetch('/challenge', {
         method: 'POST',
         body: JSON.stringify({
-          ...form,
+          title: title,
+          description: description,
+          rules: rules,
+          game: game,
+          difficulty: difficulty,
           validated: false,
-          user_id: user.id,
+          user_id: user?.id,
         }),
-      })
-      if (response.ok) {
-        router.push("/");
-      } else {
-        console.log(response)
-        let errorMessage = 'Erreur inconnue';
+      });
 
-        try {
-          const contentType = response.headers.get('content-type');
-          if (contentType?.includes('application/json')) {
-            const errorJson = await response.json();
-            errorMessage = errorJson.message || JSON.stringify(errorJson);
-          } else {
-            errorMessage = await response.text();
-          }
-        } catch (e) {
-          errorMessage = 'Impossible de lire le corps de la réponse';
-        }
-  
-        console.error(`Erreur HTTP ${response.status}: ${errorMessage}`);
-        return;
+      if (challenge?.id) {
+        router.push(`/details/${challenge.id}`);
+      } else {
+        throw new Error("Réponse inattendue du serveur");
       }
-      setIsOpen(false)
-    } catch (error) {
-      console.error('Erreur lors de la création du challenge', error)
-    } finally {
-      setLoading(false)
+
+    } catch (err: any) {
+      setSubmitError(err.message || "Erreur lors de la soumission");
     }
   }
 
@@ -117,35 +105,35 @@ export default function CreateChallengeModal({ label = 'Créer un challenge', cl
                 <input
                   name="title"
                   placeholder="Titre"
-                  value={form.title}
-                  onChange={handleChange}
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
                   className="w-full border border-gray-300 rounded px-3 py-2 text-black"
                 />
                 <textarea
                   name="description"
                   placeholder="Description"
-                  value={form.description}
-                  onChange={handleChange}
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
                   className="w-full border border-gray-300 rounded px-3 py-2 text-black"
                 />
                 <textarea
                   name="rules"
                   placeholder="Règles"
-                  value={form.rules}
-                  onChange={handleChange}
+                  value={rules}
+                  onChange={(e) => setRules(e.target.value)}
                   className="w-full border border-gray-300 rounded px-3 py-2 text-black"
                 />
                 <input
                   name="game"
                   placeholder="Jeu"
-                  value={form.game}
-                  onChange={handleChange}
+                  value={game}
+                  onChange={(e) => setGame(e.target.value)}
                   className="w-full border border-gray-300 rounded px-3 py-2 text-black"
                 />
                 <select
                   name="difficulty"
-                  value={form.difficulty}
-                  onChange={handleChange}
+                  value={difficulty}
+                  onChange={(e) => setDifficulty(e.target.value)}
                   className="w-full border border-gray-300 rounded px-3 py-2 text-black"
                 >
                   <option value="EASY">Facile</option>
