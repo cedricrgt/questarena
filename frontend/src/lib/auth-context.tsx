@@ -1,7 +1,7 @@
 "use client";
 
 import React, { createContext, useContext, useEffect, useState } from "react";
-import { useRouter, useParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { getToken, setToken, removeToken } from "@/lib/auth";
 import { apiFetch as baseApiFetch } from "@/lib/api";
 
@@ -9,6 +9,8 @@ interface User {
   id: string;
   name: string;
   email: string;
+  created_at: string;
+  avatar_url: string;
 }
 
 interface AuthContextValue {
@@ -37,45 +39,50 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
-  const params = useParams();
-  const challengeId = params.id as string;
-  const [challenge, setChallenge] = useState(null);
 
-  // 1. On mount, check for a token. If present, call /auth/me (or similar) to populate "user".
-  useEffect(() => {
-    const token = getToken();
-    if (!token) {
+  // 1. On mount, check for a token. If present, call /auth/me (or similar) to populate “user”.
+  // 1) On mount, *only* fetch
+useEffect(() => {
+  const token = getToken();
+  if (!token) {
+    setIsLoading(false);
+    return;
+  }
+
+  apiFetch("/auth/me", { method: "GET" })
+    .then(json => {
+      setUser({
+        id: json.id,
+        name: json.name,
+        email: json.email,
+        created_at: json.created_at,
+        avatar_url: json.avatar_url,
+      });
+    })
+    .catch(err => {
+      console.error("auth/me failed", err);
+      removeToken();
+      setUser(null);
+    })
+    .finally(() => {
       setIsLoading(false);
-      return;
-    }
+    });
+}, []); // ← only on first mount
 
-    // si token, fetch le current user
-    baseApiFetch("/auth/me", { method: "GET" })
-      .then((json) => {
-        //backend envoie { name, email, ... }
-        setUser({ id: json.id, name: json.name, email: json.email });
-      })
-      .catch((err) => {
-        console.error("Error fetching /auth/me:", err);
-        removeToken();
-        setUser(null);
-      })
-      .finally(() => setIsLoading(false));
-  }, []);
+// 2) Once we know “loading is done & we got a user” → dashboard
+useEffect(() => {
+  if (!isLoading && user) {
+    // router.replace("/account/dashboard");
+  }
+}, [isLoading, user, router]);
 
-  useEffect(() => {
-    if (!challengeId) return;
-    fetch(`http://localhost:3000/challenge/${challengeId}`)
-      .then((res) => res.json())
-      .then(setChallenge);
-  }, [challengeId]);
 
-  // 2. Wrap "apiFetch" so that if any call returns 401, we clear token & redirect
+  // 2. Wrap “apiFetch” so that if any call returns 401, we clear token & redirect
   async function apiFetch(path: string, options: RequestInit = {}) {
     try {
       return await baseApiFetch(path, options);
     } catch (error: any) {
-      // Naively detect "Unauthorized" by checking status text or including a custom field.
+      // Naively detect “Unauthorized” by checking status text or including a custom field.
       // If you modify baseApiFetch to throw an Error that contains status, use that.
       if (error.message.includes("401")) {
         //force logout
@@ -90,23 +97,32 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   //lorsque login,
   // store token, setUser(, et push le navigateur to /dashboard (la homepage devrait etre /dashboard).
   async function login(data: { email: string; password: string }) {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/login`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(data),
-    });
-    if (!res.ok) {
-      const err = await res.json();
-      throw new Error(err.message || "Login failed");
-    }
-    const json = await res.json();
-
-    setToken(json.accessToken);
-
-    // fetch "/auth/me" pour populate "user"
-    const profile = await baseApiFetch("/auth/me", { method: "GET" });
-    setUser({ id: profile.id, name: profile.name, email: profile.email });
+  // 1) hit login → get the token
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/login`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data),
+  });
+  if (!res.ok) {
+    const err = await res.json();
+    throw new Error(err.message || "Login failed");
   }
+  const { accessToken } = await res.json();
+
+  // 2) store it
+  setToken(accessToken);
+
+  // 3) *now* fetch the real user profile
+  const profile = await baseApiFetch("/auth/me", { method: "GET" });
+  setUser({
+    id:         profile.id,
+    name:       profile.name,
+    email:      profile.email,
+    created_at: profile.created_at,
+    avatar_url: profile.avatar_url,
+  });
+}
+
 
   async function signup(data: {
     userName: string;
@@ -122,12 +138,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const err = await res.json();
       throw new Error(err.message || "Signup failed");
     }
-    const json = await res.json();
-    setToken(json.accessToken);
-    // Fetch "/auth/me"
+    const { accessToken } = await res.json();
+    setToken(accessToken);
+    // Fetch “/auth/me”
     const profile = await baseApiFetch("/auth/me", { method: "GET" });
-    setUser({ id: profile.id, name: profile.name, email: profile.email });
-    router.push("/account/dashboard");
+    setUser({
+    id:         profile.id,
+    name:       profile.name,
+    email:      profile.email,
+    created_at: profile.created_at,
+    avatar_url: profile.avatar_url,
+  });
   }
 
   function logout() {
