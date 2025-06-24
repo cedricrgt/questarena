@@ -9,6 +9,7 @@ import ParticipationCard from './components/participationCard/participationCard'
 import { Challenge, LeaderboardType } from "@/types";
 import { apiFetch } from "@/lib/api";
 
+const leaderboard: LeaderboardType[] = await apiFetch("/user/leaderboard?limit=3");
 export default function Home() {
   const [challenges, setChallenges] = useState<Challenge[]>([]);
   const [visibleCount, setVisibleCount] = useState(6);
@@ -48,49 +49,6 @@ export default function Home() {
     (ch) => ch.participations.length > 0
   );
   const visibleChallenges = filteredChallenges.slice(0, visibleCount);
-
-const leaderboard: LeaderboardType[] = await apiFetch("/user/leaderboard?limit=3");
-  const fakeParticipations = [
-  {
-    link: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
-    title: 'Super combo de ouf 🔥',
-    nbVotes: 42,
-    challenge: 'Défi Combo Parfait',
-    userId: 2
-  },
-  {
-    link: 'https://youtu.be/3JZ_D3ELwOQ',
-    title: 'Victoire en 10 secondes',
-    nbVotes: 15,
-    challenge: 'Speedrun Éclair',
-    userId: 1
-  },
-  {
-    link: 'https://www.youtube.com/watch?v=oHg5SJYRHA0',
-    title: 'Clutch incroyable à la dernière seconde !',
-    nbVotes: 88,
-    challenge: 'Sauvetage Inespéré',
-    userId: 3
-  },
-];
-
-  const leaderboardData = [
-    {
-      imageUser: "https://randomuser.me/api/portraits/men/32.jpg",
-      username: "NinjaSlayer42",
-      score: 247,
-    },
-    {
-      imageUser: "https://randomuser.me/api/portraits/women/45.jpg",
-      username: "ShadowFox",
-      score: 198,
-    },
-    {
-      imageUser: "https://randomuser.me/api/portraits/men/76.jpg",
-      username: "DragonFury",
-      score: 175,
-    },
-  ];
 
   return (
     <>
