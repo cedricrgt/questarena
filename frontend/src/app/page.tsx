@@ -4,11 +4,12 @@ import { useEffect, useState } from "react";
 import Button from "./components/button/button";
 import Hero from "./components/hero/Hero";
 import ChallengeCard from "./components/challengeCard/challengeCard";
-import Leaderboard from "./components/leaderboard/leaderboard";
-import ParticipationCard from "./components/participationCard/participationCard";
-import { Challenge } from "@/types";
+import Leaderboard from './components/leaderboard/leaderboard';
+import ParticipationCard from './components/participationCard/participationCard';
+import { Challenge, LeaderboardType } from "@/types";
 import { apiFetch } from "@/lib/api";
 
+const leaderboard: LeaderboardType[] = await apiFetch("/user/leaderboard?limit=3");
 export default function Home() {
   const [challenges, setChallenges] = useState<Challenge[]>([]);
   const [visibleCount, setVisibleCount] = useState(6);
@@ -49,24 +50,6 @@ export default function Home() {
   );
   const visibleChallenges = filteredChallenges.slice(0, visibleCount);
 
-  const leaderboardData = [
-    {
-      imageUser: "https://randomuser.me/api/portraits/men/32.jpg",
-      username: "NinjaSlayer42",
-      score: 247,
-    },
-    {
-      imageUser: "https://randomuser.me/api/portraits/women/45.jpg",
-      username: "ShadowFox",
-      score: 198,
-    },
-    {
-      imageUser: "https://randomuser.me/api/portraits/men/76.jpg",
-      username: "DragonFury",
-      score: 175,
-    },
-  ];
-
   return (
     <>
       <Hero />
@@ -97,7 +80,7 @@ export default function Home() {
         <h2 className="text-xl font-bold mb-4 mt-10">Leaderboard</h2>
         <div className="container">
           <Leaderboard
-            leaderboard={leaderboardData}
+            leaderboard={leaderboard}
             color="text-gray-600"
             backgroundColor="bg-white"
             centered={false}

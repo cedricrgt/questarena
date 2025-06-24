@@ -108,4 +108,67 @@ export class UserService {
     return this.prisma.user.findUnique({ where: { email } });
   }
 
+  async getLeaderboard(limit = 10) {
+    const weights = {
+      validatedParticipation: 5,
+      vote: 2,
+      challengeCreated: 1,
+    };
+
+    // Retrieve users with their validated participations and the number of votes
+    const users = await this.prisma.user.findMany({
+      select: {
+        id: true,
+        participations: {
+          where: { validated: true },
+          select: {
+            votes: { select: { id: true } },
+          },
+        },
+        challenges: { select: { id: true } },
+      },
+    });
+
+    const leaderboardData = users.map((user) => {
+      // Number of validated participations
+      const validatedParticipations = user.participations.length;
+      // Number of votes received by the participations
+      const votesOnParticipation = user.participations.reduce(
+        (sum, participation) => sum + participation.votes.length,
+        1,
+      );
+      // Number of challenges created by the user
+      const challengesCreated = user.challenges.length;
+
+      const score =
+        validatedParticipations * weights.validatedParticipation +
+        votesOnParticipation * weights.vote +
+        challengesCreated * weights.challengeCreated;
+
+      // For each user, return their ID and score
+      return {
+        id: user.id,
+        score,
+      };
+    });
+
+    // Sort users by score and keep only the top 'limit' users
+    const topUsers = leaderboardData
+      .sort((a, b) => b.score - a.score)
+      .slice(0, limit);
+
+    // Fetch username and avatar for the top users
+    const userDetails = await this.prisma.user.findMany({
+      where: { id: { in: topUsers.map((u) => u.id) } },
+      select: { id: true, userName: true, avatar_url: true },
+    });
+
+    // Combine score with user details for the leaderboard
+    const leaderboard = topUsers.map((u) => ({
+      ...userDetails.find((d) => d.id === u.id),
+      score: u.score,
+    }));
+
+    return leaderboard;
+  }
 }

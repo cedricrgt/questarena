@@ -54,3 +54,9 @@ export type User = {
 //   username: string;
 //   score: number;
 // };
+
+export type LeaderboardType = {
+   userName: string;
+   avatar_url: string;
+   score: number;
+ };
