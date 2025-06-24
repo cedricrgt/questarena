@@ -1,18 +1,38 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Menu, Heart, Users, Trophy, Star } from "lucide-react";
 import { useAuth } from "@/lib/auth-context";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useParams } from "next/navigation";
+import { apiFetch } from "@/lib/api";
+import type { Challenge } from "@/types";
+import ParticipationCard from "@/app/components/participationCard/participationCard";
 
 export default function ChallengeDetailPage() {
+  const API_URL = process.env.NEXT_PUBLIC_API_URL;
+  const params = useParams();
+  const challengeId = params.id as string;
   const [emailOrUsername, setEmailOrUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [videoUrl, setVideoUrl] = useState("");
+  const [description, setDescription] = useState("");
+  const [submitError, setSubmitError] = useState("");
+  const [image, setImage] = useState("");
+  const [challenge, setChallenge] = useState<Challenge | null>(null);
 
-  const { isLoggedIn, login } = useAuth();
+  const { isLoggedIn, login, user } = useAuth();
   const [loginError, setLoginError] = useState("");
   const router = useRouter();
+
+  useEffect(() => {
+    if (!challengeId) return;
+    apiFetch(`/challenge/${challengeId}`)
+      .then(setChallenge)
+      .catch((err) => {
+        console.error("Erreur lors du chargement du challenge :", err);
+      });
+  }, [challengeId]);
 
   const handleLoginSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -28,9 +48,25 @@ export default function ChallengeDetailPage() {
     }
   };
 
-  const handleParticipationSubmit = (e: React.FormEvent) => {
+  const handleParticipationSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Participation form submitted (static)");
+    setSubmitError("");
+    try {
+      await apiFetch("/participation", {
+        method: "POST",
+        body: JSON.stringify({
+          challenge_id: challengeId,
+          video_url: videoUrl,
+          description: description,
+          validated: false,
+          user_id: user?.id,
+        }),
+      });
+      setVideoUrl("");
+      setDescription("");
+    } catch (err: any) {
+      setSubmitError(err.message || "Erreur lors de la soumission");
+    }
   };
 
   return (
@@ -38,15 +74,16 @@ export default function ChallengeDetailPage() {
       <section className="relative px-4 py-4 md:px-8 md:py-6">
         <div className="relative w-full h-[40vh] md:h-[50vh] rounded-3xl overflow-hidden">
           <img
-            src="/details/hero-details.webp"
+            src={challenge?.image_url || "/details/default_image.webp"}
             alt="Hero background"
-            className="absolute inset-0 w-full h-full object-cover rounded-3xl"
+            className="absolute inset-0 w-full h-full object-fit rounded-3xl"
           />
           <div className="absolute top-4 left-4 bg-green-500 text-white text-xs px-3 py-1 rounded-full font-semibold font-primary">
             En cours
           </div>
           <div className="absolute bottom-4 right-4 bg-gray-800 bg-opacity-75 text-white text-xs px-3 py-1 rounded-full flex items-center gap-1 font-primary">
-            <Users size={12} /> 227 participants
+            <Users size={12} /> {challenge?.participations?.length ?? 0} {""}
+            participants
           </div>
         </div>
       </section>
@@ -94,16 +131,14 @@ export default function ChallengeDetailPage() {
               Description & Règles
             </h3>
             <p className="text-gray-700 leading-relaxed mb-4 font-secondary">
-              Tu es la lumière dans l'ombre, le seul à avoir compris comment
-              gagner… mais comme toujours, ta team est en bronze émotionnel. Ce
-              défi récompense ta capacité à rester dans le déni tout en
-              enchaînant les défaites, persuadé que tu n'y est pour rien.
+              {challenge?.description ||
+                "Description du challenge absente, merci de contacter l'administrateur."}
             </p>
             <div className="flex items-start gap-3 p-4 bg-white rounded-lg shadow-md">
               <span className="text-xl mt-1">🎯</span>
               <p className="text-gray-800 leading-relaxed font-secondary">
-                Perdre 10 parties classées ou normales d'affilée, en écrivant au
-                moins une fois "diff" dans chaque partie.
+                {challenge?.rules ||
+                  "Règles absentes, merci de contacter l'administrateur "}
               </p>
             </div>
           </div>
@@ -125,6 +160,8 @@ export default function ChallengeDetailPage() {
                   <input
                     type="url"
                     id="video-url"
+                    value={videoUrl}
+                    onChange={(e) => setVideoUrl(e.target.value)}
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-secondary focus:border-secondary font-secondary"
                     placeholder="https://www.youtube.com/watch?v=..."
                   />
@@ -140,10 +177,14 @@ export default function ChallengeDetailPage() {
                   <textarea
                     id="participation-description"
                     rows={4}
+                    value={description}
+                    onChange={(e) => setDescription(e.target.value)}
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-secondary focus:border-secondary font-secondary"
                     placeholder="Ajoutez une description à votre participation"
                   ></textarea>
                 </div>
+
+                {submitError && <p className="text-red-500">{submitError}</p>}
 
                 <button
                   onClick={handleParticipationSubmit}
@@ -222,91 +263,21 @@ export default function ChallengeDetailPage() {
           </h3>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="bg-white rounded-lg shadow-md p-4">
-              <div className="relative h-32 rounded-lg mb-4 overflow-hidden flex items-center justify-center bg-gray-300">
-                <img
-                  src="/details/hero-details.webp"
-                  alt="Participation video thumbnail"
-                  className="absolute inset-0 w-full h-full object-cover"
+            {challenge?.participations &&
+            challenge.participations.length > 0 ? (
+              challenge.participations.map((participation) => (
+                <ParticipationCard
+                  key={participation.id}
+                  link={participation.video_url}
+                  title={participation.description}
+                  nbVotes={participation.nb_votes}
+                  challenge={null}
+                  userId={participation.user_id}
                 />
-                <div className="relative z-10 w-10 h-10 bg-white bg-opacity-50 rounded-full flex items-center justify-center text-lg text-gray-800">
-                  ▶️
-                </div>
-                <div className="absolute bottom-2 left-2 text-white text-xs bg-black bg-opacity-50 px-2 py-1 rounded-full flex items-center gap-1 font-secondary">
-                  <Heart size={12} className="inline mr-1 text-red-500" /> 1.800
-                  likes
-                </div>
-              </div>
-              <p className="text-gray-700 leading-relaxed mb-2 text-sm font-secondary">
-                Tootsie roll sugar plum toffee bear claw topping. Caramels
-                cupcake ice cream brownie chocolate. Candy candy canes chocolate
-                cake tootsie roll fruitcake. Apple pie marzipan wafer candy
-                dragée powder croissant oat cake.
-              </p>
-            </div>
-
-            <div className="bg-white rounded-lg shadow-md p-4">
-              <div className="relative h-32 rounded-lg mb-4 overflow-hidden flex items-center justify-center bg-gray-300">
-                <img
-                  src="/details/hero-details.webp"
-                  alt="Participation video thumbnail"
-                  className="absolute inset-0 w-full h-full object-cover"
-                />
-                <div className="relative z-10 w-10 h-10 bg-white bg-opacity-50 rounded-full flex items-center justify-center text-lg text-gray-800">
-                  ▶️
-                </div>
-                <div className="absolute bottom-2 left-2 text-white text-xs bg-black bg-opacity-50 px-2 py-1 rounded-full flex items-center gap-1 font-secondary">
-                  <Heart size={12} className="inline mr-1 text-red-500" /> 0
-                  likes
-                </div>
-              </div>
-              <p className="text-gray-700 leading-relaxed mb-2 text-sm font-secondary">
-                Tootsie roll sugar plum toffee bear claw topping. Caramels
-                cupcake ice cream brownie chocolate. Candy candy canes chocolate
-                cake tootsie roll fruitcake. Apple pie marzipan wafer candy
-                dragée powder croissant oat cake.
-              </p>
-            </div>
-
-            <div className="bg-white rounded-lg shadow-md p-4">
-              <div className="relative h-32 rounded-lg mb-4 overflow-hidden flex items-center justify-center bg-gray-300">
-                <img
-                  src="/details/hero-details.webp"
-                  alt="Participation video thumbnail"
-                  className="absolute inset-0 w-full h-full object-cover"
-                />
-                <div className="relative z-10 w-10 h-10 bg-white bg-opacity-50 rounded-full flex items-center justify-center text-lg text-gray-800">
-                  ▶️
-                </div>
-                <div className="absolute bottom-2 left-2 text-white text-xs bg-black bg-opacity-50 px-2 py-1 rounded-full flex items-center gap-1 font-secondary">
-                  <Heart size={12} className="inline mr-1 text-red-500" /> 0
-                  likes
-                </div>
-              </div>
-              <p className="text-gray-700 leading-relaxed mb-2 text-sm font-secondary">
-                Tilt Simulator 2025
-              </p>
-            </div>
-
-            <div className="bg-white rounded-lg shadow-md p-4">
-              <div className="relative h-32 rounded-lg mb-4 overflow-hidden flex items-center justify-center bg-gray-300">
-                <img
-                  src="/details/hero-details.webp"
-                  alt="Participation video thumbnail"
-                  className="absolute inset-0 w-full h-full object-cover"
-                />
-                <div className="relative z-10 w-10 h-10 bg-white bg-opacity-50 rounded-full flex items-center justify-center text-lg text-gray-800">
-                  ▶️
-                </div>
-                <div className="absolute bottom-2 left-2 text-white text-xs bg-black bg-opacity-50 px-2 py-1 rounded-full flex items-center gap-1 font-secondary">
-                  <Heart size={12} className="inline mr-1 text-red-500" /> 0
-                  likes
-                </div>
-              </div>
-              <p className="text-gray-700 leading-relaxed mb-2 text-sm font-secondary">
-                Tilt Simulator 2025
-              </p>
-            </div>
+              ))
+            ) : (
+              <p>Aucune participation pour ce challenge.</p>
+            )}
           </div>
         </div>
       </div>

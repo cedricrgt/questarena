@@ -22,7 +22,7 @@ const Button = ({
 
   const variants = {
     primary: "bg-secondary text-blanc hover:bg-secondary/90",
-    cta: "bg-cta text-noir hover:bg-cta/90 p-[50px] shadow-[0px_4px_4px_rgba(0,0,0,0.25)]",
+    cta: "px-6 py-2 rounded-full font-semibold bg-cta text-noir hover:bg-cta/10 border-2 border-solid border-cta transition hover:text-cta shadow-[0px_4px_4px_rgba(0,0,0,0.25)]",
     white: "bg-blanc text-cta hover:bg-blanc/90",
   };
 

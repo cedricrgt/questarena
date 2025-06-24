@@ -11,7 +11,7 @@ async function main() {
       userName: "alice",
       email: "alice@example.com",
       password_hash: "hashalice123",
-      avatar_url: "https://example.com/avatar/alice.png",
+      avatar_url: "https://randomuser.me/api/portraits/women/32.jpg",
     },
   });
 
@@ -22,11 +22,11 @@ async function main() {
       userName: "bob",
       email: "bob@example.com",
       password_hash: "hashbob456",
-      avatar_url: "https://example.com/avatar/bob.png",
+      avatar_url: "https://randomuser.me/api/portraits/men/75.jpg",
     },
   });
 
-  
+  const randomId = Math.floor(Math.random() * 50) + 1;
   const challenge1 = await prisma.challenge.create({
     data: {
       title: "Speedrun challenge",
@@ -35,12 +35,14 @@ async function main() {
       game: "SuperFastGame",
       difficulty: Difficulty.MEDIUM,
       validated: true,
+      image_url: `https://via.assets.so/game.webp?id=${randomId}`,
       creator: { connect: { id: user1.id } },
     },
   });
 
-
+  
   const participation1 = await prisma.participation.create({
+    
     data: {
       user: { connect: { id: user2.id } },           
       challenge:{connect: {id: challenge1.id}},

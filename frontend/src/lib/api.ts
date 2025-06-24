@@ -5,8 +5,7 @@ export async function apiFetch(path: string, options: RequestInit = {}) {
     typeof window === "undefined"
       ? process.env.SERVER_API_URL
       : process.env.NEXT_PUBLIC_API_URL;
-
-  console.log("→ calling API at:", base, path);
+      
   if (!base) throw new Error("API base URL is not defined");
 
   const token = getToken();

@@ -60,4 +60,7 @@ export class CreateChallengeDto {
 
   @ApiProperty({ description: 'ID of the creator' })
   user_id: string;
+
+  @ApiProperty({ description: 'Url image of the Challenge' })
+  image_url?: string;
 }
