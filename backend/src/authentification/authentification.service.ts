@@ -47,7 +47,7 @@ export class AuthentificationService {
     const newUser = { ...data};
     const user = await this.usersService.create(newUser);
     const apiUser = await this.usersService.findByEmail(data.email);
-    const payload = {id: apiUser?.id, name: user.userName, email: user.email, created_at: user.created_at, avatar_url: user.avatar_url };
+    const payload = {id: apiUser?.id, name: user.userName, email: user.email, created_at: user.created_at, avatar_url: user.avatar_url, challenges: user.challenges, participations: user.participations, votes: user.votes };
     return {
       accessToken: await this.jwtService.signAsync(payload),
     };
@@ -63,7 +63,7 @@ export class AuthentificationService {
     if (!isPasswordValid) {
       throw new NotFoundException();
     }
-    const payload = { id: user.id, name: user.userName, email: user.email, created_at: user.created_at, avatar_url: user.avatar_url };
+    const payload = { id: user.id, name: user.userName, email: user.email, created_at: user.created_at, avatar_url: user.avatar_url, challenges: user.challenges, participations: user.participations, votes: user.votes };
     return {
       accessToken: await this.jwtService.signAsync(payload),
     };

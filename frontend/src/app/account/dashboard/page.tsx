@@ -1,11 +1,14 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { apiFetch } from "@/lib/api";
+import type { User } from "@/types"
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/lib/auth-context";
 
 export default function AccountDashboardPage() {
   const { user, isLoading, logout } = useAuth();
+  const [userObject, setUserObject] = useState<User | null>(null);
   const router = useRouter();
 
   // redirect if they’re not supposed to see this…
@@ -13,10 +16,17 @@ useEffect(() => {
     if (!isLoading && user === null) {
       router.replace("/auth/signin");
     }
+
+    apiFetch(`/user/${user?.id}`)
+      .then(setUserObject)
+      .catch((err) => {
+        console.error("Erreur lors du chargement du userObject :", err);
+      });
+
   }, [isLoading, user, router]);
 
   if (isLoading) return <p>Loading…</p>;
-  if (!user)      return null;   // ← never try to do user.foo when user is null
+  if (!user)      return null;
 
   return (
     <main className="mt-[10%] w-full max-w-2xl mx-auto bg-blanc rounded-xl shadow-lg p-8 flex flex-col gap-8">
@@ -47,15 +57,15 @@ useEffect(() => {
       {/* Stats */}
       <div className="flex flex-wrap gap-6 justify-between">
         <div className="flex-1 min-w-[120px] bg-primary/10 rounded-lg p-4 flex flex-col items-center">
-          <span className="text-2xl font-bold text-primary">{user.challenges?.length ?? 0}</span>
+          <span className="text-2xl font-bold text-primary">{userObject?.challenges?.length ?? 0}</span>
           <span className="text-sm text-noir/70">Challenges créés</span>
         </div>
         <div className="flex-1 min-w-[120px] bg-secondary/10 rounded-lg p-4 flex flex-col items-center">
-          <span className="text-2xl font-bold text-secondary">{user.participations?.length ?? 0}</span>
+          <span className="text-2xl font-bold text-secondary">{userObject?.participations?.length ?? 0}</span>
           <span className="text-sm text-noir/70">Participations</span>
         </div>
         <div className="flex-1 min-w-[120px] bg-cta/10 rounded-lg p-4 flex flex-col items-center">
-          <span className="text-2xl font-bold text-cta">{user.votes?.length ?? 0}</span>
+          <span className="text-2xl font-bold text-cta">{userObject?.votes?.length ?? 0}</span>
           <span className="text-sm text-noir/70">Votes</span>
         </div>
       </div>

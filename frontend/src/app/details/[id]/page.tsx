@@ -10,7 +10,6 @@ import type { Challenge } from "@/types";
 import ParticipationCard from "@/app/components/participationCard/participationCard";
 
 export default function ChallengeDetailPage() {
-  const API_URL = process.env.NEXT_PUBLIC_API_URL;
   const params = useParams();
   const challengeId = params.id as string;
   const [emailOrUsername, setEmailOrUsername] = useState("");

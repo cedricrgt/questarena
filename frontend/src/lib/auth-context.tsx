@@ -11,6 +11,9 @@ interface User {
   email: string;
   created_at: string;
   avatar_url: string;
+  challenges: JSON;
+  participations: JSON;
+  votes: JSON;
 }
 
 interface AuthContextValue {
@@ -57,6 +60,9 @@ useEffect(() => {
         email: json.email,
         created_at: json.created_at,
         avatar_url: json.avatar_url,
+        challenges: json.challenges,
+        participations: json.participations,
+        votes: json.votes,
       });
     })
     .catch(err => {
@@ -120,6 +126,9 @@ useEffect(() => {
     email:      profile.email,
     created_at: profile.created_at,
     avatar_url: profile.avatar_url,
+    challenges: profile.challenges,
+    participations: profile.participations,
+    votes: profile.votes,
   });
 }
 
@@ -148,6 +157,9 @@ useEffect(() => {
     email:      profile.email,
     created_at: profile.created_at,
     avatar_url: profile.avatar_url,
+    challenges: profile.challenges,
+    participations: profile.participations,
+    votes: profile.votes,
   });
   }
 
