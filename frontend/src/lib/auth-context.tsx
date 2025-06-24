@@ -82,22 +82,6 @@ useEffect(() => {
   }
 }, [isLoading, user, router]);
 
-<<<<<<< HEAD
-    // si token, fetch le current user
-    baseApiFetch("/auth/me", { method: "GET" })
-      .then((json) => {
-        //backend envoie { name, email, ... }
-        setUser({ id: json.id, name: json.name, email: json.email });
-      })
-      .catch((err) => {
-        console.error("Error fetching /auth/me:", err);
-        removeToken();
-        setUser(null);
-      })
-      .finally(() => setIsLoading(false));
-  }, []);
-=======
->>>>>>> d5336cd36c97777a093cdb661b659003bc10ad54
 
   // 2. Wrap “apiFetch” so that if any call returns 401, we clear token & redirect
   async function apiFetch(path: string, options: RequestInit = {}) {
@@ -119,24 +103,6 @@ useEffect(() => {
   //lorsque login,
   // store token, setUser(, et push le navigateur to /dashboard (la homepage devrait etre /dashboard).
   async function login(data: { email: string; password: string }) {
-<<<<<<< HEAD
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/login`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(data),
-    });
-    if (!res.ok) {
-      const err = await res.json();
-      throw new Error(err.message || "Login failed");
-    }
-    const json = await res.json();
-
-    setToken(json.accessToken);
-
-    // fetch “/auth/me” pour populate “user”
-    const profile = await baseApiFetch("/auth/me", { method: "GET" });
-    setUser({id: profile.id, name: profile.name, email: profile.email });
-=======
   // 1) hit login → get the token
   const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/login`, {
     method: "POST",
@@ -146,7 +112,6 @@ useEffect(() => {
   if (!res.ok) {
     const err = await res.json();
     throw new Error(err.message || "Login failed");
->>>>>>> d5336cd36c97777a093cdb661b659003bc10ad54
   }
   const { accessToken } = await res.json();
 
@@ -186,10 +151,6 @@ useEffect(() => {
     setToken(accessToken);
     // Fetch “/auth/me”
     const profile = await baseApiFetch("/auth/me", { method: "GET" });
-<<<<<<< HEAD
-    setUser({id: profile.id, name: profile.name, email: profile.email });
-    router.push("/account/dashboard");
-=======
     setUser({
     id:         profile.id,
     name:       profile.name,
@@ -200,7 +161,6 @@ useEffect(() => {
     participations: profile.participations,
     votes: profile.votes,
   });
->>>>>>> d5336cd36c97777a093cdb661b659003bc10ad54
   }
 
   function logout() {
