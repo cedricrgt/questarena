@@ -23,9 +23,37 @@ export type Challenge = {
   validated: boolean;
   created_at: string;
   image_url: string | null;
-  votes: any[];
-  participations: Participation[];
+  votes?: Vote[];
+  participations?: Participation[];
 };
+
+export type Vote = {
+  id: string;
+  user_id: string;
+  target_id: string;
+  target_type: string;
+  created_at: Date;
+  user?: User;
+  challenge?: Challenge | null;
+  participation?: Participation | null;
+}
+
+export type User = {
+  id: string;
+  userName: string;
+  email: string;
+  avatar_url: string;
+  created_at: Date;
+  challenges?: Challenge[];
+  participations?: Participation[];
+  votes?: Vote[];
+}
+
+// export type LeaderboardEntry = {
+//   imageUser: string;
+//   username: string;
+//   score: number;
+// };
 
 export type LeaderboardType = {
    userName: string;
