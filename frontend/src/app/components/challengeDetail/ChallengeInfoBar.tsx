@@ -1,19 +1,19 @@
 import type { Challenge } from "@/types";
 import { Heart, Users, Star } from "lucide-react";
+import { VoteButton } from "../button/voteButton";
 
 type ChallengeInfoBarProps = {
   challenge: Challenge | null;
-  votesCount: number;
-  hasVoted: boolean;
-  onVote: () => void;
+  onVoteChange: () => void;
 };
 
 const ChallengeInfoBar = ({
   challenge,
-  votesCount,
-  hasVoted,
-  onVote,
+  onVoteChange,
 }: ChallengeInfoBarProps) => {
+  // Supprimer l'état local, utiliser directement les données du challenge
+  const votesCount = challenge?.votes?.length ?? 0;
+
   return (
     <div className="flex items-center justify-start gap-6 md:gap-8 text-sm mb-8 p-4 bg-white rounded-lg shadow-md">
       <div className="flex items-center gap-1">
@@ -28,15 +28,14 @@ const ChallengeInfoBar = ({
           {challenge?.participations?.length ?? 0} participants
         </p>
       </div>
-      <div
-        className="flex items-center gap-1 cursor-pointer"
-        onClick={onVote}
-        title={hasVoted ? "Vous avez déjà voté" : "Voter"}
-      >
-        <Heart
-          size={16}
-          className={hasVoted ? "text-red-500" : "text-secondary"}
-        />
+      <div className="flex items-center gap-1">
+        {challenge?.id && (
+          <VoteButton
+            targetId={challenge.id}
+            targetType="CHALLENGE"
+            onVoteChange={onVoteChange}
+          />
+        )}
         <p className="font-bold font-secondary">{votesCount} likes</p>
       </div>
     </div>

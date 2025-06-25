@@ -6,7 +6,6 @@ import { useAuth } from "@/lib/auth-context";
 import { useParams, useRouter } from "next/navigation";
 import { apiFetch } from "@/lib/api";
 import type { Challenge } from "@/types";
-import ParticipationCard from "@/app/components/participationCard/participationCard";
 import { VoteButton } from "@/app/components/button/voteButton";
 import ChallengeDetailHeader from "@/app/components/challengeDetail/ChallengeDetailHeader";
 import ChallengeInfoBar from "@/app/components/challengeDetail/ChallengeInfoBar";
@@ -110,23 +109,6 @@ export default function ChallengeDetailPage() {
       return false;
     }
   };
-
-  const handleVote = async () => {
-    try {
-      await apiFetch("/vote", {
-        method: "POST",
-        body: JSON.stringify({
-          challenge_id: challengeId,
-          user_id: user?.id,
-        }),
-      });
-      setVotesCount(votesCount + 1);
-      setHasVoted(true);
-    } catch (err: any) {
-      console.error("Erreur lors de la soumission du vote:", err);
-    }
-  };
-
   return (
     <div className="min-h-screen bg-white text-gray-800">
       <section className="relative px-4 py-4 md:px-8 md:py-6">
@@ -152,9 +134,7 @@ export default function ChallengeDetailPage() {
 
           <ChallengeInfoBar
             challenge={challenge}
-            votesCount={votesCount}
-            hasVoted={hasVoted}
-            onVote={handleVote}
+            onVoteChange={fetchChallenge}
           />
 
           <ChallengeTags challenge={challenge} />
