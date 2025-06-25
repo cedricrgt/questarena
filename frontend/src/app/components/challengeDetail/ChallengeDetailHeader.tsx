@@ -12,11 +12,13 @@ const ChallengeDetailHeader = ({ challenge }: ChallengeDetailHeaderProps) => {
 
   return (
     <div className="mb-6">
-      <h2 className="text-3xl md:text-4xl font-bold mb-2 font-primary">
+      <h2 className="text-3xl md:text-4xl text-shadow-sm text-shadow-secondary font-bold mb-2 font-primary">
         {challenge?.game || "Titre du jeu inconnu"}
       </h2>
-      <p>{challenge?.title || "Type de challenge inconnu"}</p>
-      <p className="text-sm text-gray-600 font-secondary">
+      <p className="text-shadow-xl">
+        {challenge?.title || "Type de challenge inconnu"}
+      </p>
+      <p className="text-sm text-white font-secondary">
         Créé par {creatorName || "Inconnu"} •{" "}
         {challenge?.created_at
           ? new Date(challenge.created_at).toLocaleDateString("fr-FR", {

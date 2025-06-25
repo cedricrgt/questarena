@@ -15,10 +15,10 @@ const ChallengeInfoBar = ({
   const votesCount = challenge?.votes?.length ?? 0;
 
   return (
-    <div className="flex items-center justify-start gap-6 md:gap-8 text-sm mb-8 p-4 bg-white rounded-lg shadow-md">
+    <div className="flex items-center justify-start gap-6 md:gap-8 text-sm mb-8 p-4 bg-primary rounded-lg shadow-md">
       <div className="flex items-center gap-1">
         <Star size={16} className="text-yellow-500" />
-        <p className="text-gray-600 font-secondary">
+        <p className="text-white font-secondary">
           {challenge?.difficulty || "Non précisée"}
         </p>
       </div>

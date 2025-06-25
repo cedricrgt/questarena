@@ -110,13 +110,13 @@ export default function ChallengeDetailPage() {
     }
   };
   return (
-    <div className="min-h-screen bg-white text-gray-800">
-      <section className="relative px-4 py-4 md:px-8 md:py-6">
-        <div className="relative w-full h-[40vh] md:h-[50vh] rounded-3xl overflow-hidden">
+    <div className="min-h-screen bg-black text-white">
+      <section className="relative px-4 py-4 md:px-8 md:py-6 bg-yellow">
+        <div className="flex justify-center items-center relative w-full h-[40vh] md:h-[60vh] rounded-3xl overflow-hidden bg-radial-[at_50%_50%] from-secondary via-primary to-black">
           <img
             src={challenge?.image_url || "/details/default_image.webp"}
             alt="Hero background"
-            className="absolute inset-0 w-full h-full object-fit rounded-3xl"
+            className="w-auto h-[90%] object-fit mx-auto rounded-3xl shadow-[0px_0px_15px_rgba(0,0,0,0.50)] ring-2 ring-secondary shadow-secondary"
           />
           <div className="absolute top-4 left-4 bg-green-500 text-white text-xs px-3 py-1 rounded-full font-semibold font-primary">
             En cours
