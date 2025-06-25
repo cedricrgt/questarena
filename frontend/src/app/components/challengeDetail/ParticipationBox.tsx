@@ -16,7 +16,7 @@ const ParticipationBox = ({ challengeId }: ParticipationBoxProps) => {
   const handleParticipationSubmit = async (
     videoUrl: string,
     description: string
-  ) => {
+  ): Promise<boolean> => {
     setSubmitError("");
     try {
       await apiFetch("/participation", {
@@ -29,9 +29,10 @@ const ParticipationBox = ({ challengeId }: ParticipationBoxProps) => {
           user_id: user?.id,
         }),
       });
-      // Optionally reset fields or give feedback
+      return true;
     } catch (err: any) {
       setSubmitError(err.message || "Erreur lors de la soumission");
+      return false;
     }
   };
 
