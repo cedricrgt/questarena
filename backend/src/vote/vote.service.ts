@@ -67,7 +67,6 @@ export class VoteService {
     return this.prisma.vote.delete({
       where: { id },
     });
-    
   }
 
   findByTargetId(targetId: string) {
@@ -82,24 +81,23 @@ export class VoteService {
     });
   }
 
-  async hasVoted(checkVoteDto: CheckVoteDto): Promise<{ hasVoted: boolean; voteId?: string }> {
-  const { user_id, target_id, target_type } = checkVoteDto;  
-  console.log(checkVoteDto)
- const result = await this.prisma.vote.findFirst({
-  where: {
-    user_id,
-    target_type,
-    ...(target_type === TargetType.CHALLENGE? { challenge_id: target_id } : { participation_id: target_id }),
-  },
-});
+  async hasVoted(
+    checkVoteDto: CheckVoteDto,
+  ): Promise<{ hasVoted: boolean; voteId?: string }> {
+    const { user_id, target_id, target_type } = checkVoteDto;
 
- if (result) {
-    return { hasVoted: true, voteId: result.id };
+    const result = await this.prisma.vote.findFirst({
+      where: {
+        user_id,
+        ...(target_type === TargetType.CHALLENGE
+          ? { challenge_id: target_id }
+          : { participation_id: target_id }),
+      },
+    });
+
+    if (result) {
+      return { hasVoted: true, voteId: result.id };
+    }
+    return { hasVoted: false, voteId: undefined };
   }
-  return { hasVoted: false, voteId: undefined };
-}
-  
-
-
-
 }
