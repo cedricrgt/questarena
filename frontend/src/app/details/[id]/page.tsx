@@ -53,6 +53,8 @@ export default function ChallengeDetailPage() {
             (p: any) => p.user_id === user.id
           );
           setHasUserParticipated(userHasParticipated);
+        } else {
+          setHasUserParticipated(false);
         }
       })
       .catch((err) => {
@@ -61,9 +63,7 @@ export default function ChallengeDetailPage() {
   };
 
   useEffect(() => {
-    if (user) {
-      fetchChallenge();
-    }
+    fetchChallenge();
   }, [challengeId, user]);
 
   const handleLoginSubmit = async (
