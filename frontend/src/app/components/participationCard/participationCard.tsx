@@ -3,24 +3,37 @@ import { apiFetch } from "@/lib/api";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHeart } from "@fortawesome/free-solid-svg-icons";
-
+import { useAuth } from "@/lib/auth-context";
+import { Menu, Heart, Users, Trophy, Star } from "lucide-react";
+import { useEffect, useState } from "react";
+import { VoteButton } from "../button/voteButton";
 type ParticipationCardProps = {
   link: string;
   title: string;
   nbVotes: number;
   challenge: string | null;
-  userId: number;
+  userId: number
+  participationId: string
 };
 
-// TODO : Attendre le backend pour ajouter la vérification indiquant si l'utilisateur connecté a déjà voté pour la participation
 const ParticipationCard = ({
   link,
   title,
   nbVotes,
   challenge,
-  userId,
+  participationId,
+  userId
 }: ParticipationCardProps) => {
+
+  const [hasVoted, setHasVoted] = useState(false);
+  const { isLoggedIn, login, user } = useAuth();
+
+   useEffect(() => {
+    
+  }, [user?.id, participationId]);
+
   const extractIdVideo = (link: string) => {
+    
     const regex = /(?:youtube\.com\/.*v=|youtu\.be\/)([^&\n?#]+)/;
     const match = link.match(regex);
     const videoId = match ? match[1] : undefined;
@@ -47,9 +60,7 @@ const ParticipationCard = ({
         )}
         <h3 className="text-lg font-semibold px-2">{title}</h3>
         <p className="text-sm text-gray-600 px-2 mt-3 flex items-center">
-          <span className="mr-2">
-            <FontAwesomeIcon icon={faHeart} />
-          </span>
+          <VoteButton targetId={participationId} targetType="PARTICIPATION" />
           {nbVotes} votes
         </p>
       </div>

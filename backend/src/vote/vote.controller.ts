@@ -4,11 +4,23 @@ import { CreateVoteDto } from './dto/create-vote.dto';
 import { UpdateVoteDto } from './dto/update-vote.dto';
 import { JwtAuthGuard } from 'src/auth-guard/jwt-auth.guard';
 import { VoteOwnershipGuard } from './vote-ownership.guard';
+import { CheckVoteDto } from './dto/check-vote.dto';
 
 @Controller('vote')
 export class VoteController {
   constructor(private readonly voteService: VoteService) {}
 
+
+   @Get('target/:id')
+  findByTargetId(@Param('id') id: string) {
+    return this.voteService.findByTargetId(id);
+  }
+  @Post('check')
+  async checkIfVoted(@Body() checkVoteDto: CheckVoteDto) {
+    const hasVoted = await this.voteService.hasVoted( checkVoteDto);
+    console.log({hasVoted})
+    return hasVoted
+  }
   @Post()
   @UseGuards(JwtAuthGuard)
   create(@Body() createVoteDto: CreateVoteDto) {
@@ -36,10 +48,4 @@ export class VoteController {
   remove(@Param('id') id: string) {
     return this.voteService.remove(id);
   }
-
-   @Get('target/:id')
-  findByTargetId(@Param('id') id: string) {
-    return this.voteService.findByTargetId(id);
-  }
-
 }
