@@ -5,15 +5,14 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHeart } from "@fortawesome/free-solid-svg-icons";
 import { useAuth } from "@/lib/auth-context";
 import { Menu, Heart, Users, Trophy, Star } from "lucide-react";
-import { useEffect, useState } from "react";
 import { VoteButton } from "../button/voteButton";
+
 type ParticipationCardProps = {
   link: string;
   title: string;
   nbVotes: number;
   challenge: string | null;
-  userId: number
-  participationId: string
+  participationId: string;
 };
 
 const ParticipationCard = ({
@@ -22,18 +21,10 @@ const ParticipationCard = ({
   nbVotes,
   challenge,
   participationId,
-  userId
 }: ParticipationCardProps) => {
-
-  const [hasVoted, setHasVoted] = useState(false);
-  const { isLoggedIn, login, user } = useAuth();
-
-   useEffect(() => {
-    
-  }, [user?.id, participationId]);
+  const { user } = useAuth();
 
   const extractIdVideo = (link: string) => {
-    
     const regex = /(?:youtube\.com\/.*v=|youtu\.be\/)([^&\n?#]+)/;
     const match = link.match(regex);
     const videoId = match ? match[1] : undefined;
