@@ -1,11 +1,12 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useAuth } from '@/lib/auth-context'
 import { createPortal } from "react-dom";
 import { useRouter } from "next/navigation";
 import { apiFetch } from '@/lib/api'
-
+import Select from 'react-select'
+import { fetchGames } from '@/lib/games';
 
 
 type Props = {
@@ -13,15 +14,20 @@ type Props = {
   className?: string
 }
 
+type GameOption = {
+  label: string;
+  value: string;
+};
+
 export default function CreateChallengeModal({ label = 'Créer un challenge', className = '' }: Props) {
   const { user } = useAuth()
   const [submitError, setSubmitError] = useState("");
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [rules, setRules] = useState("");
-  const [game, setGame] = useState("");
+  const [games, setGames] = useState<{ label: string; value: string }[]>([]);
+  const [game, setGame] = useState<GameOption | null>(null);
   const [difficulty, setDifficulty] = useState("EASY");
-
   const [isOpen, setIsOpen] = useState(false)
   const [form, setForm] = useState({
     title: '',
@@ -31,6 +37,19 @@ export default function CreateChallengeModal({ label = 'Créer un challenge', cl
     difficulty: 'EASY',
   })
   const [loading, setLoading] = useState(false)
+
+  useEffect(()=>{
+    fetchGames()
+    .then((data) => {
+        const options = data.results.map((game: any) => ({
+          label: game.name,
+          value: game.name
+        }));
+        setGames(options);
+      })
+    .catch((err) => console.error('Error fetching games:', err));
+  },[])
+
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
@@ -123,13 +142,14 @@ export default function CreateChallengeModal({ label = 'Créer un challenge', cl
                   onChange={(e) => setRules(e.target.value)}
                   className="w-full border border-gray-300 rounded px-3 py-2 text-black"
                 />
-                <input
-                  name="game"
-                  placeholder="Jeu"
+                <Select
+                  options={games}
+                  onChange={setGame}
                   value={game}
-                  onChange={(e) => setGame(e.target.value)}
-                  className="w-full border border-gray-300 rounded px-3 py-2 text-black"
+                  placeholder="Recherchez un jeu"
+                  isClearable
                 />
+               
                 <select
                   name="difficulty"
                   value={difficulty}
