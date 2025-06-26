@@ -16,7 +16,10 @@ type Props = {
 
 type GameOption = {
   label: string;
-  value: string;
+  value: {
+    name: string;
+    image: string;
+  };
 };
 
 export default function CreateChallengeModal({ label = 'Créer un challenge', className = '' }: Props) {
@@ -25,7 +28,7 @@ export default function CreateChallengeModal({ label = 'Créer un challenge', cl
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [rules, setRules] = useState("");
-  const [games, setGames] = useState<{ label: string; value: string }[]>([]);
+  const [games, setGames] = useState<GameOption[]>([]);
   const [game, setGame] = useState<GameOption | null>(null);
   const [difficulty, setDifficulty] = useState("EASY");
   const [isOpen, setIsOpen] = useState(false)
@@ -43,7 +46,10 @@ export default function CreateChallengeModal({ label = 'Créer un challenge', cl
     .then((data) => {
         const options = data.results.map((game: any) => ({
           label: game.name,
-          value: game.name
+          value: {
+            name: game.name,
+            image: game.background_image,
+          },
         }));
         setGames(options);
       })
@@ -70,7 +76,8 @@ export default function CreateChallengeModal({ label = 'Créer un challenge', cl
           title: title,
           description: description,
           rules: rules,
-          game: game,
+          game:  game?.value.name,
+          image_url: game?.value.image,
           difficulty: difficulty,
           validated: false,
           user_id: user?.id,
