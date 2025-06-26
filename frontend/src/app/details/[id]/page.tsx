@@ -255,6 +255,26 @@ export default function ChallengeDetailPage() {
               </div>
             )}
           </div>
+          {isLoggedIn && challenge && user && (user.id === challenge.user_id || user.role === "ADMIN") && (
+          <button
+            className="w-full mt-6 py-3 rounded-full text-primary font-bold text-lg tracking-wide bg-red-600 hover:bg-red-600/75 transition-colors font-primary"
+            onClick={async () => {
+              if (!window.confirm("Es-tu sûr de vouloir supprimer ce challenge ?")) return;
+              try {
+                await apiFetch(`/challenge/${challengeId}`, {
+                  method: "DELETE",
+                });
+                alert("Challenge supprimé !");
+                router.push("/challenge");
+              } catch (err) {
+                console.error("Erreur lors de la suppression :", err);
+                alert("Erreur lors de la suppression du challenge");
+              }
+            }}
+          >
+            Supprimer ce challenge
+          </button>
+        )}
         </div>
 
         <div className="md:col-span-1">

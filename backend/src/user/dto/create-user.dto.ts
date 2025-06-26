@@ -5,7 +5,13 @@ import {
   IsString,
   IsUrl,
   MinLength,
+  IsEnum,
 } from 'class-validator';
+
+enum Roles {
+  ADMIN = 'ADMIN',
+  USER = 'USER',
+}
 
 export class CreateUserDto {
   @ApiProperty({
@@ -41,4 +47,13 @@ export class CreateUserDto {
   @IsUrl()
   @IsNotEmpty()
   avatar_url: string;
+
+  @ApiProperty({
+    description: 'Rôle de l\'utilisateur',
+    enum: Roles,
+    example: 'USER',
+  })
+  @IsEnum(Roles)
+  @IsNotEmpty()
+  role: Roles;
 }

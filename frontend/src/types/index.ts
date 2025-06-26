@@ -47,6 +47,7 @@ export type User = {
   challenges?: Challenge[];
   participations?: Participation[];
   votes?: Vote[];
+  role: string;
 }
 
 // export type LeaderboardEntry = {
