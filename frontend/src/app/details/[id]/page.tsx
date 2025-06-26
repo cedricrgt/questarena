@@ -64,7 +64,7 @@ export default function ChallengeDetailPage() {
 
   useEffect(() => {
     fetchChallenge();
-  }, [challengeId, user]);
+  }, [challengeId, user, hasUserParticipated, challenge]);
 
   const handleLoginSubmit = async (
     emailOrUsername: string,
@@ -110,7 +110,7 @@ export default function ChallengeDetailPage() {
     }
   };
   return (
-    <div className="min-h-screen bg-black text-white">
+    <div className="min-h-screen bg-white dark:bg-black dark:text-white">
       <section className="relative px-4 py-4 md:px-8 md:py-6">
         <div className="flex justify-center items-center relative w-full h-[40vh] md:h-[60vh] rounded-3xl overflow-hidden bg-radial-[at_50%_50%] from-secondary via-primary to-black shadow-[inset_0_0_400px_rgba(0,0,0,1)]">
           <img
@@ -118,7 +118,7 @@ export default function ChallengeDetailPage() {
             alt="Hero background"
             className="w-auto h-[90%] object-fit mx-auto rounded-3xl shadow-[0px_0px_15px_rgba(0,0,0,0.50)] ring-2 ring-secondary shadow-secondary"
           />
-          <div className="absolute top-4 left-4 bg-green-500 text-white text-xs px-3 py-1 rounded-full font-semibold font-primary">
+          <div className="absolute top-4 left-4 bg-secondary shadow-[0px_0px_15px_rgba(0,0,0,0.1)] ring-2 ring-primary shadow-secondary text-white text-xs px-3 py-1 rounded-full font-semibold font-primary">
             En cours
           </div>
           <div className="absolute bottom-4 right-4 bg-gray-800 bg-opacity-75 text-white text-xs px-3 py-1 rounded-full flex items-center gap-1 font-primary">
@@ -136,10 +136,6 @@ export default function ChallengeDetailPage() {
             challenge={challenge}
             onVoteChange={fetchChallenge}
           />
-
-          <ChallengeTags challenge={challenge} />
-
-          <ChallengeRules challenge={challenge} />
 
           <div className="mb-8">
             <h3 className="text-xl font-bold mb-6 font-primary">

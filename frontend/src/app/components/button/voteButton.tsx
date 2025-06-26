@@ -39,7 +39,7 @@ export const VoteButton = ({
       .catch((error) => {
         console.error("Erreur lors de la vérification du vote :", error);
       });
-  }, [targetId, user?.id]);
+  }, [targetId, user?.id, hasVoted, voteId]);
 
   const handleVoteToggle = async () => {
     if (!user?.id) {

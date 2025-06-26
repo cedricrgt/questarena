@@ -15,10 +15,10 @@ const ChallengeDetailHeader = ({ challenge }: ChallengeDetailHeaderProps) => {
       <h2 className="text-3xl md:text-4xl text-shadow-sm text-shadow-secondary font-bold mb-2 font-primary">
         {challenge?.game || "Titre du jeu inconnu"}
       </h2>
-      <p className="text-shadow-xl">
+      <p className="dark:text-white">
         {challenge?.title || "Type de challenge inconnu"}
       </p>
-      <p className="text-sm text-white font-secondary">
+      <p className="text-sm dark:text-white font-secondary">
         Créé par {creatorName || "Inconnu"} •{" "}
         {challenge?.created_at
           ? new Date(challenge.created_at).toLocaleDateString("fr-FR", {

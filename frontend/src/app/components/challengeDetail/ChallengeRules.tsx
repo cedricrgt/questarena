@@ -6,7 +6,7 @@ type ChallengeRulesProps = {
 
 const ChallengeRules = ({ challenge }: ChallengeRulesProps) => {
   return (
-    <div className="mb-8">
+    <div className="mb-8 p-4">
       <h3 className="text-xl font-bold mb-4 font-primary">
         Description & Règles
       </h3>

@@ -19,6 +19,7 @@ const ParticipationsGrid = ({ challenge }: ParticipationsGridProps) => {
               nbVotes={participation.nb_votes}
               challenge={null}
               userId={participation.user_id}
+              participationId={participation.id}
             />
           ))
         ) : (
