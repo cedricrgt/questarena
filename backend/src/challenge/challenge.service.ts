@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateChallengeDto } from './dto/create-challenge.dto';
 import { UpdateChallengeDto } from './dto/update-challenge.dto';
+import { Challenge } from './entities/challenge.entity';
 
 @Injectable()
 export class ChallengeService {
@@ -25,17 +26,22 @@ export class ChallengeService {
     });
   }
 
-  findAll() {
-    return this.prisma.challenge.findMany({
+  async findAll() {
+    const res = await this.prisma.challenge.findMany({
       include: {
         votes: true,
         participations: true,
       },
     });
+   
+  return res.map(challenge => ({
+    ...challenge,
+    createdAt: challenge.created_at?.toISOString(),
+  }));
   }
 
-  findOne(id: string) {
-    return this.prisma.challenge.findUnique({
+  async findOne(id: string) {
+    const challenge =  await this.prisma.challenge.findUnique({
       where: { id },
 
       include: {
@@ -48,6 +54,13 @@ export class ChallengeService {
         },
       },
     });
+    if(!challenge){
+      return null
+    }
+    return {
+      ...challenge,
+      created_at: challenge.created_at?.toISOString(),
+    };
   }
 
   update(id: string, updateChallengeDto: UpdateChallengeDto) {
