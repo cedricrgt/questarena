@@ -30,11 +30,7 @@ export class ParticipationService {
 }
 
   findAll() {
-    return this.prisma.participation.findMany({
-      include:{
-        user:true
-      }
-    });
+    return this.prisma.participation.findMany();
   }
 
   findOne(id: string) {
