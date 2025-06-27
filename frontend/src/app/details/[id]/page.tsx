@@ -6,7 +6,7 @@ import { useAuth } from "@/lib/auth-context";
 import Link from "next/link";
 import { useRouter, useParams } from "next/navigation";
 import { apiFetch } from "@/lib/api";
-import type { Challenge } from "@/types";
+import type { Challenge, User } from "@/types";
 import ParticipationCard from "@/app/components/participationCard/participationCard";
 import { VoteButton } from "@/app/components/button/voteButton";
 
@@ -22,6 +22,7 @@ export default function ChallengeDetailPage() {
   const [challenge, setChallenge] = useState<Challenge | null>(null);
 
   const { isLoggedIn, login, user } = useAuth();
+  const [user, setUser] = useState<User | null>(null);
   const [loginError, setLoginError] = useState("");
   const router = useRouter();
 
@@ -68,6 +69,10 @@ export default function ChallengeDetailPage() {
       setSubmitError(err.message || "Erreur lors de la soumission");
     }
   };
+
+  console.log("DEBUG: isLoggedIn", isLoggedIn);
+  console.log("DEBUG: user", user);
+  console.log("DEBUG: challenge", challenge);
 
   return (
     <div className="min-h-screen bg-white text-gray-800">
@@ -265,7 +270,7 @@ export default function ChallengeDetailPage() {
                   method: "DELETE",
                 });
                 alert("Challenge supprimé !");
-                router.push("/challenge");
+                router.push("/challenges");
               } catch (err) {
                 console.error("Erreur lors de la suppression :", err);
                 alert("Erreur lors de la suppression du challenge");
