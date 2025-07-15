@@ -1,0 +1,33 @@
+name: Deploy Backend to VM
+
+on:
+  push:
+    branches:
+      - feat/deployment
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Copy files to VM
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.VM_HOST }}
+          username: ${{ secrets.VM_USER }}
+          password: ${{ secrets.VM_PASSWORD }}
+          source: "backend/"
+          target: "/home/student/projet-gamer-challenge/backend"
+
+      - name: SSH and restart backend
+        uses: appleboy/ssh-action@v0.1.10
+        with:
+          host: ${{ secrets.VM_HOST }}
+          username: ${{ secrets.VM_USER }}
+          password: ${{ secrets.VM_PASSWORD }}
+          script: |
+            cd /home/student/projet-gamer-challenge/backend
+            docker compose down
+            docker compose up -d --build
