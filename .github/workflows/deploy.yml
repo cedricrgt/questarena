@@ -18,7 +18,6 @@ jobs:
           host: ${{ secrets.VM_HOST }}
           username: ${{ secrets.VM_USER }}
           password: ${{ secrets.VM_PASSWORD }}
-          port: 22
           source: "backend/"
           target: "/home/student/projet-gamer-challenge/backend"
 
