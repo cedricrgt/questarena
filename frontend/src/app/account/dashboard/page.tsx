@@ -49,18 +49,6 @@ export default function AccountDashboardPage() {
         </div>
       </div>
 
-      {/* User Info */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div className="bg-background rounded-lg p-4 shadow flex flex-col gap-2">
-          <span className="text-sm text-secondary font-semibold">
-            Identifiant
-          </span>
-          <span className="font-mono text-white break-all">
-            {user.id}
-          </span>
-        </div>
-      </div>
-
       {/* Stats */}
       <div className="flex flex-wrap gap-6 justify-between">
         <div className="flex-1 min-w-[120px] bg-primary/10 rounded-lg p-4 flex flex-col items-center">

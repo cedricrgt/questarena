@@ -5,15 +5,15 @@ export default function AuthLayout({ children }: { children: ReactNode }) {
   return (
     <div className="min-h-screen flex flex-col bg-primary">
       {/* Main Content */}
-      <div className="bg-white flex-1 flex items-center justify-center ">
-        <div className="w-full max-w-6xl mx-8 overflow-hidden flex">
+      <div className="bg-white flex-1 flex items-center justify-center p-4">
+        <div className="w-full max-w-6xl mx-auto overflow-hidden flex flex-col lg:flex-row bg-transparent rounded-lg">
           {/* Left Panel - Login Form */}
-          <div className="w-1/2 bg-white p-8 border-2 border-r-0 border-primary rounded-l-lg">
+          <div className="w-full lg:w-1/2 bg-white p-6 sm:p-8 border-2 border-primary rounded-lg lg:rounded-r-none lg:rounded-l-lg">
             {children}
           </div>
 
           {/* Right Panel - Hero Content */}
-          <div className="w-1/2 bg-secondary p-8 rounded-r-lg flex flex-col justify-center border-2 border-l-0 border-primary">
+          <div className="lg:w-1/2 lg:bg-secondary lg:p-8 lg:rounded-r-lg lg:flex lg:flex-col lg:justify-center lg:border-2 border-l-0 border-primary hidden">
             <div className="text-blanc">
               <h1 className="text-3xl font-bold mb-4">LEVEL UP TON GAME !</h1>
               <p className="font-medium mb-8">

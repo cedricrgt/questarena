@@ -27,6 +27,7 @@ const ChallengeCard = ({ id }: ChallengeCardProps) => {
     setLoading(true);
     apiFetch(`/challenge/${id}`)
       .then((data) => setChallenge(data))
+      
       .finally(() => setLoading(false));
   }, [id]);
 
@@ -37,7 +38,6 @@ const ChallengeCard = ({ id }: ChallengeCardProps) => {
       </div>
     );
   }
-
   if (!challenge) {
     return null;
   }
@@ -62,13 +62,8 @@ const ChallengeCard = ({ id }: ChallengeCardProps) => {
             {challenge.title}
           </h3>
           <p className="text-md text-primary">
-            Créé le:{""}
-            {new Date(challenge.created_at).toLocaleDateString("fr-FR", {
-              weekday: "long",
-              year: "numeric",
-              month: "long",
-              day: "numeric",
-            })}
+            Créé le:
+            {new Date(challenge.created_at).toLocaleDateString()}
           </p>
           <p className="text-sm text-gray-600">
             {challenge.participations.length} participation

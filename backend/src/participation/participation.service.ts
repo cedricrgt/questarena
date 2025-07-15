@@ -29,18 +29,30 @@ export class ParticipationService {
   });
 }
 
-  findAll() {
-    return this.prisma.participation.findMany();
+  async findAll() {
+    const participations = await this.prisma.participation.findMany();
+    return participations.map(participation => ({
+      ...participation,
+      created_at: participation.created_at?.toISOString(),
+   }));
   }
 
-  findOne(id: string) {
-    return this.prisma.participation.findUnique({
-      where: { id },
-      include:{
-        user:true
-      }
-    });
-  }
+  async findOne(id: string) {
+  const participation = await this.prisma.participation.findUnique({
+    where: { id },
+    include: {
+      user: true,
+    },
+  });
+
+  if (!participation) return null;
+
+  return {
+    ...participation,
+    createdAt: participation.created_at?.toISOString(),
+
+  };
+}
 
   update(id: string, updateParticipationDto: UpdateParticipationDto) {
     return this.prisma.participation.update({
