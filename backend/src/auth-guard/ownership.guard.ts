@@ -31,9 +31,11 @@ export class OwnershipGuard implements CanActivate {
       throw new UnauthorizedException('Ressource introuvable');
     }
     
-    if (resource.user_id !== decodedToken.id) {
+    if (resource.user_id !== decodedToken.id && decodedToken.role !== 'ADMIN') {
       throw new ForbiddenException('Accès refusé : vous n’êtes pas le propriétaire');
     }
+    
+    console.log("DEBUG: OwnershipGuard - user", user);
 
     const isOwner = resource.user_id === user.id;
     const isAdmin = user.role === 'ADMIN';

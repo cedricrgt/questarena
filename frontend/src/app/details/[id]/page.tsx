@@ -40,8 +40,8 @@ export default function ChallengeDetailPage() {
     useState(false);
   const [hasUserParticipated, setHasUserParticipated] = useState(false);
 
-  const { isLoggedIn, login, user } = useAuth();
-  const [user, setUser] = useState<User | null>(null);
+  const { isLoggedIn, login, user} = useAuth();
+  const [userObject, setUserObject] = useState<User | null>(null);
   const [loginError, setLoginError] = useState("");
   const router = useRouter();
 
@@ -64,8 +64,16 @@ export default function ChallengeDetailPage() {
       });
   };
 
+  const fetchUser = () => {
+    apiFetch(`/user/${user?.id}`)
+    .then((data) => {
+      setUserObject(data);
+    })
+  }
+
   useEffect(() => {
     fetchChallenge();
+    fetchUser();
   }, [challengeId, user, hasUserParticipated, challenge]);
 
   const handleLoginSubmit = async (
@@ -111,10 +119,6 @@ export default function ChallengeDetailPage() {
       return false;
     }
   };
-
-  console.log("DEBUG: isLoggedIn", isLoggedIn);
-  console.log("DEBUG: user", user);
-  console.log("DEBUG: challenge", challenge);
 
   return (
     <div className="min-h-screen bg-white dark:bg-black dark:text-white">
@@ -182,7 +186,7 @@ export default function ChallengeDetailPage() {
               <LoginForm onLogin={handleLoginSubmit} loginError={loginError} />
             )}
           </div>
-          {isLoggedIn && challenge && user && (user.id === challenge.user_id || user.role === "ADMIN") && (
+          {isLoggedIn && challenge && userObject && (userObject.id === challenge.user_id || userObject.role === "ADMIN") && (
           <button
             className="w-full mt-6 py-3 rounded-full text-primary font-bold text-lg tracking-wide bg-red-600 hover:bg-red-600/75 transition-colors font-primary"
             onClick={async () => {
