@@ -21,7 +21,7 @@ export type Challenge = {
   difficulty: string;
   user_id: string;
   validated: boolean;
-  created_at: string;
+  createdAt: string;
   creator:
     | {
         userName: string;

@@ -14,31 +14,15 @@ export default function ChallengesView() {
   useEffect(() => {
     setLoading(true);
     apiFetch("/challenge")
-      .then((data) => setChallenges(data))
+      .then((data) => {
+        setChallenges(data);
+        console.log("Challenges reçus:", data.map(c => c.created_at));
+      })
       .finally(() => setLoading(false));
   }, []);
 
   const sortedChallenges = [...challenges].sort((a, b) => {
-    if ((b.participations?.length ?? 0) !== (a.participations?.length ?? 0)) {
-      return (b.participations?.length ?? 0) - (a.participations?.length ?? 0);
-    }
-    const aLast =
-      (a.participations?.length ?? 0) > 0
-        ? Math.max(
-            ...(a.participations ?? []).map((p) =>
-              new Date(p.created_at).getTime()
-            )
-          )
-        : 0;
-    const bLast =
-      (b.participations?.length ?? 0) > 0
-        ? Math.max(
-            ...(b.participations ?? []).map((p) =>
-              new Date(p.created_at).getTime()
-            )
-          )
-        : 0;
-    return bLast - aLast;
+    return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
   });
 
   const filteredChallenges = sortedChallenges.filter((ch) => {
@@ -48,7 +32,7 @@ export default function ChallengesView() {
   });
 
   const visibleChallenges = filteredChallenges.slice(0, visibleCount);
-
+console.log(visibleChallenges)
   return (
     <section className="w-4/5 mx-auto my-11">
       <div className="flex items-center justify-between mb-6">
