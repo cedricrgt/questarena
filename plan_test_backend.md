@@ -120,3 +120,93 @@ Cas de test : Supprimer une participation
 - entrée : L'ID de la participation
 - résultat : La participation est supprimée 
 - statut : VERT
+
+## Challenge
+Cas de test : Créer un challenge valide
+- test : L'utilisateur crée un challenge avec des données correctes
+- entrée: Titre, description, règles, le jeu associé, la difficulté, le statut de validation, l'utilisateur et l'image du challenge valides  
+- résultat : Le challenge est enregistré et visible dans la liste des challenges
+- statut : VERT
+
+
+Cas de test : Créer un challenge avec des champs manquants ou invalides
+- test : L'utilisateur fournit des informations invalides lors de la création du challenge
+- entrée : Un titre vide avec le reste des informations valides
+- résultat : Une erreur est levée
+- statut : ROUGE
+
+Cas de test : Récupérer la liste de tous les challenges
+- test: On récupère la liste des challenges
+- entrée: Un tableau de challenge
+- Résultat : La liste des challenges est retournée
+- statut : VERT
+
+Cas de test : Récupérer un challenge existant
+- test: Trouver un challenge via son ID
+- entrée: Une ID valide 
+- Résultat : Le challenge correspondant est retourné
+- statut : VERT
+
+Cas de test : Récupérer un challenge inexistant
+- test : Trouver un challenge avec une ID inexistante
+- entrée : Une ID qui n'existe pas
+- résultat : null est retourné
+- statut : ROUGE
+
+Cas de test : Mettre à jour un challenge avec des données valides
+- test : On tente de mettre à jour un challenge avec des informations valide
+- entrée : L'ID du challenge et le titre modifié 
+- résultat : Le challenge est mis à jour et est retourné dans la réponse
+- statut : VERT
+
+Cas de test : Supprimer un challenge
+test : L’utilisateur supprime un challenge
+entrée : L'ID d'un challenge existant
+résultat : Le challenge est supprimé et le challenge supprimé est retourné dans la réponse
+statut : VERT
+
+## Inscription
+Cas de test: Fournir des informations d'inscription valide
+- test :  L'utilisateur fournit des informations valides 
+- entrée : L'utilisateur rentre un nom, prenom, email et un mdp valides
+- sortie : L'utilisateur est redirigé vers la page d'accueil
+- statut : VERT
+
+Cas de test: Fournir un email invalide  
+- test : L'utilisateur fournit un email invalide
+- entrée : l'utilisateur rentre un email déjà utilisé ou au mauvais format
+- résultat : L'utilisateur reste sur le formulaire d'inscription et un message d'erreur est affiché
+- statut : ROUGE
+
+Cas de test: Fournir un mot de passe invalide 
+- test : L'utilisateur fournit un mot de passe non invalide
+- entrée : l'utilisateur rentre un mdp au mauvais format
+- résultat :  L'utilisateur reste sur le formulaire d'inscription et un message d'erreur est affiché
+- statut : ROUGE
+
+## Connexion
+Cas de test: Fournir des informations de connexions valides
+- test: L'utilisateur fournit un email et un mot de passe valides
+- entrée : Email: utilisateur@mail.com et Mot de passe: password123
+- sortie : L'utilisateur est redirigé vers la page d'accueil
+- statut : VERT
+
+Cas de test: Fournir un email inconnu
+- test : L'utilisateur fournit un email non enregistré en base de données
+- contexte : l'utilisateur rentre un email inconnu
+- résultat : L'utilisateur reste sur le formulaire de connexion et un message d'erreur est affiché
+- statut : ROUGE
+
+Cas de test: Email et mot de passe ne correspondent pas 
+- test : L'utilisateur fournit une combinaison email/ mot de passe qui ne correspondent pas 
+- contexte : l'utilisateur rentre un email valide et un mot de passe qui n'est pas valide
+- résultat : L'utilisateur reste sur le formulaire de connexion et un message d'erreur est affiché
+- statut : ROUGE
+
+## Leaderboard
+
+Cas de test : Retourner un leaderboard avec des utilisateurs actifs  
+- test : Récupération du leaderboard avec des utilisateurs ayant des participations, votes et challenges  
+- entrée : Deux utilisateurs avec des votes et des challenges
+- résultat : Retour d’un leaderboard avec les bons scores calculés et les informations utilisateurs
+- statut : VERT
