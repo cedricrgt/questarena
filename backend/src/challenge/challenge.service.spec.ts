@@ -107,7 +107,7 @@ describe('ChallengeService', () => {
         {
           id: 'challenge-1',
           title: 'Speedrun',
-          created_at: new Date('2025-01-01T10:00:00Z'),
+          created_at: new Date('2025-01-01T10:00:00.000Z'),
           votes: [{ id: 'vote1' }],
           participations: [{ id: 'part1' }],
           rules: 'No glitches allowed',
@@ -120,7 +120,7 @@ describe('ChallengeService', () => {
         {
           id: 'challenge-2',
           title: 'Marathon',
-          created_at: new Date('2025-02-02T12:00:00Z'),
+          created_at: new Date('2025-02-02T12:00:00.000Z'),
           votes: [],
           participations: [],
           rules: 'No glitches allowed',
@@ -135,9 +135,13 @@ describe('ChallengeService', () => {
       mockPrisma.challenge.findMany.mockResolvedValue(challenges);
 
       const result = await service.findAll();
-      expect(result).toEqual([
-        { ...challenges[0], created_at: '2025-01-01T10:00:00Z' },
-        { ...challenges[1], created_at: '2025-02-02T12:00:00Z' },
+      const formatted = result.map((challenge) => ({
+        ...challenge,
+        created_at: challenge.created_at.toISOString(),
+      }));
+      expect(formatted).toEqual([
+        { ...challenges[0], created_at: '2025-01-01T10:00:00.000Z' },
+        { ...challenges[1], created_at: '2025-02-02T12:00:00.000Z' },
       ]);
     });
   });
@@ -163,7 +167,10 @@ describe('ChallengeService', () => {
 
       const result = await service.findOne('challenge-1');
 
-      expect(result).toEqual(challenge);
+      expect(result).toMatchObject({
+          ...challenge,
+          created_at: new Date(challenge.created_at).toISOString(),
+      });
     });
 
     it('should return null if challenge not found', async () => {

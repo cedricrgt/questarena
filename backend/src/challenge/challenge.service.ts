@@ -40,7 +40,6 @@ export class ChallengeService {
    
   return res.map(challenge => ({
     ...challenge,
-    createdAt: challenge.created_at?.toISOString(),
   }));
   }
 

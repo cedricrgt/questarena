@@ -59,7 +59,6 @@ export class ParticipationService {
 
   return {
     ...participation,
-    createdAt: participation.created_at?.toISOString(),
 
   };
 }

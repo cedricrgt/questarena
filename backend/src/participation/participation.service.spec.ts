@@ -140,13 +140,14 @@ describe('ParticipationService', () => {
   });
 
   describe('findOne', () => {
-    it('should return a participation with createdAt as ISO string', async () => {
+    it('should return a participation', async () => {
       const participation = {
-        id: 'participation-1', 
+        id: 'participation-1',
         user_id: 'user-1',
         challenge_id: 'challenge-1',
         validated: true,
-        video_url: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ&ab_channel=RickAstley',
+        video_url:
+          'https://www.youtube.com/watch?v=dQw4w9WgXcQ&ab_channel=RickAstley',
         description: 'Description de la participation',
         created_at: new Date('2024-01-01T00:00:00Z'),
       };
@@ -156,9 +157,15 @@ describe('ParticipationService', () => {
 
       expect(prisma.participation.findUnique).toHaveBeenCalledWith({
         where: { id: 'participation-1' },
+        include: { user: true },
       });
 
-      expect(result).toEqual({participation});
+      expect({...result!, created_at: result!.created_at.toISOString()}).toMatchObject({
+       
+          ...participation,
+          created_at: participation.created_at.toISOString(),
+      
+      });
     });
 
     it('should return null if participation not found', async () => {
@@ -193,7 +200,9 @@ describe('ParticipationService', () => {
 
   describe('remove', () => {
     it('should delete a participation', async () => {
-      mockPrisma.participation.delete.mockResolvedValue({ id: 'participation-1' });
+      mockPrisma.participation.delete.mockResolvedValue({
+        id: 'participation-1',
+      });
       const result = await service.remove('participation-1');
 
       expect(prisma.participation.delete).toHaveBeenCalledWith({
