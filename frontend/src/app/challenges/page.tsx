@@ -42,8 +42,9 @@ export default function ChallengesView() {
   });
 
   const filteredChallenges = sortedChallenges.filter((ch) => {
-    if (filter === "with") return ch.participations?.length ?? 0;
-    if (filter === "without") return ch.participations?.length ?? true;
+    if (filter === "with") return (ch.participations?.length ?? 0) > 0;
+    if (filter === "without") return (ch.participations?.length ?? 0) === 0;
+    return true;
   });
 
   const visibleChallenges = filteredChallenges.slice(0, visibleCount);
