@@ -8,6 +8,7 @@ const nextConfig: NextConfig = {
   basePath: isGithubPages ? "/project-gamer-challenges" : "",
   assetPrefix: isGithubPages ? "/project-gamer-challenges/" : "",
   images: {
+    unoptimized: true,
     domains: [
       "randomuser.me",
       "via.assets.so",
