@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Challenge } from 'src/challenge/entities/challenge.entity';
-import { Participation } from 'src/participation/entities/participation.entity';
-import { Vote } from 'src/vote/entities/vote.entity';
+import { Challenge } from '../../challenge/entities/challenge.entity';
+import { Participation } from '../../participation/entities/participation.entity';
+import { Vote } from '../../vote/entities/vote.entity';
 
 export class User {
   @ApiProperty({
