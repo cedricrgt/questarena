@@ -1,8 +1,20 @@
-import { PrismaClient, Difficulty, TargetType } from '@prisma/client';
+import { PrismaClient, Difficulty, Roles, TargetType } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
 async function main() {
+
+  const adminUser = await prisma.user.upsert({
+    where: { userName: 'admin' },
+    update: {},
+    create: {
+      userName: 'admin',
+      email: 'admin@example.com',
+      password_hash: 'Passpass1',
+      avatar_url: 'https://randomuser.me/api/portraits/women/23.jpg',
+      role: Roles.ADMIN,
+    },
+  });
 
   const user1 = await prisma.user.upsert({
      where: { userName: 'alice' },
@@ -12,6 +24,7 @@ async function main() {
       email: "alice@example.com",
       password_hash: "hashalice123",
       avatar_url: "https://randomuser.me/api/portraits/women/32.jpg",
+      role: Roles.USER
     },
   });
 
@@ -23,6 +36,7 @@ async function main() {
       email: "bob@example.com",
       password_hash: "hashbob456",
       avatar_url: "https://randomuser.me/api/portraits/men/75.jpg",
+      role: Roles.USER
     },
   });
 

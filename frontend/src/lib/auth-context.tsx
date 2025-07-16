@@ -14,6 +14,7 @@ interface User {
   challenges: JSON;
   participations: JSON;
   votes: JSON;
+  role: JSON
 }
 
 interface AuthContextValue {
@@ -63,6 +64,7 @@ useEffect(() => {
         challenges: json.challenges,
         participations: json.participations,
         votes: json.votes,
+        role: json.roles,
       });
     })
     .catch(err => {
@@ -129,6 +131,7 @@ useEffect(() => {
     challenges: profile.challenges,
     participations: profile.participations,
     votes: profile.votes,
+    role: profile.roles,
   });
 }
 
@@ -160,6 +163,7 @@ useEffect(() => {
     challenges: profile.challenges,
     participations: profile.participations,
     votes: profile.votes,
+    role: profile.roles,
   });
   }
 
