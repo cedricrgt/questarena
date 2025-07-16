@@ -19,24 +19,31 @@ export default function ChallengesView() {
   }, []);
 
   const sortedChallenges = [...challenges].sort((a, b) => {
-    if (b.participations.length !== a.participations.length) {
-      return b.participations.length - a.participations.length;
+    if ((b.participations?.length ?? 0) !== (a.participations?.length ?? 0)) {
+      return (b.participations?.length ?? 0) - (a.participations?.length ?? 0);
     }
     const aLast =
-      a.participations.length > 0
-        ? Math.max(...a.participations.map((p) => new Date(p.created_at).getTime()))
+      (a.participations?.length ?? 0) > 0
+        ? Math.max(
+            ...(a.participations ?? []).map((p) =>
+              new Date(p.created_at).getTime()
+            )
+          )
         : 0;
     const bLast =
-      b.participations.length > 0
-        ? Math.max(...b.participations.map((p) => new Date(p.created_at).getTime()))
+      (b.participations?.length ?? 0) > 0
+        ? Math.max(
+            ...(b.participations ?? []).map((p) =>
+              new Date(p.created_at).getTime()
+            )
+          )
         : 0;
     return bLast - aLast;
   });
 
   const filteredChallenges = sortedChallenges.filter((ch) => {
-    if (filter === "with") return ch.participations.length > 0;
-    if (filter === "without") return ch.participations.length === 0;
-    return true;
+    if (filter === "with") return ch.participations?.length ?? 0;
+    if (filter === "without") return ch.participations?.length ?? true;
   });
 
   const visibleChallenges = filteredChallenges.slice(0, visibleCount);
@@ -48,19 +55,25 @@ export default function ChallengesView() {
         <div className="space-x-2">
           <button
             onClick={() => setFilter("all")}
-            className={`px-4 py-1 rounded ${filter === "all" ? "bg-cta text-noir" : "border"}`}
+            className={`px-4 py-1 rounded ${
+              filter === "all" ? "bg-cta text-noir" : "border"
+            }`}
           >
             Tous
           </button>
           <button
             onClick={() => setFilter("with")}
-            className={`px-4 py-1 rounded ${filter === "with" ? "bg-cta text-noir" : "border"}`}
+            className={`px-4 py-1 rounded ${
+              filter === "with" ? "bg-cta text-noir" : "border"
+            }`}
           >
             Avec participations
           </button>
           <button
             onClick={() => setFilter("without")}
-            className={`px-4 py-1 rounded ${filter === "without" ? "bg-cta text-noir" : "border"}`}
+            className={`px-4 py-1 rounded ${
+              filter === "without" ? "bg-cta text-noir" : "border"
+            }`}
           >
             Sans participation
           </button>
