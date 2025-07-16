@@ -70,13 +70,11 @@ export default function Header() {
                 onClick={() => setIsMenuOpen(!isMenuOpen)}
                 className="flex items-center text-blanc focus:outline-none"
               >
-                
-                  <img
-                    src={user.avatar_url}
-                    alt="Avatar"
-                    className="w-8 h-8 rounded-full border-2 border-blanc"
-                  />
-                
+                <img
+                  src={user?.avatar_url}
+                  alt="Avatar"
+                  className="w-8 h-8 rounded-full border-2 border-blanc"
+                />
               </button>
               {isMenuOpen && (
                 <div className="absolute right-0 mt-2 w-40 bg-white rounded shadow-lg py-2">
@@ -149,7 +147,11 @@ export default function Header() {
             ) : (
               <>
                 <Button label="Connexion" href="/auth/signin" variant="cta" />
-                <Button label="Inscription" href="/auth/signup" variant="white" />
+                <Button
+                  label="Inscription"
+                  href="/auth/signup"
+                  variant="white"
+                />
               </>
             )}
           </div>
