@@ -2,7 +2,7 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Req } fro
 import { VoteService } from './vote.service';
 import { CreateVoteDto } from './dto/create-vote.dto';
 import { UpdateVoteDto } from './dto/update-vote.dto';
-import { JwtAuthGuard } from 'src/auth-guard/jwt-auth.guard';
+import { JwtAuthGuard } from '../auth-guard/jwt-auth.guard';
 import { VoteOwnershipGuard } from './vote-ownership.guard';
 import { CheckVoteDto } from './dto/check-vote.dto';
 

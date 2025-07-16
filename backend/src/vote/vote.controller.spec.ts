@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { VoteController } from './vote.controller';
 import { VoteService } from './vote.service';
-import { JwtAuthGuard } from 'src/auth-guard/jwt-auth.guard';
+import { JwtAuthGuard } from '../auth-guard/jwt-auth.guard';
 import { VoteOwnershipGuard } from './vote-ownership.guard';
 import { CreateVoteDto } from './dto/create-vote.dto';
 import { CheckVoteDto } from './dto/check-vote.dto';

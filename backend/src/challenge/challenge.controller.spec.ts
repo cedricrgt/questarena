@@ -92,7 +92,7 @@ describe('ChallengeController Integration avec Guards', () => {
       jest.spyOn(ownershipGuard, 'canActivate').mockResolvedValue(true);
 
       const result = await controller.update('challenge-1', updateDto);
-      expect(result).toEqual({ id: '1', ...updateDto });
+      expect(result).toEqual({ id: 'challenge-1', ...updateDto });
       expect(mockChallengeService.update).toHaveBeenCalledWith('challenge-1', updateDto);
     });
 
