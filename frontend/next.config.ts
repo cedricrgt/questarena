@@ -4,9 +4,6 @@ const isGithubPages =
   process.env.GITHUB_ACTIONS || process.env.DEPLOY_TARGET === "GH_PAGES";
 
 const nextConfig: NextConfig = {
-  output: "export",
-  basePath: isGithubPages ? "/project-gamer-challenges" : "",
-  assetPrefix: isGithubPages ? "/project-gamer-challenges/" : "",
   images: {
     unoptimized: true,
     domains: [

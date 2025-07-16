@@ -28,16 +28,6 @@ const getEndDate = (startDate: string | undefined): string => {
   });
 };
 
-export async function generateStaticParams() {
-  // Récupère la liste des IDs de challenge pour génération site static
-  const res = await fetch(process.env.NEXT_PUBLIC_API_URL + "/challenge");
-  const challenges = await res.json();
-
-  return challenges.map((challenge: { id: string }) => ({
-    id: challenge.id,
-  }));
-}
-
 export default function ChallengeDetailPage() {
   const params = useParams();
   const challengeId = params.id as string;
