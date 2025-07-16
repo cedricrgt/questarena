@@ -18,7 +18,6 @@ export class VoteController {
   @Post('check')
   async checkIfVoted(@Body() checkVoteDto: CheckVoteDto) {
     const hasVoted = await this.voteService.hasVoted( checkVoteDto);
-    console.log({hasVoted})
     return hasVoted
   }
   @Post()

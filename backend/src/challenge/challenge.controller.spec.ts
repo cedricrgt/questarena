@@ -44,7 +44,7 @@ describe('ChallengeController Integration avec Guards', () => {
       providers: [
         { provide: ChallengeService, useValue: mockChallengeService },
         { provide: AuthentificationService, useValue: mockAuthService },
-         { provide: JwtService, useValue: mockJwtService },
+        { provide: JwtService, useValue: mockJwtService },
         { provide: JwtAuthGuard, useValue : mockJwtGuard},
         { provide: ChallengeOwnershipGuard, useValue : mockChallengeOwnershipGuard},
       ],

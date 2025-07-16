@@ -6,7 +6,12 @@ import { VoteOwnershipGuard } from './vote-ownership.guard';
 import { CreateVoteDto } from './dto/create-vote.dto';
 import { CheckVoteDto } from './dto/check-vote.dto';
 import { TargetType } from './entities/vote.entity';
+import { JwtService } from '@nestjs/jwt';
+import { AuthentificationService } from '../authentification/authentification.service';
 
+const mockJwtService = {
+  verifyAsync: jest.fn(),
+};
 const mockVoteService = {
   create: jest.fn(),
   findAll: jest.fn(),
@@ -24,6 +29,10 @@ const mockJwtGuard = {
 const mockOwnershipGuard = {
   canActivate: jest.fn(),
 };
+const mockAuthService = {
+  decodeToken: jest.fn(),
+};
+
 
 describe('VoteController', () => {
   let controller: VoteController;
@@ -34,9 +43,12 @@ describe('VoteController', () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [VoteController],
       providers: [
+        { provide: JwtService, useValue: mockJwtService },
         { provide: VoteService, useValue: mockVoteService },
         { provide: JwtAuthGuard, useValue: mockJwtGuard },
         { provide: VoteOwnershipGuard, useValue: mockOwnershipGuard },
+        { provide: AuthentificationService, useValue: mockAuthService },
+        
       ],
     }).compile();
 

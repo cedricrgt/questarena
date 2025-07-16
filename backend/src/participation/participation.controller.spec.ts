@@ -5,6 +5,13 @@ import { JwtAuthGuard } from '../auth-guard/jwt-auth.guard';
 import { ParticipationOwnershipGuard } from './participation-ownership.guard';
 import { CreateParticipationDto } from './dto/create-participation.dto';
 import { UpdateParticipationDto } from './dto/update-participation.dto';
+import { JwtService } from '@nestjs/jwt';
+import { AuthentificationService } from '../authentification/authentification.service';
+
+
+const mockJwtService = {
+  verifyAsync: jest.fn(),
+};
 
 const mockParticipationService = {
   create: jest.fn(),
@@ -22,6 +29,11 @@ const mockOwnershipGuard = {
   canActivate: jest.fn(),
 };
 
+const mockAuthService = {
+  decodeToken: jest.fn(),
+};
+
+
 describe('ParticipationController', () => {
   let controller: ParticipationController;
   let jwtGuard: JwtAuthGuard;
@@ -31,6 +43,8 @@ describe('ParticipationController', () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [ParticipationController],
       providers: [
+        { provide: AuthentificationService, useValue: mockAuthService },
+        { provide: JwtService, useValue: mockJwtService },
         { provide: ParticipationService, useValue: mockParticipationService },
         { provide: JwtAuthGuard, useValue: mockJwtGuard },
         { provide: ParticipationOwnershipGuard, useValue: mockOwnershipGuard },
