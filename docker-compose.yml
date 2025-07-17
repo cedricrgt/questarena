@@ -68,3 +68,6 @@ services:
     depends_on:
       database:
         condition: service_healthy
+    volumes: 
+      - ./backend/prisma:/app/prisma
+    command: ["prisma", "studio", "--schema=/app/prisma/schema.prisma"]
