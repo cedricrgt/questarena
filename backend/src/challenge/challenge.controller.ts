@@ -2,7 +2,7 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Req } fro
 import { ChallengeService } from './challenge.service';
 import { CreateChallengeDto } from './dto/create-challenge.dto';
 import { UpdateChallengeDto } from './dto/update-challenge.dto';
-import { JwtAuthGuard } from 'src/auth-guard/jwt-auth.guard';
+import { JwtAuthGuard } from '../auth-guard/jwt-auth.guard';
 import { ChallengeOwnershipGuard } from './challenge-ownership.guard';
 
 @Controller('challenge')

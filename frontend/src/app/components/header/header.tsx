@@ -4,7 +4,6 @@ import Button from "../button/button";
 import Link from "next/link";
 import { useState } from "react";
 import { useAuth } from "@/lib/auth-context";
-// import { FiUser } from "react-icons/fi"; // or any icon lib
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -68,6 +67,7 @@ export default function Header() {
             <>
               <button
                 onClick={() => setIsMenuOpen(!isMenuOpen)}
+                data-testid='homeOpenAccountButton'
                 className="flex items-center text-blanc focus:outline-none"
               >
                 <img
@@ -90,6 +90,7 @@ export default function Header() {
                       logout();
                       setIsMenuOpen(false);
                     }}
+                    data-testid="homeLogoutButton"
                     className="w-full text-left px-4 py-2 text-noir hover:bg-gray-100"
                   >
                     Déconnexion
@@ -99,8 +100,8 @@ export default function Header() {
             </>
           ) : (
             <>
-              <Button label="Connexion" href="/auth/signin" variant="cta" />
-              <Button label="Inscription" href="/auth/signup" variant="white" />
+              <Button datatestid="homeLoginButton" label="Connexion" href="/auth/signin" variant="cta" />
+              <Button datatestid="homeSignupButton" label="Inscription" href="/auth/signup" variant="white" />
             </>
           )}
         </div>
@@ -139,6 +140,7 @@ export default function Header() {
                     logout();
                     setIsMenuOpen(false);
                   }}
+                  data-testid="homeLogoutButtonMobile"
                   className="text-blanc hover:text-secondary"
                 >
                   Déconnexion
@@ -146,12 +148,8 @@ export default function Header() {
               </>
             ) : (
               <>
-                <Button label="Connexion" href="/auth/signin" variant="cta" />
-                <Button
-                  label="Inscription"
-                  href="/auth/signup"
-                  variant="white"
-                />
+                <Button datatestid="homeLoginButtonMobile" label="Connexion" href="/auth/signin" variant="cta" />
+                <Button datatestid="homeSignupButtonMobile" label="Inscription" href="/auth/signup" variant="white" />
               </>
             )}
           </div>

@@ -5,7 +5,8 @@ import { Users, CheckCircle, Info } from "lucide-react";
 import { useAuth } from "@/lib/auth-context";
 import { useParams, useRouter } from "next/navigation";
 import { apiFetch } from "@/lib/api";
-import type { Challenge } from "@/types";
+import type { Challenge, User } from "@/types";
+import ParticipationCard from "@/app/components/participationCard/participationCard";
 import { VoteButton } from "@/app/components/button/voteButton";
 import ChallengeDetailHeader from "@/app/components/challengeDetail/ChallengeDetailHeader";
 import ChallengeInfoBar from "@/app/components/challengeDetail/ChallengeInfoBar";
@@ -39,7 +40,8 @@ export default function ChallengeDetailPage() {
     useState(false);
   const [hasUserParticipated, setHasUserParticipated] = useState(false);
 
-  const { isLoggedIn, login, user } = useAuth();
+  const { isLoggedIn, login, user} = useAuth();
+  const [userObject, setUserObject] = useState<User | null>(null);
   const [loginError, setLoginError] = useState("");
   const router = useRouter();
 
@@ -62,8 +64,16 @@ export default function ChallengeDetailPage() {
       });
   };
 
+  const fetchUser = () => {
+    apiFetch(`/user/${user?.id}`)
+    .then((data) => {
+      setUserObject(data);
+    })
+  }
+
   useEffect(() => {
     fetchChallenge();
+    fetchUser();
   }, [challengeId, user, hasUserParticipated, challenge]);
 
   const handleLoginSubmit = async (
@@ -109,6 +119,7 @@ export default function ChallengeDetailPage() {
       return false;
     }
   };
+
   return (
     <div className="min-h-screen bg-white dark:bg-black dark:text-white">
       <section className="relative px-4 py-4 md:px-8 md:py-6">
@@ -175,6 +186,26 @@ export default function ChallengeDetailPage() {
               <LoginForm onLogin={handleLoginSubmit} loginError={loginError} />
             )}
           </div>
+          {isLoggedIn && challenge && userObject && (userObject.id === challenge.user_id || userObject.role === "ADMIN") && (
+          <button
+            className="w-full mt-6 py-3 rounded-full text-primary font-bold text-lg tracking-wide bg-red-600 hover:bg-red-600/75 transition-colors font-primary"
+            onClick={async () => {
+              if (!window.confirm("Es-tu sûr de vouloir supprimer ce challenge ?")) return;
+              try {
+                await apiFetch(`/challenge/${challengeId}`, {
+                  method: "DELETE",
+                });
+                alert("Challenge supprimé !");
+                router.push("/challenges");
+              } catch (err) {
+                console.error("Erreur lors de la suppression :", err);
+                alert("Erreur lors de la suppression du challenge");
+              }
+            }}
+          >
+            Supprimer ce challenge
+          </button>
+        )}
         </div>
 
         <div className="md:col-span-1">
