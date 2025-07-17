@@ -1,5 +1,5 @@
-import { Injectable } from '@nestjs/common';
-import { PrismaService } from 'src/prisma/prisma.service';
+import { BadRequestException, Injectable } from '@nestjs/common';
+import { PrismaService } from '../prisma/prisma.service';
 import { CreateParticipationDto } from './dto/create-participation.dto';
 import { UpdateParticipationDto } from './dto/update-participation.dto';
 
@@ -7,26 +7,36 @@ import { UpdateParticipationDto } from './dto/update-participation.dto';
 export class ParticipationService {
   constructor(private prisma: PrismaService) {}
 
-  create(createParticipationDto: CreateParticipationDto) {
+ async create(createParticipationDto: CreateParticipationDto) {
   const { user_id, challenge_id, ...rest } = createParticipationDto;
 
-  return this.prisma.participation.create({
-    data: {
-      ...rest,
-      validated: rest.validated ?? false,
-      challenge:{
-        connect:{
-          id:challenge_id
-        }
-      } , 
-      user: {
-        connect: {
-          id: user_id,
+  if (!user_id) {
+    throw new BadRequestException('user_id est obligatoire');
+  }
+  if (!challenge_id) {
+    throw new BadRequestException('challenge_id est obligatoire');
+  }
+
+  try {
+    return await this.prisma.participation.create({
+      data: {
+        ...rest,
+        validated: rest.validated ?? false,
+        challenge: {
+          connect: {
+            id: challenge_id,
+          },
+        },
+        user: {
+          connect: {
+            id: user_id,
+          },
         },
       },
-      
-    },
-  });
+    });
+  } catch (error) {
+    throw new BadRequestException('Erreur lors de la création de la participation');
+  }
 }
 
   async findAll() {
@@ -49,21 +59,28 @@ export class ParticipationService {
 
   return {
     ...participation,
-    createdAt: participation.created_at?.toISOString(),
 
   };
 }
 
-  update(id: string, updateParticipationDto: UpdateParticipationDto) {
-    return this.prisma.participation.update({
+  async update(id: string, updateParticipationDto: UpdateParticipationDto) {
+  try {
+    return await this.prisma.participation.update({
       where: { id },
       data: updateParticipationDto,
     });
+  } catch (error) {
+    throw new BadRequestException('Erreur lors de la mise à jour de la participation');
   }
+}
 
-  remove(id: string) {
-    return this.prisma.participation.delete({
+async remove(id: string) {
+  try {
+    return await this.prisma.participation.delete({
       where: { id },
     });
+  } catch (error) {
+    throw new BadRequestException('Erreur lors de la suppression de la participation');
   }
+}
 }

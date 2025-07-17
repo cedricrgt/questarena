@@ -1,19 +1,20 @@
-import { Injectable } from '@nestjs/common';
-import { PrismaService } from 'src/prisma/prisma.service';
+import { BadRequestException, Injectable } from '@nestjs/common';
+import { PrismaService } from '../prisma/prisma.service';
 import { CreateChallengeDto } from './dto/create-challenge.dto';
 import { UpdateChallengeDto } from './dto/update-challenge.dto';
-import { Challenge } from './entities/challenge.entity';
+
 
 @Injectable()
 export class ChallengeService {
   constructor(private prisma: PrismaService) {}
 
-  create(createChallengeDto: CreateChallengeDto) {
+  async create(createChallengeDto: CreateChallengeDto) {
+    try{
     const { user_id, image_url, ...rest } = createChallengeDto;
     const finalImageUrl =
       image_url?.trim() ||
       `https://via.assets.so/game.webp?id=${Math.floor(Math.random() * 50) + 1}`;
-    return this.prisma.challenge.create({
+    return await this.prisma.challenge.create({
       data: {
         ...rest,
         image_url: finalImageUrl,
@@ -23,7 +24,10 @@ export class ChallengeService {
           },
         },
       },
-    });
+    });}
+    catch(error){
+      throw new BadRequestException('invalid data')
+    }
   }
 
   async findAll() {
@@ -36,7 +40,6 @@ export class ChallengeService {
    
   return res.map(challenge => ({
     ...challenge,
-    createdAt: challenge.created_at?.toISOString(),
   }));
   }
 
@@ -63,15 +66,19 @@ export class ChallengeService {
     };
   }
 
-  update(id: string, updateChallengeDto: UpdateChallengeDto) {
-    return this.prisma.challenge.update({
+  async update(id: string, updateChallengeDto: UpdateChallengeDto) {
+    try{
+    return await this.prisma.challenge.update({
       where: { id },
       data: updateChallengeDto,
-    });
+    });}
+    catch(error){
+       throw new BadRequestException('invalid data')
+    }
   }
 
-  remove(id: string) {
-    return this.prisma.challenge.delete({
+  async remove(id: string) {
+    return await this.prisma.challenge.delete({
       where: { id },
     });
   }

@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { PrismaService } from '../prisma/prisma.service';
@@ -10,7 +10,8 @@ export class UserService {
   constructor(private prisma: PrismaService) {}
 
   async create(createUserDto: CreateUserDto): Promise<UserEntity> {
-    const hashedPassword = await bcrypt.hash(createUserDto.password, 10);
+    try{
+       const hashedPassword = await bcrypt.hash(createUserDto.password, 10);
 
     const user = await this.prisma.user.create({
       data: {
@@ -23,6 +24,10 @@ export class UserService {
 
     const { password_hash, ...result } = user;
     return result as UserEntity;
+    }
+   catch(error){
+       throw new BadRequestException('Invalid Data');
+   }
   }
 
   async findAll(): Promise<UserEntity[]> {
@@ -52,6 +57,7 @@ export class UserService {
   }
 
   async update(id: string, updateUserDto: UpdateUserDto): Promise<UserEntity> {
+    try{
     await this.findOne(id);
 
     const data: any = {};
@@ -78,7 +84,10 @@ export class UserService {
     });
 
     const { password_hash, ...result } = updatedUser;
-    return result as UserEntity;
+    return result as UserEntity;}
+    catch(error){
+       throw new BadRequestException('Invalid data');
+    }
   }
 
   async delete(id: string): Promise<UserEntity> {
