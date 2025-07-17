@@ -11,6 +11,7 @@ export class OwnershipGuard implements CanActivate {
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
+    const user = request.user;
 
      const authHeader = request.headers['authorization'];
 
@@ -30,8 +31,17 @@ export class OwnershipGuard implements CanActivate {
       throw new UnauthorizedException('Ressource introuvable');
     }
     
-    if (resource.user_id !== decodedToken.id) {
+    if (resource.user_id !== decodedToken.id && decodedToken.role !== 'ADMIN') {
       throw new ForbiddenException('Accès refusé : vous n’êtes pas le propriétaire');
+    }
+    
+    console.log("DEBUG: OwnershipGuard - user", user);
+
+    const isOwner = resource.user_id === user.id;
+    const isAdmin = user.role === 'ADMIN';
+
+    if (!isOwner && !isAdmin) {
+      throw new ForbiddenException('Accès interdit');
     }
 
     return true;
