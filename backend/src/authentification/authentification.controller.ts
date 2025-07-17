@@ -1,5 +1,5 @@
 import { Body, Controller, Get, Headers, HttpCode, HttpStatus, Post, UnauthorizedException } from "@nestjs/common";
-import { CreateUserDto } from "src/user/dto/create-user.dto";
+import { CreateUserDto } from "../user/dto/create-user.dto";
 import { SignInDto } from "./dto/sign-in.dto";
 import { AuthentificationService } from "./authentification.service";
 import { ApiBearerAuth, ApiBody, ApiResponse } from "@nestjs/swagger";

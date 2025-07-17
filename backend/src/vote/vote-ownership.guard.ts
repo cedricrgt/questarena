@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { OwnershipGuard } from 'src/auth-guard/ownership.guard';
+import { OwnershipGuard } from '../auth-guard/ownership.guard';
 import { VoteService } from './vote.service';
-import { AuthentificationService } from 'src/authentification/authentification.service';
+import { AuthentificationService } from '../authentification/authentification.service';
 
 @Injectable()
 export class VoteOwnershipGuard extends OwnershipGuard {

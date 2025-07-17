@@ -12,7 +12,7 @@ import {
 import { ParticipationService } from './participation.service';
 import { CreateParticipationDto } from './dto/create-participation.dto';
 import { UpdateParticipationDto } from './dto/update-participation.dto';
-import { JwtAuthGuard } from 'src/auth-guard/jwt-auth.guard';
+import { JwtAuthGuard } from '../auth-guard/jwt-auth.guard';
 import { ParticipationOwnershipGuard } from './participation-ownership.guard';
 
 @Controller('participation')

@@ -1,5 +1,5 @@
 import {CanActivate,ExecutionContext,Injectable, UnauthorizedException,ForbiddenException,} from '@nestjs/common';
-import { AuthentificationService } from 'src/authentification/authentification.service';
+import { AuthentificationService } from '../authentification/authentification.service';
 
 @Injectable()
 export class OwnershipGuard implements CanActivate {
