@@ -4,7 +4,6 @@ import Button from "../button/button";
 import Link from "next/link";
 import { useState } from "react";
 import { useAuth } from "@/lib/auth-context";
-// import { FiUser } from "react-icons/fi"; // or any icon lib
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -71,13 +70,11 @@ export default function Header() {
                 data-testid='homeOpenAccountButton'
                 className="flex items-center text-blanc focus:outline-none"
               >
-                
-                  <img
-                    src={user?.avatar_url}
-                    alt="Avatar"
-                    className="w-8 h-8 rounded-full border-2 border-blanc"
-                  />
-                
+                <img
+                  src={user?.avatar_url}
+                  alt="Avatar"
+                  className="w-8 h-8 rounded-full border-2 border-blanc"
+                />
               </button>
               {isMenuOpen && (
                 <div className="absolute right-0 mt-2 w-40 bg-white rounded shadow-lg py-2">

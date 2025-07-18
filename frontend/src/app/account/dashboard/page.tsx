@@ -75,13 +75,12 @@ export default function AccountDashboardPage() {
       <section className="mt-8">
         <h2 className="text-2xl font-bold text-primary mb-4">Mes Challenges</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {userObject?.challenges.map((challenge) => (
+          {userObject?.challenges?.map((challenge) => (
             <a href={`/details/${challenge.id}`}>
               <div
                 key={challenge.id}
                 className="bg-background rounded-lg p-4 shadow transform transition-transform hover:scale-105 hover:shadow-lg"
               >
-
                 <h3 className="text-xl font-semibold">{challenge.title}</h3>
 
                 <p className="text-sm text-secondary">
@@ -112,17 +111,17 @@ export default function AccountDashboardPage() {
 
       {/* Mes Participations */}
       <section className="mt-8">
-        <h2 className="text-2xl font-bold text-primary mb-4">Mes Participations</h2>
+        <h2 className="text-2xl font-bold text-primary mb-4">
+          Mes Participations
+        </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {userObject?.participations.map((part) => (
+          {userObject?.participations?.map((part) => (
             <a href={`/details/${part.challenge_id}`}>
               <div
                 key={part.id}
                 className="bg-background rounded-lg p-4 shadow transform transition-transform hover:scale-105 hover:shadow-lg"
               >
-
                 <p className="text-white">{part.description}</p>
-
 
                 <a
                   href={part.video_url}
@@ -145,7 +144,6 @@ export default function AccountDashboardPage() {
             </a>
           ))}
         </div>
-
       </section>
 
       <button

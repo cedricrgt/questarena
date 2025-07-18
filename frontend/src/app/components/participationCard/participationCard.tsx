@@ -13,6 +13,7 @@ type ParticipationCardProps = {
   nbVotes: number;
   challenge: string | null;
   participationId: string;
+  userId: number;
 };
 
 const ParticipationCard = ({

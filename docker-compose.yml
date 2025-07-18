@@ -71,6 +71,25 @@ services:
     volumes:
       - ./backend/prisma:/app/prisma
     command: ["prisma", "studio", "--schema=/app/prisma/schema.prisma"]
+
+  caddy:
+    image: caddy:2
+    container_name: caddy
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      - frontend
+      - backend
+
+volumes:
+  caddy_data:
+  caddy_config:
   
   cypress:
     image: cypress/included:13.7.3

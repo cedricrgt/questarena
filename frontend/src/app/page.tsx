@@ -4,8 +4,8 @@ import { useEffect, useState } from "react";
 import Button from "./components/button/button";
 import Hero from "./components/hero/Hero";
 import ChallengeCard from "./components/challengeCard/challengeCard";
-import Leaderboard from './components/leaderboard/leaderboard';
-import ParticipationCard from './components/participationCard/participationCard';
+import Leaderboard from "./components/leaderboard/leaderboard";
+import ParticipationCard from "./components/participationCard/participationCard";
 import { Challenge, LeaderboardType } from "@/types";
 import { apiFetch } from "@/lib/api";
 
@@ -21,7 +21,7 @@ export default function Home() {
       .finally(() => setLoading(false));
   }, []);
 
-  useEffect(() => {     
+  useEffect(() => {
     setLoading(true);
     apiFetch("/challenge")
       .then((data) => setChallenges(data))
@@ -31,20 +31,24 @@ export default function Home() {
   // Trie les challenges d'abord par nombre de participations décroissant, puis par la date de la participation la plus récente
   const sortedChallenges = [...challenges].sort((a, b) => {
     // 1. Par nombre de participations décroissant
-    if (b.participations.length !== a.participations.length) {
-      return b.participations.length - a.participations.length;
+    if ((b.participations?.length ?? 0) !== (a.participations?.length ?? 0)) {
+      return (b.participations?.length ?? 0) - (a.participations?.length ?? 0);
     }
     // 2. Si égalité, par date de participation la plus récente décroissante
     const aLast =
-      a.participations.length > 0
+      (a.participations?.length ?? 0) > 0
         ? Math.max(
-            ...a.participations.map((p) => new Date(p.created_at).getTime())
+            ...(a.participations ?? []).map((p) =>
+              new Date(p.created_at).getTime()
+            )
           )
         : 0;
     const bLast =
-      b.participations.length > 0
+      (b.participations?.length ?? 0) > 0
         ? Math.max(
-            ...b.participations.map((p) => new Date(p.created_at).getTime())
+            ...(b.participations ?? []).map((p) =>
+              new Date(p.created_at).getTime()
+            )
           )
         : 0;
     return bLast - aLast;
@@ -52,7 +56,7 @@ export default function Home() {
 
   // Garde que les challenges qui ont au moins une participation
   const filteredChallenges = sortedChallenges.filter(
-    (ch) => ch.participations.length > 0
+    (ch) => (ch.participations?.length ?? 0) > 0
   );
   const visibleChallenges = filteredChallenges.slice(0, visibleCount);
 
