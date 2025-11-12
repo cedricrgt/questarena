@@ -40,6 +40,55 @@ export default function CreateChallengeModal({ label = 'Créer un challenge', cl
     difficulty: 'EASY',
   })
   const [loading, setLoading] = useState(false)
+  const selectStyles = {
+    control: (base: any, state: any) => ({
+      ...base,
+      width: '100%',
+      border: `1px solid var(--secondary)`,
+      borderRadius: '0.5rem',
+      boxShadow: '0 0 0 2px var(--secondary), 0 0 5px rgba(0,0,0,0.25)',
+      outline: 'none',
+      padding: '2px 6px',
+      backgroundColor: 'transparent',
+      fontWeight: '700',
+      color: 'var(--tertiary)',
+      '&:hover': {
+        borderColor: 'var(--secondary)',
+      },
+    }),
+    singleValue: (base: any) => ({
+      ...base,
+      color: 'var(--tertiary)',
+      fontWeight: 700,
+    }),
+    input: (base: any) => ({
+      ...base,
+      color: 'var(--tertiary)',
+      fontWeight: 700,
+    }),
+    placeholder: (base: any) => ({
+      ...base,
+      color: 'rgba(148,163,184,0.9)',
+      fontWeight: 600,
+    }),
+    menu: (base: any) => ({
+      ...base,
+      backgroundColor: '#0f172a',
+      color: '#f8fafc',
+      zIndex: 50,
+      borderRadius: '0.5rem',
+      boxShadow: '0 10px 15px rgba(0,0,0,0.25)',
+    }),
+    option: (base: any, state: any) => ({
+      ...base,
+      backgroundColor: state.isFocused ? '#1e293b' : '#0f172a',
+      color: '#f8fafc',
+      fontWeight: 600,
+      ':active': {
+        backgroundColor: '#1e293b',
+      },
+    }),
+  }
 
   useEffect(()=>{
     fetchGames()
@@ -96,7 +145,7 @@ export default function CreateChallengeModal({ label = 'Créer un challenge', cl
   }
 
   return (
-    <div className="relative">
+    <div className="relative text-tertiary">
       <button
         onClick={() => setIsOpen(true)}
         disabled={!user}
@@ -116,38 +165,38 @@ export default function CreateChallengeModal({ label = 'Créer un challenge', cl
       {isOpen &&
         typeof window !== "undefined" &&
         createPortal(
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-            <div className="bg-white rounded-lg shadow-xl w-full max-w-lg p-6 relative">
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-primary/75">
+            <div className="bg-secondary/25 backdrop-blur-sm rounded-lg shadow-xl w-full max-w-lg p-6 relative">
               <button
-                className="absolute top-2 right-2 text-primary hover:text-gray-800 text-xl"
+                className="absolute top-2 right-2 hover:text-tertiary text-2xl text-bold hover:text-white"
                 onClick={() => setIsOpen(false)}
               >
                 ×
               </button>
 
-              <h2 className="text-xl font-semibold mb-4 text-primary  ">Créer un challenge</h2>
+              <h2 className="text-xl text-shadow-sm text-shadow-secondary font-bold mb-2 font-primary">Créer un challenge</h2>
 
-              <div className="space-y-4">
+              <div className="space-y-4  text-white">
                 <input
                   name="title"
                   placeholder="Titre"
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
-                  className="w-full border border-gray-300 rounded px-3 py-2 text-primary"
+                  className="w-full border border-secondary  rounded shadow-[0px_0px_5px_rgba(0,0,0,0.25)] ring-2 ring-secondary shadow-secondary px-3 py-2 text-tertiary font-bold"
                 />
                 <textarea
                   name="description"
                   placeholder="Description"
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
-                  className="w-full border border-gray-300 rounded px-3 py-2 text-primary"
+                  className="w-full border border-secondary  rounded shadow-[0px_0px_15px_rgba(0,0,0,0.50)] ring-2 ring-secondary shadow-secondary px-3 py-2 text-tertiary"
                 />
                 <textarea
                   name="rules"
                   placeholder="Règles"
                   value={rules}
                   onChange={(e) => setRules(e.target.value)}
-                  className="w-full border border-gray-300 rounded px-3 py-2 text-primary"
+                  className="w-full border border-secondary rounded shadow-[0px_0px_15px_rgba(0,0,0,0.50)] ring-2 ring-secondary shadow-secondary px-3 py-2 text-tertiary"
                 />
                 <Select
                   options={games}
@@ -155,14 +204,14 @@ export default function CreateChallengeModal({ label = 'Créer un challenge', cl
                   value={game}
                   placeholder="Recherchez un jeu"
                   isClearable
-                   className="w-full border border-gray-300 rounded px-3 py-2 text-primary"
+                  styles={selectStyles}
                 />
                
                 <select
                   name="difficulty"
                   value={difficulty}
                   onChange={(e) => setDifficulty(e.target.value)}
-                  className="w-full border border-gray-300 rounded px-3 py-2 text-primary"
+                  className="w-full border border-secondary  rounded shadow-[0px_0px_15px_rgba(0,0,0,0.50)] ring-2 ring-secondary shadow-secondary px-3 py-2 text-tertiary"
                 >
                   <option value="EASY">Facile</option>
                   <option value="MEDIUM">Moyen</option>
@@ -172,7 +221,7 @@ export default function CreateChallengeModal({ label = 'Créer un challenge', cl
                 <button
                   onClick={handleSubmit}
                   disabled={loading}
-                  className="w-full bg-[var(--cta)] text-[var(--noir)] py-2 rounded hover:bg-yellow-400  disabled:opacity-50"
+                  className=" px-4 py-2 transition transform duration-200 ease-in-out hover:-translate-y-0.5 hover:shadow-lg p-[50px] shadow-[0px_4px_4px_rgba(0,0,0,0.25)] bg-cta text-primary hover:bg-cta/90 rounded-2xl w-full"
                 >
                   {loading ? 'Création...' : 'Créer'}
                 </button>
