@@ -105,8 +105,8 @@ export default function CreateChallengeModal({ label = 'Créer un challenge', cl
           hover:-translate-y-0.5 hover:shadow-lg 
           p-[50px] shadow-[0px_4px_4px_rgba(0,0,0,0.25)]
           ${user
-            ? 'bg-cta text-noir hover:bg-cta/90'
-            : 'bg-cta text-noir opacity-50 cursor-not-allowed'}
+            ? 'bg-cta text-primary hover:bg-cta/90'
+            : 'bg-cta text-primary opacity-50 cursor-not-allowed'}
           ${className || ''}
         `}
       >
@@ -119,13 +119,13 @@ export default function CreateChallengeModal({ label = 'Créer un challenge', cl
           <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
             <div className="bg-white rounded-lg shadow-xl w-full max-w-lg p-6 relative">
               <button
-                className="absolute top-2 right-2 text-gray-500 hover:text-gray-800 text-xl"
+                className="absolute top-2 right-2 text-primary hover:text-gray-800 text-xl"
                 onClick={() => setIsOpen(false)}
               >
                 ×
               </button>
 
-              <h2 className="text-xl font-semibold mb-4 text-black  ">Créer un challenge</h2>
+              <h2 className="text-xl font-semibold mb-4 text-primary  ">Créer un challenge</h2>
 
               <div className="space-y-4">
                 <input
@@ -133,21 +133,21 @@ export default function CreateChallengeModal({ label = 'Créer un challenge', cl
                   placeholder="Titre"
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
-                  className="w-full border border-gray-300 rounded px-3 py-2 text-black"
+                  className="w-full border border-gray-300 rounded px-3 py-2 text-primary"
                 />
                 <textarea
                   name="description"
                   placeholder="Description"
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
-                  className="w-full border border-gray-300 rounded px-3 py-2 text-black"
+                  className="w-full border border-gray-300 rounded px-3 py-2 text-primary"
                 />
                 <textarea
                   name="rules"
                   placeholder="Règles"
                   value={rules}
                   onChange={(e) => setRules(e.target.value)}
-                  className="w-full border border-gray-300 rounded px-3 py-2 text-black"
+                  className="w-full border border-gray-300 rounded px-3 py-2 text-primary"
                 />
                 <Select
                   options={games}
@@ -155,13 +155,14 @@ export default function CreateChallengeModal({ label = 'Créer un challenge', cl
                   value={game}
                   placeholder="Recherchez un jeu"
                   isClearable
+                   className="w-full border border-gray-300 rounded px-3 py-2 text-primary"
                 />
                
                 <select
                   name="difficulty"
                   value={difficulty}
                   onChange={(e) => setDifficulty(e.target.value)}
-                  className="w-full border border-gray-300 rounded px-3 py-2 text-black"
+                  className="w-full border border-gray-300 rounded px-3 py-2 text-primary"
                 >
                   <option value="EASY">Facile</option>
                   <option value="MEDIUM">Moyen</option>

@@ -13,7 +13,7 @@ export default function Header() {
     <div className="bg-primary relative z-50">
       <header className="flex justify-between items-center px-8 py-4">
         <h1 className="text-blanc text-2xl font-bold font-logo">
-          GamerChallenges
+          <Link href="/">GamerChallenges</Link>
         </h1>
 
         {/* Burger Menu Button */}
@@ -55,9 +55,6 @@ export default function Header() {
           </Link>
           <Link href="/leaderboard" className="text-blanc hover:text-secondary">
             Leaderboard
-          </Link>
-          <Link href="/affronter" className="text-blanc hover:text-secondary">
-            Affronter
           </Link>
         </nav>
 
