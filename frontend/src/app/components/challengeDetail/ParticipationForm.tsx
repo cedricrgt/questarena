@@ -36,7 +36,7 @@ const ParticipationForm = ({
             id="video-url"
             value={videoUrl}
             onChange={(e) => setVideoUrl(e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-secondary focus:border-secondary font-secondary"
+            className="w-full px-3 py-2 border border-gray-300 text-primary rounded-md focus:outline-none focus:ring-secondary focus:border-secondary font-secondary"
             placeholder="https://www.youtube.com/watch?v=..."
           />
         </div>
@@ -52,7 +52,7 @@ const ParticipationForm = ({
             rows={4}
             value={description}
             onChange={(e) => setDescription(e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-secondary focus:border-secondary font-secondary"
+            className="w-full px-3 py-2 border border-gray-300 text-primary rounded-md focus:outline-none focus:ring-secondary focus:border-secondary font-secondary"
             placeholder="Ajoutez une description à votre participation"
           ></textarea>
         </div>
