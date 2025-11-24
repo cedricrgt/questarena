@@ -9,7 +9,7 @@ const ParticipationsGrid = ({ challenge }: ParticipationsGridProps) => {
   return (
     <div>
       <h3 className="text-xl font-bold mb-6 font-primary">Participations</h3>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 gap-4">
         {challenge?.participations && challenge.participations.length > 0 ? (
           challenge.participations.map((participation) => (
             <ParticipationCard
@@ -20,6 +20,7 @@ const ParticipationsGrid = ({ challenge }: ParticipationsGridProps) => {
               challenge={null}
               userId={participation.user_id}
               participationId={participation.id}
+              userName={participation.user?.userName}
             />
           ))
         ) : (

@@ -14,25 +14,43 @@ export default function ChallengesView() {
   useEffect(() => {
     setLoading(true);
     apiFetch("/challenge")
-      .then((data) => {
-        setChallenges(data);
-        console.log("Challenges reçus:", data.map(c => c.created_at));
-      })
+      .then((data) => setChallenges(data))
       .finally(() => setLoading(false));
   }, []);
 
   const sortedChallenges = [...challenges].sort((a, b) => {
-    return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+    if ((b.participations?.length ?? 0) !== (a.participations?.length ?? 0)) {
+      return (b.participations?.length ?? 0) - (a.participations?.length ?? 0);
+    }
+    const aLast =
+      (a.participations?.length ?? 0) > 0
+        ? Math.max(
+            ...(a.participations ?? []).map((p) =>
+              new Date(p.created_at).getTime()
+            )
+          )
+        : 0;
+    const bLast =
+      (b.participations?.length ?? 0) > 0
+        ? Math.max(
+            ...(b.participations ?? []).map((p) =>
+              new Date(p.created_at).getTime()
+            )
+          )
+        : 0;
+    return bLast - aLast;
   });
 
   const filteredChallenges = sortedChallenges.filter((ch) => {
-    if (filter === "with") return (ch.participations?.length ?? 0) > 0;
-    if (filter === "without") return (ch.participations?.length ?? 0) === 0;
+    const participationCount = ch.participations?.length ?? 0;
+
+    if (filter === "with") return participationCount > 0;
+    if (filter === "without") return participationCount === 0;
     return true;
   });
 
   const visibleChallenges = filteredChallenges.slice(0, visibleCount);
-console.log(visibleChallenges)
+
   return (
     <section className="w-4/5 mx-auto my-11">
       <div className="flex items-center justify-between mb-6">

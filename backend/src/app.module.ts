@@ -9,15 +9,16 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AuthentificationModule } from './authentification/authentification.module';
 import { JwtModule } from '@nestjs/jwt';
 import { PrismaModule } from './prisma/prisma.module';
+import { AppGateway } from './gateway/app.gateway';
 
 @Module({
   imports: [
     PrismaModule, // now available globally
-    UserModule, 
-    ChallengeModule, 
-    ParticipationModule, 
-    VoteModule, 
-    AuthentificationModule, 
+    UserModule,
+    ChallengeModule,
+    ParticipationModule,
+    VoteModule,
+    AuthentificationModule,
     ConfigModule.forRoot({ isGlobal: true }),
     JwtModule.registerAsync({
       global: true,
@@ -30,6 +31,6 @@ import { PrismaModule } from './prisma/prisma.module';
     }),
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, AppGateway],
 })
-export class AppModule {}
+export class AppModule { }

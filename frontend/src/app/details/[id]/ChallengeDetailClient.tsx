@@ -1,20 +1,14 @@
 "use client";
-
 import { useEffect, useState } from "react";
 import { Users, CheckCircle, Info } from "lucide-react";
 import { useAuth } from "@/lib/auth-context";
-import { useParams, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { apiFetch } from "@/lib/api";
 import type { Challenge } from "@/types";
-import { VoteButton } from "@/app/components/button/voteButton";
 import ChallengeDetailHeader from "@/app/components/challengeDetail/ChallengeDetailHeader";
 import ChallengeInfoBar from "@/app/components/challengeDetail/ChallengeInfoBar";
-import ChallengeTags from "@/app/components/challengeDetail/ChallengeTags";
-import ChallengeRules from "@/app/components/challengeDetail/ChallengeRules";
-import ParticipationBox from "@/app/components/challengeDetail/ParticipationBox";
 import ParticipationsGrid from "@/app/components/challengeDetail/ParticipationsGrid";
 import ParticipationForm from "@/app/components/challengeDetail/ParticipationForm";
-import Link from "next/link";
 import LoginForm from "@/app/components/challengeDetail/LoginForm";
 
 const getEndDate = (startDate: string | undefined): string => {
@@ -28,26 +22,27 @@ const getEndDate = (startDate: string | undefined): string => {
   });
 };
 
-export default function ChallengeDetailPage() {
-  const params = useParams();
-  const challengeId = params.id as string;
+export default function ChallengeDetailClient({
+  challenge,
+}: {
+  challenge: Challenge;
+}) {
   const [submitError, setSubmitError] = useState("");
-  const [challenge, setChallenge] = useState<Challenge | null>(null);
-  const [votesCount, setVotesCount] = useState(0);
-  const [hasVoted, setHasVoted] = useState(false);
+  const [currentChallenge, setCurrentChallenge] = useState<Challenge | null>(
+    challenge
+  );
   const [isParticipationSubmitted, setIsParticipationSubmitted] =
     useState(false);
   const [hasUserParticipated, setHasUserParticipated] = useState(false);
-
-  const { isLoggedIn, login, user, refreshProfile } = useAuth();
+  const { isLoggedIn, login, user } = useAuth();
   const [loginError, setLoginError] = useState("");
   const router = useRouter();
 
   const fetchChallenge = () => {
-    if (!challengeId) return;
-    apiFetch(`/challenge/${challengeId}`)
+    if (!challenge?.id) return;
+    apiFetch(`/challenge/${challenge.id}`)
       .then((data) => {
-        setChallenge(data);
+        setCurrentChallenge(data);
         if (user && data.participations) {
           const userHasParticipated = data.participations.some(
             (p: any) => p.user_id === user.id
@@ -64,7 +59,8 @@ export default function ChallengeDetailPage() {
 
   useEffect(() => {
     fetchChallenge();
-  }, [challengeId, user, hasUserParticipated, challenge]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user, hasUserParticipated]);
 
   const handleLoginSubmit = async (
     emailOrUsername: string,
@@ -87,35 +83,32 @@ export default function ChallengeDetailPage() {
     description: string
   ): Promise<boolean> => {
     setSubmitError("");
-    console.log("Submitting participation:", { videoUrl, description });
     try {
       await apiFetch("/participation", {
         method: "POST",
         body: JSON.stringify({
-          challenge_id: challengeId,
+          challenge_id: challenge.id,
           video_url: videoUrl,
           description: description,
           validated: false,
           user_id: user?.id,
         }),
       });
-      console.log("Participation submitted successfully!");
       fetchChallenge();
-      await refreshProfile(); // Update user stats (points)
       setIsParticipationSubmitted(true);
       return true;
     } catch (err: any) {
-      console.error("Erreur lors de la soumission de la participation:", err);
       setSubmitError(err.message || "Erreur lors de la soumission");
       return false;
     }
   };
+
   return (
     <div className="min-h-screen bg-white dark:bg-black dark:text-white">
       <section className="relative px-4 py-4 md:px-8 md:py-6">
         <div className="flex justify-center items-center relative w-full h-[40vh] md:h-[60vh] rounded-3xl overflow-hidden bg-radial-[at_50%_50%] from-secondary via-primary to-black shadow-[inset_0_0_400px_rgba(0,0,0,1)]">
           <img
-            src={challenge?.image_url || "/details/default_image.webp"}
+            src={currentChallenge?.image_url || "/details/default_image.webp"}
             alt="Hero background"
             className="w-auto h-[90%] object-fit mx-auto rounded-3xl shadow-[0px_0px_15px_rgba(0,0,0,0.50)] ring-2 ring-secondary shadow-secondary"
           />
@@ -123,7 +116,8 @@ export default function ChallengeDetailPage() {
             En cours
           </div>
           <div className="absolute bottom-4 right-4 bg-gray-800 bg-opacity-75 text-white text-xs px-3 py-1 rounded-full flex items-center gap-1 font-primary">
-            <Users size={12} /> {challenge?.participations?.length ?? 0} {""}
+            <Users size={12} /> {currentChallenge?.participations?.length ?? 0}{" "}
+            {""}
             participations
           </div>
         </div>
@@ -131,10 +125,10 @@ export default function ChallengeDetailPage() {
 
       <div className="container mx-auto px-4 py-8 grid grid-cols-1 md:grid-cols-2 gap-8">
         <div className="md:col-span-1">
-          <ChallengeDetailHeader challenge={challenge} />
+          <ChallengeDetailHeader challenge={currentChallenge} />
 
           <ChallengeInfoBar
-            challenge={challenge}
+            challenge={currentChallenge}
             onVoteChange={fetchChallenge}
           />
 
@@ -179,7 +173,7 @@ export default function ChallengeDetailPage() {
         </div>
 
         <div className="md:col-span-1">
-          <ParticipationsGrid challenge={challenge} />
+          <ParticipationsGrid challenge={currentChallenge} />
         </div>
       </div>
     </div>

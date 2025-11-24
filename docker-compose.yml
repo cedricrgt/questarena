@@ -28,15 +28,12 @@ services:
     depends_on:
       database:
         condition: service_healthy
-    command: >
-      bash -c "
-        # 1) Generate the Prisma client
-        npx prisma generate &&
-        npx prisma migrate deploy &&
-        npx prisma db push &&
-        npx prisma db seed &&
-        npm run start:dev
-      "
+    command:
+      [
+        "bash",
+        "-c",
+        "./wait-for-it.sh database:5432 -- npx prisma generate && npx prisma migrate deploy && npm run seed && npm run start:dev",
+      ]
     env_file:
       - docker.env
 
@@ -68,43 +65,3 @@ services:
     depends_on:
       database:
         condition: service_healthy
-    volumes:
-      - ./backend/prisma:/app/prisma
-    command: ["prisma", "studio", "--schema=/app/prisma/schema.prisma"]
-
-  caddy:
-    image: caddy:2
-    container_name: caddy
-    restart: unless-stopped
-    ports:
-      - "80:80"
-      - "443:443"
-    volumes:
-      - ./Caddyfile:/etc/caddy/Caddyfile
-      - caddy_data:/data
-      - caddy_config:/config
-    depends_on:
-      - frontend
-      - backend
-
-volumes:
-  caddy_data:
-  caddy_config:
-  
-  cypress:
-    image: cypress/included:13.7.3
-    container_name: cypress
-    working_dir: /e2e
-    volumes:
-      - ./:/e2e
-    depends_on:
-      - frontend
-    env_file:
-      - ./cypress/.env
-    entrypoint: 
-      - sh
-      - -c
-      - |
-        npm ci && \
-        npx cypress install && \
-        npx cypress run

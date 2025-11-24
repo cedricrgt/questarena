@@ -8,6 +8,7 @@ import Leaderboard from "./components/leaderboard/leaderboard";
 import ParticipationCard from "./components/participationCard/participationCard";
 import { Challenge, LeaderboardType } from "@/types";
 import { apiFetch } from "@/lib/api";
+import GameClientLayout from "./components/layout/GameClientLayout";
 
 export default function Home() {
   const [leaderboard, setLeaderboard] = useState<LeaderboardType[]>([]);
@@ -38,18 +39,18 @@ export default function Home() {
     const aLast =
       (a.participations?.length ?? 0) > 0
         ? Math.max(
-            ...(a.participations ?? []).map((p) =>
-              new Date(p.created_at).getTime()
-            )
+          ...(a.participations ?? []).map((p) =>
+            new Date(p.created_at).getTime()
           )
+        )
         : 0;
     const bLast =
       (b.participations?.length ?? 0) > 0
         ? Math.max(
-            ...(b.participations ?? []).map((p) =>
-              new Date(p.created_at).getTime()
-            )
+          ...(b.participations ?? []).map((p) =>
+            new Date(p.created_at).getTime()
           )
+        )
         : 0;
     return bLast - aLast;
   });
@@ -63,22 +64,25 @@ export default function Home() {
   return (
     <>
       <Hero />
-      <section className="w-4/5 mx-auto  my-11">
-        <h2 className="text-xl font-bold mb-4 mt-10">Défi tendance</h2>
+      <section className="w-full max-w-6xl mx-auto my-8 px-4">
+        <h2 className="text-2xl font-bold mb-6 mt-4 text-secondary drop-shadow-[0_0_8px_rgba(169,111,255,0.6)] font-primary uppercase tracking-wider">
+          Défi tendance
+        </h2>
         {loading ? (
-          <div>Chargement...</div>
+          <div className="text-center py-10 text-gray-400 animate-pulse">Chargement des données...</div>
         ) : (
           <>
-            <div className="grid grid-cols-1 md:grid-cols-3 justify-center gap-6 ">
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 justify-items-center">
               {visibleChallenges.map((challenge) => (
                 <ChallengeCard key={challenge.id} id={challenge.id} />
               ))}
             </div>
             {visibleCount < filteredChallenges.length && (
-              <div className="flex justify-center mt-4">
+              <div className="flex justify-center mt-8">
                 <button
                   onClick={() => setVisibleCount((prev) => prev + 6)}
-                  className="px-6 py-2 rounded-full font-semibold bg-cta text-noir hover:bg-cta/10 border-2 border-solid border-cta transition hover:text-cta"
+                  className="px-8 py-3 rounded-sm font-bold bg-cta text-noir hover:bg-cta/80 hover:shadow-[0_0_15px_rgba(233,184,114,0.6)] transition-all duration-300 uppercase tracking-widest clip-path-polygon"
+                  style={{ clipPath: "polygon(10% 0, 100% 0, 100% 70%, 90% 100%, 0 100%, 0 30%)" }}
                 >
                   Voir plus de challenge
                 </button>
@@ -87,12 +91,14 @@ export default function Home() {
           </>
         )}
 
-        <h2 className="text-xl font-bold mb-4 mt-10">Leaderboard</h2>
-        <div className="container">
+        <h2 className="text-2xl font-bold mb-6 mt-12 text-secondary drop-shadow-[0_0_8px_rgba(169,111,255,0.6)] font-primary uppercase tracking-wider">
+          Leaderboard
+        </h2>
+        <div className="bg-noir/50 backdrop-blur-md rounded-lg border border-primary/30 p-6 shadow-[0_0_20px_rgba(0,0,0,0.5)]">
           <Leaderboard
             leaderboard={leaderboard}
-            color="text-gray-600"
-            backgroundColor="bg-white"
+            color="text-gray-200"
+            backgroundColor="bg-transparent"
             centered={false}
           />
         </div>

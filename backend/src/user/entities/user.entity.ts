@@ -42,6 +42,13 @@ export class User {
   created_at: Date;
 
   @ApiProperty({
+    description: "Rôle de l'utilisateur",
+    enum: ['USER', 'ADMIN'],
+    example: 'USER',
+  })
+  role: 'USER' | 'ADMIN';
+
+  @ApiProperty({
     description: "Challenges créés par l'utilisateur",
     type: [Challenge],
   })
