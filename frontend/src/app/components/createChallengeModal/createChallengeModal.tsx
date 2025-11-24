@@ -5,9 +5,9 @@ import { useAuth } from '@/lib/auth-context'
 import { createPortal } from "react-dom";
 import { useRouter } from "next/navigation";
 import { apiFetch } from '@/lib/api'
-import Select from 'react-select'
+import CreatableSelect from 'react-select/creatable';
 import { fetchGames } from '@/lib/games';
-
+import { containsProfanity } from '@/lib/moderation';
 
 type Props = {
   label?: string
@@ -23,7 +23,7 @@ type GameOption = {
 };
 
 export default function CreateChallengeModal({ label = 'Créer un challenge', className = '' }: Props) {
-  const { user } = useAuth()
+  const { user, refreshProfile } = useAuth()
   const [submitError, setSubmitError] = useState("");
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -32,18 +32,11 @@ export default function CreateChallengeModal({ label = 'Créer un challenge', cl
   const [game, setGame] = useState<GameOption | null>(null);
   const [difficulty, setDifficulty] = useState("EASY");
   const [isOpen, setIsOpen] = useState(false)
-  const [form, setForm] = useState({
-    title: '',
-    description: '',
-    rules: '',
-    game: '',
-    difficulty: 'EASY',
-  })
   const [loading, setLoading] = useState(false)
 
-  useEffect(()=>{
+  useEffect(() => {
     fetchGames()
-    .then((data) => {
+      .then((data) => {
         const options = data.results.map((game: any) => ({
           label: game.name,
           value: {
@@ -53,31 +46,37 @@ export default function CreateChallengeModal({ label = 'Créer un challenge', cl
         }));
         setGames(options);
       })
-    .catch((err) => console.error('Error fetching games:', err));
-  },[])
-
-
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
-  ) => {
-    const { name, value } = e.target
-    setForm((prev) => ({ ...prev, [name]: value }))
-  }
+      .catch((err) => console.error('Error fetching games:', err));
+  }, [])
 
   const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSubmitError("")
+
+    // Check for profanity
+    const hasProfanity =
+      containsProfanity(title) ||
+      containsProfanity(description) ||
+      containsProfanity(rules) ||
+      (game ? containsProfanity(game.value.name) : false);
+
+    if (hasProfanity) {
+      setSubmitError("Oups ! Il semblerait que certains mots ne soient pas très 'fair-play'. Merci de rester courtois pour que le jeu reste amusant pour tous ! 🎮✨");
+      return;
+    }
+
     try {
+      setLoading(true);
       const challenge = await apiFetch('/challenge', {
         method: 'POST',
         body: JSON.stringify({
           title: title,
           description: description,
           rules: rules,
-          game:  game?.value.name,
-          image_url: game?.value.image,
+          game: game?.value.name,
+          image_url: game?.value.image || "/details/default_image.webp", // Default image for new games
           difficulty: difficulty,
           validated: false,
           user_id: user?.id,
@@ -85,6 +84,8 @@ export default function CreateChallengeModal({ label = 'Créer un challenge', cl
       });
 
       if (challenge?.id) {
+        await refreshProfile(); // Update user stats (points)
+        setIsOpen(false);
         router.push(`/details/${challenge.id}`);
       } else {
         throw new Error("Réponse inattendue du serveur");
@@ -92,6 +93,8 @@ export default function CreateChallengeModal({ label = 'Créer un challenge', cl
 
     } catch (err: any) {
       setSubmitError(err.message || "Erreur lors de la soumission");
+    } finally {
+      setLoading(false);
     }
   }
 
@@ -127,6 +130,12 @@ export default function CreateChallengeModal({ label = 'Créer un challenge', cl
 
               <h2 className="text-xl font-semibold mb-4 text-black  ">Créer un challenge</h2>
 
+              {submitError && (
+                <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded text-sm">
+                  {submitError}
+                </div>
+              )}
+
               <div className="space-y-4">
                 <input
                   name="title"
@@ -149,14 +158,27 @@ export default function CreateChallengeModal({ label = 'Créer un challenge', cl
                   onChange={(e) => setRules(e.target.value)}
                   className="w-full border border-gray-300 rounded px-3 py-2 text-black"
                 />
-                <Select
+                <CreatableSelect
                   options={games}
-                  onChange={setGame}
+                  onChange={(newValue) => setGame(newValue as GameOption)}
+                  onCreateOption={(inputValue) => {
+                    const newOption = {
+                      label: inputValue,
+                      value: {
+                        name: inputValue,
+                        image: "" // No image for custom games
+                      }
+                    };
+                    setGame(newOption);
+                    setGames((prev) => [...prev, newOption]);
+                  }}
                   value={game}
-                  placeholder="Recherchez un jeu"
+                  placeholder="Recherchez ou ajoutez un jeu"
                   isClearable
+                  formatCreateLabel={(inputValue) => `Ajouter "${inputValue}"`}
+                  className="text-black"
                 />
-               
+
                 <select
                   name="difficulty"
                   value={difficulty}
@@ -178,8 +200,8 @@ export default function CreateChallengeModal({ label = 'Créer un challenge', cl
               </div>
             </div>
           </div>,
-        document.getElementById("modal-root") as HTMLElement
-      )}
+          document.getElementById("modal-root") as HTMLElement
+        )}
     </div>
   )
 }

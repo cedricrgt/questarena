@@ -39,7 +39,7 @@ export default function ChallengeDetailPage() {
     useState(false);
   const [hasUserParticipated, setHasUserParticipated] = useState(false);
 
-  const { isLoggedIn, login, user } = useAuth();
+  const { isLoggedIn, login, user, refreshProfile } = useAuth();
   const [loginError, setLoginError] = useState("");
   const router = useRouter();
 
@@ -101,6 +101,7 @@ export default function ChallengeDetailPage() {
       });
       console.log("Participation submitted successfully!");
       fetchChallenge();
+      await refreshProfile(); // Update user stats (points)
       setIsParticipationSubmitted(true);
       return true;
     } catch (err: any) {

@@ -6,7 +6,7 @@ import { Challenge } from './entities/challenge.entity';
 
 @Injectable()
 export class ChallengeService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private prisma: PrismaService) { }
 
   create(createChallengeDto: CreateChallengeDto) {
     const { user_id, image_url, ...rest } = createChallengeDto;
@@ -33,20 +33,29 @@ export class ChallengeService {
         participations: true,
       },
     });
-   
-  return res.map(challenge => ({
-    ...challenge,
-    createdAt: challenge.created_at?.toISOString(),
-  }));
+
+    return res.map(challenge => ({
+      ...challenge,
+      createdAt: challenge.created_at?.toISOString(),
+    }));
   }
 
   async findOne(id: string) {
-    const challenge =  await this.prisma.challenge.findUnique({
+    const challenge = await this.prisma.challenge.findUnique({
       where: { id },
 
       include: {
         votes: true,
-        participations: true,
+        participations: {
+          include: {
+            user: {
+              select: {
+                userName: true,
+                avatar_url: true,
+              },
+            },
+          },
+        },
         creator: {
           select: {
             userName: true,
@@ -54,7 +63,7 @@ export class ChallengeService {
         },
       },
     });
-    if(!challenge){
+    if (!challenge) {
       return null
     }
     return {

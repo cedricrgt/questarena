@@ -10,6 +10,10 @@ export type Participation = {
   created_at: string;
   description: string;
   nb_votes: number;
+  user?: {
+    userName: string;
+    avatar_url: string;
+  };
 };
 
 export type Challenge = {
@@ -23,10 +27,10 @@ export type Challenge = {
   validated: boolean;
   created_at: string;
   creator:
-    | {
-        userName: string;
-      }
-    | string;
+  | {
+    userName: string;
+  }
+  | string;
   image_url: string | null;
   votes?: Vote[];
   participations?: Participation[];
@@ -61,6 +65,7 @@ export type User = {
 // };
 
 export type LeaderboardType = {
+  id: string;
   userName: string;
   avatar_url: string;
   score: number;

@@ -56,3 +56,30 @@ span,
 div {
   font-family: var(--font-secondary);
 }
+
+/* Neon Scrollbar */
+.neon-scrollbar::-webkit-scrollbar {
+  width: 8px;
+}
+
+.neon-scrollbar::-webkit-scrollbar-track {
+  background: rgba(14, 6, 12, 0.8);
+}
+
+.neon-scrollbar::-webkit-scrollbar-thumb {
+  background: var(--secondary);
+  border-radius: 4px;
+  box-shadow: 0 0 10px var(--secondary);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.neon-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: var(--cta);
+  box-shadow: 0 0 15px var(--cta);
+}
+
+/* Firefox support */
+.neon-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: var(--secondary) var(--noir);
+}

@@ -4,31 +4,49 @@ import Link from "next/link";
 type ButtonProps = {
   label: string;
   href?: string;
-  variant?: "primary" | "cta" | "white";
+  onClick?: () => void;
+  variant?: "primary" | "cta" | "white" | "outline";
   className?: string;
+  type?: "button" | "submit" | "reset";
 };
 
 const Button = ({
   label,
   href,
+  onClick,
   variant = "primary",
-  className,
+  className = "",
+  type = "button",
 }: ButtonProps) => {
   const baseStyle = `
-    px-4 py-2 rounded transition
-    transform duration-200 ease-in-out
-    hover:-translate-y-0.5 hover:shadow-lg
+    px-4 py-2 rounded transition-all transform duration-200 ease-in-out
+    font-bold uppercase tracking-wider
   `;
 
   const variants = {
-    primary: "bg-secondary text-blanc hover:bg-secondary/90",
-    cta: "px-6 py-2 rounded-full font-semibold bg-cta text-noir hover:bg-cta/10 border-2 border-solid border-cta transition hover:text-cta shadow-[0px_4px_4px_rgba(0,0,0,0.25)]",
-    white: "bg-blanc text-cta hover:bg-blanc/90",
+    primary: "bg-secondary text-noir hover:bg-secondary/90 hover:shadow-[0_0_15px_rgba(169,111,255,0.5)]",
+    cta: "bg-cta text-noir shadow-[0_0_10px_rgba(233,184,114,0.6)] hover:bg-cta/80 hover:shadow-[0_0_20px_rgba(233,184,114,0.8)] hover:scale-105",
+    white: "bg-blanc text-noir hover:bg-gray-200 hover:shadow-lg",
+    outline: "bg-transparent border border-primary/50 text-white hover:border-secondary hover:text-secondary",
   };
 
+  const combinedClassName = `${baseStyle} ${variants[variant]} ${className}`;
+
+  if (href) {
+    return (
+      <Link href={href} className={combinedClassName}>
+        {label}
+      </Link>
+    );
+  }
+
   return (
-    <button className={`${baseStyle} ${variants[variant]} ${className || ""}`}>
-      <Link href={href || "#"}>{label}</Link>
+    <button
+      type={type}
+      className={combinedClassName}
+      onClick={onClick}
+    >
+      {label}
     </button>
   );
 };

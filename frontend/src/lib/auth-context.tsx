@@ -11,9 +11,13 @@ interface User {
   email: string;
   created_at: string;
   avatar_url: string;
-  challenges: JSON;
-  participations: JSON;
-  votes: JSON;
+  challenges: any[];
+  participations: any[];
+  votes: any[];
+  challengesCount?: number;
+  participationsCount?: number;
+  votesCount?: number;
+  role: 'USER' | 'ADMIN';
 }
 
 interface AuthContextValue {
@@ -28,6 +32,8 @@ interface AuthContextValue {
   logout(): void;
   apiFetch: typeof baseApiFetch;
   isLoggedIn: boolean;
+  updateUser(data: Partial<User>): Promise<void>;
+  refreshProfile(): Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
@@ -45,42 +51,46 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   // 1. On mount, check for a token. If present, call /auth/me (or similar) to populate “user”.
   // 1) On mount, *only* fetch
-useEffect(() => {
-  const token = getToken();
-  if (!token) {
-    setIsLoading(false);
-    return;
-  }
-
-  apiFetch("/auth/me", { method: "GET" })
-    .then(json => {
-      setUser({
-        id: json.id,
-        name: json.name,
-        email: json.email,
-        created_at: json.created_at,
-        avatar_url: json.avatar_url,
-        challenges: json.challenges,
-        participations: json.participations,
-        votes: json.votes,
-      });
-    })
-    .catch(err => {
-      console.error("auth/me failed", err);
-      removeToken();
-      setUser(null);
-    })
-    .finally(() => {
+  useEffect(() => {
+    const token = getToken();
+    if (!token) {
       setIsLoading(false);
-    });
-}, []); // ← only on first mount
+      return;
+    }
 
-// 2) Once we know “loading is done & we got a user” → dashboard
-useEffect(() => {
-  if (!isLoading && user) {
-    // router.replace("/account/dashboard");
-  }
-}, [isLoading, user, router]);
+    apiFetch("/auth/me", { method: "GET" })
+      .then(json => {
+        setUser({
+          id: json.id,
+          name: json.name,
+          email: json.email,
+          created_at: json.created_at,
+          avatar_url: json.avatar_url,
+          challenges: json.challenges,
+          participations: json.participations,
+          votes: json.votes,
+          challengesCount: json.challengesCount,
+          participationsCount: json.participationsCount,
+          votesCount: json.votesCount,
+          role: json.role,
+        });
+      })
+      .catch(err => {
+        console.error("auth/me failed", err);
+        removeToken();
+        setUser(null);
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
+  }, []); // ← only on first mount
+
+  // 2) Once we know “loading is done & we got a user” → dashboard
+  useEffect(() => {
+    if (!isLoading && user) {
+      // router.replace("/account/dashboard");
+    }
+  }, [isLoading, user, router]);
 
 
   // 2. Wrap “apiFetch” so that if any call returns 401, we clear token & redirect
@@ -103,34 +113,38 @@ useEffect(() => {
   //lorsque login,
   // store token, setUser(, et push le navigateur to /dashboard (la homepage devrait etre /dashboard).
   async function login(data: { email: string; password: string }) {
-  // 1) hit login → get the token
-  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/login`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(data),
-  });
-  if (!res.ok) {
-    const err = await res.json();
-    throw new Error(err.message || "Login failed");
+    // 1) hit login → get the token
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/login`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    });
+    if (!res.ok) {
+      const err = await res.json();
+      throw new Error(err.message || "Login failed");
+    }
+    const { accessToken } = await res.json();
+
+    // 2) store it
+    setToken(accessToken);
+
+    // 3) *now* fetch the real user profile
+    const profile = await baseApiFetch("/auth/me", { method: "GET" });
+    setUser({
+      id: profile.id,
+      name: profile.name,
+      email: profile.email,
+      created_at: profile.created_at,
+      avatar_url: profile.avatar_url,
+      challenges: profile.challenges,
+      participations: profile.participations,
+      votes: profile.votes,
+      challengesCount: profile.challengesCount,
+      participationsCount: profile.participationsCount,
+      votesCount: profile.votesCount,
+      role: profile.role,
+    });
   }
-  const { accessToken } = await res.json();
-
-  // 2) store it
-  setToken(accessToken);
-
-  // 3) *now* fetch the real user profile
-  const profile = await baseApiFetch("/auth/me", { method: "GET" });
-  setUser({
-    id:         profile.id,
-    name:       profile.name,
-    email:      profile.email,
-    created_at: profile.created_at,
-    avatar_url: profile.avatar_url,
-    challenges: profile.challenges,
-    participations: profile.participations,
-    votes: profile.votes,
-  });
-}
 
 
   async function signup(data: {
@@ -152,21 +166,65 @@ useEffect(() => {
     // Fetch “/auth/me”
     const profile = await baseApiFetch("/auth/me", { method: "GET" });
     setUser({
-    id:         profile.id,
-    name:       profile.name,
-    email:      profile.email,
-    created_at: profile.created_at,
-    avatar_url: profile.avatar_url,
-    challenges: profile.challenges,
-    participations: profile.participations,
-    votes: profile.votes,
-  });
+      id: profile.id,
+      name: profile.name,
+      email: profile.email,
+      created_at: profile.created_at,
+      avatar_url: profile.avatar_url,
+      challenges: profile.challenges,
+      participations: profile.participations,
+      votes: profile.votes,
+      challengesCount: profile.challengesCount,
+      participationsCount: profile.participationsCount,
+      votesCount: profile.votesCount,
+      role: profile.role,
+    });
   }
 
   function logout() {
     removeToken();
     setUser(null);
     router.push("/auth/signin");
+  }
+
+  async function updateUser(data: Partial<User>) {
+    if (!user) return;
+    const res = await apiFetch(`/user/${user.id}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    });
+
+    // Map backend response (userName) to frontend interface (name)
+    const updatedUser = {
+      ...res,
+      name: res.userName || res.name || user.name,
+    };
+
+    setUser(prev => prev ? { ...prev, ...updatedUser } : null);
+  }
+
+  async function refreshProfile() {
+    if (!getToken()) return;
+    try {
+      const profile = await baseApiFetch("/auth/me", { method: "GET" });
+      setUser({
+        id: profile.id,
+        name: profile.name,
+        email: profile.email,
+        created_at: profile.created_at,
+        avatar_url: profile.avatar_url,
+        challenges: profile.challenges,
+        participations: profile.participations,
+        votes: profile.votes,
+        challengesCount: profile.challengesCount,
+        participationsCount: profile.participationsCount,
+        votesCount: profile.votesCount,
+        role: profile.role,
+      });
+    } catch (error) {
+      console.error("Failed to refresh profile", error);
+    }
   }
 
   const value: AuthContextValue = {
@@ -177,6 +235,8 @@ useEffect(() => {
     logout,
     apiFetch,
     isLoggedIn: user !== null,
+    updateUser,
+    refreshProfile,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

@@ -7,7 +7,7 @@ import { User as UserEntity } from './entities/user.entity';
 
 @Injectable()
 export class UserService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private prisma: PrismaService) { }
 
   async create(createUserDto: CreateUserDto): Promise<UserEntity> {
     const hashedPassword = await bcrypt.hash(createUserDto.password, 10);
@@ -43,6 +43,7 @@ export class UserService {
         votes: true,
       },
     });
+    console.log(`Debug UserService.findOne(${id}):`, JSON.stringify(user, null, 2));
 
     if (!user) {
       throw new NotFoundException(`User with ID ${id} not found`);
@@ -110,61 +111,68 @@ export class UserService {
 
   async getLeaderboard(limit = 10) {
     const weights = {
-      validatedParticipation: 5,
+      participation: 10,
       vote: 2,
-      challengeCreated: 1,
+      challengeCreated: 5,
     };
 
-    // Retrieve users with their validated participations and the number of votes
+    // Retrieve users with their participations, votes given, and challenges created
     const users = await this.prisma.user.findMany({
       select: {
         id: true,
-        participations: {
-          where: { validated: true },
-          select: {
-            votes: { select: { id: true } },
-          },
-        },
+        participations: { select: { id: true } }, // Count all participations
+        votes: { select: { id: true } }, // Count votes given
         challenges: { select: { id: true } },
       },
     });
 
     const leaderboardData = users.map((user) => {
-      // Number of validated participations
-      const validatedParticipations = user.participations.length;
-      // Number of votes received by the participations
-      const votesOnParticipation = user.participations.reduce(
-        (sum, participation) => sum + participation.votes.length,
-        1,
-      );
-      // Number of challenges created by the user
-      const challengesCreated = user.challenges.length;
+      const participationsCount = user.participations.length;
+      const votesGivenCount = user.votes.length;
+      const challengesCreatedCount = user.challenges.length;
 
       const score =
-        validatedParticipations * weights.validatedParticipation +
-        votesOnParticipation * weights.vote +
-        challengesCreated * weights.challengeCreated;
+        participationsCount * weights.participation +
+        votesGivenCount * weights.vote +
+        challengesCreatedCount * weights.challengeCreated;
 
-      // For each user, return their ID and score
       return {
         id: user.id,
         score,
       };
     });
 
-    // Sort users by score and keep only the top 'limit' users
+    // Sort users by score
     const topUsers = leaderboardData
       .sort((a, b) => b.score - a.score)
       .slice(0, limit);
 
+    // Apply Rank Bonuses (1st: +10, 2nd: +5, 3rd: +2)
+    // Note: This modifies the score for display/ranking purposes.
+    // If the bonus affects the ranking itself, we would need to re-sort, 
+    // but typically rank bonuses are rewards for *being* in that rank.
+    // However, the user said "if his ranking changes then the number of points must be modified",
+    // implying the bonus is dynamic based on current rank.
+    const rankedUsers = topUsers.map((user, index) => {
+      let bonus = 0;
+      if (index === 0) bonus = 10;
+      else if (index === 1) bonus = 5;
+      else if (index === 2) bonus = 2;
+
+      return {
+        ...user,
+        score: user.score + bonus,
+      };
+    });
+
     // Fetch username and avatar for the top users
     const userDetails = await this.prisma.user.findMany({
-      where: { id: { in: topUsers.map((u) => u.id) } },
+      where: { id: { in: rankedUsers.map((u) => u.id) } },
       select: { id: true, userName: true, avatar_url: true },
     });
 
     // Combine score with user details for the leaderboard
-    const leaderboard = topUsers.map((u) => ({
+    const leaderboard = rankedUsers.map((u) => ({
       ...userDetails.find((d) => d.id === u.id),
       score: u.score,
     }));

@@ -18,12 +18,18 @@ enum TargetType {
   PARTICIPATION
 }
 
+enum Role {
+  USER
+  ADMIN
+}
+
 model User {
   id             String          @id @default(uuid())
   userName       String          @unique
   email          String          @unique
   password_hash  String
   avatar_url     String
+  role           Role            @default(USER)
   created_at     DateTime        @default(now())
   challenges     Challenge[]     @relation("CreatedChallenges")
   participations Participation[]
@@ -55,7 +61,7 @@ model Participation {
   validated    Boolean
   created_at   DateTime @default(now())
   user         User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
-  challenge    Challenge     @relation(fields: [challenge_id], references: [id])
+  challenge    Challenge     @relation(fields: [challenge_id], references: [id], onDelete: Cascade)
   votes        Vote[]  
 }
 
@@ -67,6 +73,6 @@ model Vote {
   target_type      TargetType
   created_at       DateTime       @default(now())
   user             User           @relation(fields: [user_id], references: [id], onDelete: Cascade)
-  challenge        Challenge?     @relation(fields: [challenge_id], references: [id])
-  participation    Participation? @relation(fields: [participation_id], references: [id])
+  challenge        Challenge?     @relation(fields: [challenge_id], references: [id], onDelete: Cascade)
+  participation    Participation? @relation(fields: [participation_id], references: [id], onDelete: Cascade)
 }

@@ -4,16 +4,20 @@ import Button from "../button/button";
 import Link from "next/link";
 import { useState } from "react";
 import { useAuth } from "@/lib/auth-context";
+import { useNavigation } from "@/lib/navigation-context";
+import { useRouter } from "next/navigation";
 // import { FiUser } from "react-icons/fi"; // or any icon lib
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { isLoggedIn, user, logout } = useAuth();
+  const { setViewState } = useNavigation();
+  const router = useRouter();
 
   return (
     <div className="bg-primary relative z-50">
       <header className="flex justify-between items-center px-8 py-4">
-        <h1 className="text-blanc text-2xl font-bold font-logo">
+        <h1 className="text-secondary text-2xl font-bold font-logo">
           GamerChallenges
         </h1>
 
@@ -48,7 +52,11 @@ export default function Header() {
 
         {/* Desktop Navigation */}
         <nav className="hidden md:flex space-x-6">
-          <Link href="/" className="text-blanc hover:text-secondary">
+          <Link
+            href="/"
+            className="text-blanc hover:text-secondary"
+            onClick={() => setViewState("home")}
+          >
             Accueil
           </Link>
           <Link href="/challenges" className="text-blanc hover:text-secondary">
@@ -99,19 +107,39 @@ export default function Header() {
             </>
           ) : (
             <>
-              <Button label="Connexion" href="/auth/signin" variant="cta" />
-              <Button label="Inscription" href="/auth/signup" variant="white" />
+              <Button
+                label="Connexion"
+                onClick={() => {
+                  setViewState("login");
+                  router.push("/");
+                }}
+                variant="cta"
+              />
+              <Button
+                label="Inscription"
+                onClick={() => {
+                  setViewState("register");
+                  router.push("/");
+                }}
+                variant="white"
+              />
             </>
           )}
         </div>
 
         {/* Mobile Menu */}
         <div
-          className={`${
-            isMenuOpen ? "flex" : "hidden"
-          } md:hidden absolute top-full left-0 right-0 bg-primary flex-col items-center py-4 space-y-4 z-10 shadow-lg`}
+          className={`${isMenuOpen ? "flex" : "hidden"
+            } md:hidden absolute top-full left-0 right-0 bg-primary flex-col items-center py-4 space-y-4 z-10 shadow-lg`}
         >
-          <Link href="/" className="text-blanc hover:text-secondary">
+          <Link
+            href="/"
+            className="text-blanc hover:text-secondary"
+            onClick={() => {
+              setViewState("home");
+              setIsMenuOpen(false);
+            }}
+          >
             Accueil
           </Link>
           <Link href="/challenges" className="text-blanc hover:text-secondary">
@@ -146,10 +174,22 @@ export default function Header() {
               </>
             ) : (
               <>
-                <Button label="Connexion" href="/auth/signin" variant="cta" />
+                <Button
+                  label="Connexion"
+                  onClick={() => {
+                    setViewState("login");
+                    router.push("/");
+                    setIsMenuOpen(false);
+                  }}
+                  variant="cta"
+                />
                 <Button
                   label="Inscription"
-                  href="/auth/signup"
+                  onClick={() => {
+                    setViewState("register");
+                    router.push("/");
+                    setIsMenuOpen(false);
+                  }}
                   variant="white"
                 />
               </>
