@@ -1,7 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Challenge } from 'src/challenge/entities/challenge.entity';
-import { Participation } from 'src/participation/entities/participation.entity';
-import { Vote } from 'src/vote/entities/vote.entity';
+import { Challenge } from '../../challenge/entities/challenge.entity';
+import { Participation } from '../../participation/entities/participation.entity';
+import { Roles } from '@prisma/client';
+import { Vote } from '../../vote/entities/vote.entity';
 
 export class User {
   @ApiProperty({
@@ -64,4 +65,11 @@ export class User {
     type: [Vote],
   })
   votes?: Vote[];
+
+  @ApiProperty({
+    description: "Rôle(s) de l'utilisateur (par exemple, 'admin', 'user')",
+    enum: Roles,
+    example: 'user',
+  })
+  role: Roles;
 }

@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { User } from 'src/user/entities/user.entity';
-import { Vote } from 'src/vote/entities/vote.entity';
+import { User } from '../../user/entities/user.entity';
+import { Vote } from '../../vote/entities/vote.entity';
 
 export enum Difficulty {
   EASY = 'EASY',

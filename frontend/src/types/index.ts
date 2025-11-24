@@ -25,7 +25,7 @@ export type Challenge = {
   difficulty: string;
   user_id: string;
   validated: boolean;
-  created_at: string;
+  createdAt: string;
   creator:
   | {
     userName: string;
@@ -56,7 +56,8 @@ export type User = {
   challenges?: Challenge[];
   participations?: Participation[];
   votes?: Vote[];
-};
+  role: string;
+}
 
 // export type LeaderboardEntry = {
 //   imageUser: string;
