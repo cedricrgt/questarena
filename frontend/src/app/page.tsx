@@ -1,14 +1,11 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Button from "./components/button/button";
 import Hero from "./components/hero/Hero";
 import ChallengeCard from "./components/challengeCard/challengeCard";
 import Leaderboard from "./components/leaderboard/leaderboard";
-import ParticipationCard from "./components/participationCard/participationCard";
 import { Challenge, LeaderboardType } from "@/types";
 import { apiFetch } from "@/lib/api";
-import GameClientLayout from "./components/layout/GameClientLayout";
 
 export default function Home() {
   const [leaderboard, setLeaderboard] = useState<LeaderboardType[]>([]);
@@ -72,7 +69,7 @@ export default function Home() {
           <div className="text-center py-10 text-gray-400 animate-pulse">Chargement des données...</div>
         ) : (
           <>
-            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 justify-items-center">
+            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6 mx-auto w-3/4 sm:w-full justify-center">
               {visibleChallenges.map((challenge) => (
                 <ChallengeCard key={challenge.id} id={challenge.id} />
               ))}

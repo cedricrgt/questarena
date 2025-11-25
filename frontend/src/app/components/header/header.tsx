@@ -14,16 +14,21 @@ export default function Header() {
   const { setViewState } = useNavigation();
   const router = useRouter();
 
+  if (!isLoggedIn) {
+    return null;
+  }
+
   return (
-    <div className="bg-primary relative z-50">
-      <header className="flex justify-between items-center px-8 py-4">
-        <h1 className="text-secondary text-2xl font-bold font-logo">
-          GamerChallenges
+      <header className="bg-black border-b border-secondary/50 dark:bg-primary/50 relative z-50 flex justify-between items-center px-8 py-4">
+        <h1>
+          <Link href="/" className="text-secondary text-2xl font-bold font-logo">
+            GamerChallenges
+          </Link>
         </h1>
 
         {/* Burger Menu Button */}
         <button
-          className="md:hidden text-blanc z-10"
+          className="md:hidden text-blanc z-10 "
           onClick={() => setIsMenuOpen(!isMenuOpen)}
         >
           <svg
@@ -65,9 +70,6 @@ export default function Header() {
           <Link href="/leaderboard" className="text-blanc hover:text-secondary">
             Leaderboard
           </Link>
-          <Link href="/affronter" className="text-blanc hover:text-secondary">
-            Affronter
-          </Link>
         </nav>
 
         {/* Desktop Buttons or Profile */}
@@ -85,7 +87,7 @@ export default function Header() {
                 />
               </button>
               {isMenuOpen && (
-                <div className="absolute right-0 mt-2 w-40 bg-white rounded shadow-lg py-2">
+                <div className="absolute right-0 mt-2 w-40 bg-secondary rounded shadow-lg py-2">
                   <Link
                     href="/account/dashboard"
                     className="block px-4 py-2 text-noir hover:bg-gray-100"
@@ -113,7 +115,7 @@ export default function Header() {
                   setViewState("login");
                   router.push("/");
                 }}
-                variant="cta"
+                variant="clipPathPolygon"
               />
               <Button
                 label="Inscription"
@@ -147,9 +149,6 @@ export default function Header() {
           </Link>
           <Link href="/leaderboard" className="text-blanc hover:text-secondary">
             Leaderboard
-          </Link>
-          <Link href="/affronter" className="text-blanc hover:text-secondary">
-            Affronter
           </Link>
 
           <div className="flex flex-col space-y-2">
@@ -197,6 +196,5 @@ export default function Header() {
           </div>
         </div>
       </header>
-    </div>
   );
 }

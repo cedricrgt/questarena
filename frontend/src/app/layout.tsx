@@ -5,6 +5,7 @@ import Footer from "./components/footer/footer";
 import { AuthProvider } from "@/lib/auth-context";
 import { NavigationProvider } from "@/lib/navigation-context";
 import GameClientLayout from "./components/layout/GameClientLayout";
+import Head from "next/head";
 
 export const metadata = {
   title: "Mon site",

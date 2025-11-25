@@ -8,6 +8,7 @@ import { apiFetch } from '@/lib/api'
 import CreatableSelect from 'react-select/creatable';
 import { fetchGames } from '@/lib/games';
 import { containsProfanity } from '@/lib/moderation';
+import Button from '../button/button';
 
 type Props = {
   label?: string
@@ -20,6 +21,11 @@ type GameOption = {
     name: string;
     image: string;
   };
+};
+
+type RawgGame = {
+  name: string;
+  background_image: string;
 };
 
 export default function CreateChallengeModal({ label = 'Créer un challenge', className = '' }: Props) {
@@ -37,7 +43,7 @@ export default function CreateChallengeModal({ label = 'Créer un challenge', cl
   useEffect(() => {
     fetchGames()
       .then((data) => {
-        const options = data.results.map((game: any) => ({
+        const options = data.results.map((game: RawgGame) => ({
           label: game.name,
           value: {
             name: game.name,
@@ -51,11 +57,10 @@ export default function CreateChallengeModal({ label = 'Créer un challenge', cl
 
   const router = useRouter();
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent | React.MouseEvent) => {
     e.preventDefault();
     setSubmitError("")
 
-    // Check for profanity
     const hasProfanity =
       containsProfanity(title) ||
       containsProfanity(description) ||
@@ -76,7 +81,7 @@ export default function CreateChallengeModal({ label = 'Créer un challenge', cl
           description: description,
           rules: rules,
           game: game?.value.name,
-          image_url: game?.value.image || "/details/default_image.webp", // Default image for new games
+          image_url: game?.value.image || "/details/default_image.webp",
           difficulty: difficulty,
           validated: false,
           user_id: user?.id,
@@ -84,15 +89,16 @@ export default function CreateChallengeModal({ label = 'Créer un challenge', cl
       });
 
       if (challenge?.id) {
-        await refreshProfile(); // Update user stats (points)
+        await refreshProfile();
         setIsOpen(false);
         router.push(`/details/${challenge.id}`);
       } else {
         throw new Error("Réponse inattendue du serveur");
       }
 
-    } catch (err: any) {
-      setSubmitError(err.message || "Erreur lors de la soumission");
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : "Erreur lors de la soumission";
+      setSubmitError(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -120,9 +126,9 @@ export default function CreateChallengeModal({ label = 'Créer un challenge', cl
         typeof window !== "undefined" &&
         createPortal(
           <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-            <div className="bg-white rounded-lg shadow-xl w-full max-w-lg p-6 relative">
+            <div className="bg-secondary/55 backdrop-blur-sm rounded-lg shadow-xl w-full max-w-lg p-6 relative">
               <button
-                className="absolute top-2 right-2 text-gray-500 hover:text-gray-800 text-xl"
+                className="absolute top-2 right-2 text-primary hover:text-secondary text-xl"
                 onClick={() => setIsOpen(false)}
               >
                 ×
@@ -142,21 +148,21 @@ export default function CreateChallengeModal({ label = 'Créer un challenge', cl
                   placeholder="Titre"
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
-                  className="w-full border border-gray-300 rounded px-3 py-2 text-black"
+                  className="w-full border border-secondary rounded px-3 py-2 text-black"
                 />
                 <textarea
                   name="description"
                   placeholder="Description"
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
-                  className="w-full border border-gray-300 rounded px-3 py-2 text-black"
+                  className="w-full border border-secondary rounded px-3 py-2 text-black"
                 />
                 <textarea
                   name="rules"
                   placeholder="Règles"
                   value={rules}
                   onChange={(e) => setRules(e.target.value)}
-                  className="w-full border border-gray-300 rounded px-3 py-2 text-black"
+                  className="w-full border border-secondary rounded px-3 py-2 text-black"
                 />
                 <CreatableSelect
                   options={games}
@@ -183,20 +189,20 @@ export default function CreateChallengeModal({ label = 'Créer un challenge', cl
                   name="difficulty"
                   value={difficulty}
                   onChange={(e) => setDifficulty(e.target.value)}
-                  className="w-full border border-gray-300 rounded px-3 py-2 text-black"
+                  className="w-full border border-secondary rounded px-3 py-2 text-black"
                 >
                   <option value="EASY">Facile</option>
                   <option value="MEDIUM">Moyen</option>
                   <option value="HARD">Difficile</option>
                 </select>
 
-                <button
+                <Button
+                  label={loading ? 'Création...' : 'Créer'}
                   onClick={handleSubmit}
                   disabled={loading}
-                  className="w-full bg-[var(--cta)] text-[var(--noir)] py-2 rounded hover:bg-yellow-400  disabled:opacity-50"
-                >
-                  {loading ? 'Création...' : 'Créer'}
-                </button>
+                  variant="cta"
+                  className="w-full"
+                />
               </div>
             </div>
           </div>,

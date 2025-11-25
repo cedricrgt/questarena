@@ -104,7 +104,7 @@ export default function ChallengeDetailClient({
   };
 
   return (
-    <div className="min-h-screen bg-white dark:bg-black dark:text-white">
+    <div className="min-h-screen bg-secondary dark:bg-black dark:text-white">
       <section className="relative px-4 py-4 md:px-8 md:py-6">
         <div className="flex justify-center items-center relative w-full h-[40vh] md:h-[60vh] rounded-3xl overflow-hidden bg-radial-[at_50%_50%] from-secondary via-primary to-black shadow-[inset_0_0_400px_rgba(0,0,0,1)]">
           <img

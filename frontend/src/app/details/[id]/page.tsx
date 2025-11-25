@@ -15,7 +15,9 @@ import ParticipationBox from "@/app/components/challengeDetail/ParticipationBox"
 import ParticipationsGrid from "@/app/components/challengeDetail/ParticipationsGrid";
 import ParticipationForm from "@/app/components/challengeDetail/ParticipationForm";
 import Link from "next/link";
-import LoginForm from "@/app/components/challengeDetail/LoginForm";
+import { useNavigation } from "@/lib/navigation-context";
+
+import BackButton from "@/app/components/backButton/backButton";
 
 const getEndDate = (startDate: string | undefined): string => {
   if (!startDate) return "Date de fin non disponible";
@@ -39,8 +41,8 @@ export default function ChallengeDetailPage() {
     useState(false);
   const [hasUserParticipated, setHasUserParticipated] = useState(false);
 
-  const { isLoggedIn, login, user, refreshProfile } = useAuth();
-  const [loginError, setLoginError] = useState("");
+  const { isLoggedIn, user, refreshProfile } = useAuth();
+  const { setViewState } = useNavigation();
   const router = useRouter();
 
   const fetchChallenge = () => {
@@ -66,21 +68,7 @@ export default function ChallengeDetailPage() {
     fetchChallenge();
   }, [challengeId, user, hasUserParticipated, challenge]);
 
-  const handleLoginSubmit = async (
-    emailOrUsername: string,
-    password: string
-  ) => {
-    setLoginError("");
-    try {
-      await login({ email: emailOrUsername, password });
-      console.log("Logged in successfully!");
-    } catch (err: any) {
-      console.error("Login failed:", err);
-      setLoginError(
-        err.message || "Login failed. Please check your credentials."
-      );
-    }
-  };
+
 
   const handleParticipationSubmit = async (
     videoUrl: string,
@@ -111,8 +99,11 @@ export default function ChallengeDetailPage() {
     }
   };
   return (
-    <div className="min-h-screen bg-white dark:bg-black dark:text-white">
-      <section className="relative px-4 py-4 md:px-8 md:py-6">
+    <div className="min-h-screen bg-black dark:text-white">
+      <section className="relative px-4 py-4 md:px-8 md:py-6 flex flex-col gap-4">
+        <div className="self-start z-20">
+          <BackButton />
+        </div>
         <div className="flex justify-center items-center relative w-full h-[40vh] md:h-[60vh] rounded-3xl overflow-hidden bg-radial-[at_50%_50%] from-secondary via-primary to-black shadow-[inset_0_0_400px_rgba(0,0,0,1)]">
           <img
             src={challenge?.image_url || "/details/default_image.webp"}
@@ -173,7 +164,29 @@ export default function ChallengeDetailPage() {
                 submitError={submitError}
               />
             ) : (
-              <LoginForm onLogin={handleLoginSubmit} loginError={loginError} />
+              <div className="bg-secondary rounded-lg p-6 shadow-md text-center">
+                <h4 className="text-lg font-bold mb-4 font-primary">
+                  Connectez-vous pour participer
+                </h4>
+                <p className="text-gray-600 mb-4 font-secondary">
+                  Vous devez être connecté pour soumettre une participation à ce challenge.
+                </p>
+                <button
+                  onClick={() => setViewState("login")}
+                  className="w-full py-3 rounded-full text-primary font-bold text-lg tracking-wide bg-cta hover:bg-yellow-600 transition-colors font-primary"
+                >
+                  SE CONNECTER
+                </button>
+                <p className="text-center text-sm mt-4 text-gray-700 font-secondary">
+                  Pas encore de compte ?{" "}
+                  <button
+                    onClick={() => setViewState("register")}
+                    className="text-secondary hover:underline font-semibold"
+                  >
+                    Créer un compte
+                  </button>
+                </p>
+              </div>
             )}
           </div>
         </div>

@@ -10,24 +10,24 @@ export class UserService {
   constructor(private prisma: PrismaService) { }
 
   async create(createUserDto: CreateUserDto): Promise<UserEntity> {
-    try{
-       const hashedPassword = await bcrypt.hash(createUserDto.password, 10);
+    try {
+      const hashedPassword = await bcrypt.hash(createUserDto.password, 10);
 
-    const user = await this.prisma.user.create({
-      data: {
-        userName: createUserDto.userName,
-        email: createUserDto.email,
-        password_hash: hashedPassword,
-        avatar_url: 'https://placehold.co/10',
-      },
-    });
+      const user = await this.prisma.user.create({
+        data: {
+          userName: createUserDto.userName,
+          email: createUserDto.email,
+          password_hash: hashedPassword,
+          avatar_url: 'https://placehold.co/10',
+        },
+      });
 
-    const { password_hash, ...result } = user;
-    return result as UserEntity;
+      const { password_hash, ...result } = user;
+      return result as UserEntity;
     }
-   catch(error){
-       throw new BadRequestException('Invalid Data');
-   }
+    catch (error) {
+      throw new BadRequestException('Invalid Data');
+    }
   }
 
   async findAll(): Promise<UserEntity[]> {
@@ -58,36 +58,37 @@ export class UserService {
   }
 
   async update(id: string, updateUserDto: UpdateUserDto): Promise<UserEntity> {
-    try{
-    await this.findOne(id);
+    try {
+      await this.findOne(id);
 
-    const data: any = {};
+      const data: any = {};
 
-    if (updateUserDto.userName) {
-      data.userName = updateUserDto.userName;
+      if (updateUserDto.userName) {
+        data.userName = updateUserDto.userName;
+      }
+
+      if (updateUserDto.email) {
+        data.email = updateUserDto.email;
+      }
+
+      if (updateUserDto.password) {
+        data.password_hash = await bcrypt.hash(updateUserDto.password, 10);
+      }
+
+      if (updateUserDto.avatar_url) {
+        data.avatar_url = updateUserDto.avatar_url;
+      }
+
+      const updatedUser = await this.prisma.user.update({
+        where: { id },
+        data,
+      });
+
+      const { password_hash, ...result } = updatedUser;
+      return result as UserEntity;
     }
-
-    if (updateUserDto.email) {
-      data.email = updateUserDto.email;
-    }
-
-    if (updateUserDto.password) {
-      data.password_hash = await bcrypt.hash(updateUserDto.password, 10);
-    }
-
-    if (updateUserDto.avatar_url) {
-      data.avatar_url = updateUserDto.avatar_url;
-    }
-
-    const updatedUser = await this.prisma.user.update({
-      where: { id },
-      data,
-    });
-
-    const { password_hash, ...result } = updatedUser;
-    return result as UserEntity;}
-    catch(error){
-       throw new BadRequestException('Invalid data');
+    catch (error) {
+      throw new BadRequestException('Invalid data');
     }
   }
 
@@ -116,6 +117,18 @@ export class UserService {
   }
   async findByEmailWithPassword(email: string): Promise<UserEntity | null> {
     return this.prisma.user.findUnique({ where: { email } });
+  }
+
+  async findByEmailOrUsername(identifier: string): Promise<UserEntity | null> {
+    // Try to find by email first
+    let user = await this.prisma.user.findUnique({ where: { email: identifier } });
+
+    // If not found by email, try username
+    if (!user) {
+      user = await this.prisma.user.findUnique({ where: { userName: identifier } });
+    }
+
+    return user;
   }
 
   async getLeaderboard(limit = 10) {
@@ -187,5 +200,29 @@ export class UserService {
     }));
 
     return leaderboard;
+  }
+
+  async searchUsers(query: string): Promise<UserEntity[]> {
+    if (!query || query.trim().length === 0) {
+      return [];
+    }
+
+    const users = await this.prisma.user.findMany({
+      where: {
+        userName: {
+          contains: query,
+          mode: 'insensitive',
+        },
+      },
+      select: {
+        id: true,
+        userName: true,
+        avatar_url: true,
+        created_at: true,
+      },
+      take: 10,
+    });
+
+    return users as unknown as UserEntity[];
   }
 }
