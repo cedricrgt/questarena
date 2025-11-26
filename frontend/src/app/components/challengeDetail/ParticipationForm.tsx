@@ -22,12 +22,12 @@ const ParticipationForm = ({
   };
 
   return (
-    <div className="bg-white rounded-lg p-6 shadow-md">
+    <div className="bg-secondary rounded-lg p-6 shadow-md">
       <form onSubmit={handleSubmit}>
         <div className="mb-4">
           <label
             htmlFor="video-url"
-            className="block text-sm font-medium text-gray-700 mb-1 font-secondary"
+            className="block text-sm font-medium text-primary mb-1 font-secondary"
           >
             Lien de votre vidéo (YouTube, Twitch, etc.)
           </label>
@@ -43,7 +43,7 @@ const ParticipationForm = ({
         <div>
           <label
             htmlFor="participation-description"
-            className="block text-sm font-medium text-gray-700 mb-1 font-secondary"
+            className="block text-sm font-medium text-primary mb-1 font-secondary"
           >
             Description de votre participation
           </label>

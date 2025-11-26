@@ -6,6 +6,8 @@ import type { User } from "@/types";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/lib/auth-context";
 
+import Image from "next/image";
+
 export default function AccountDashboardPage() {
   const { user, isLoading, logout } = useAuth();
   const [userObject, setUserObject] = useState<User | null>(null);
@@ -33,10 +35,12 @@ export default function AccountDashboardPage() {
     <main className="mt-[10%] w-full max-w-2xl mx-auto bg-blanc rounded-xl shadow-lg p-8 flex flex-col gap-8">
       {/* Profile */}
       <div className="flex items-center gap-6">
-        <img
+        <Image
           src={user.avatar_url}
           alt="Avatar"
-          className="w-20 h-20 rounded-full border-4 border-primary shadow"
+          width={80}
+          height={80}
+          className="rounded-full border-4 border-primary shadow"
         />
         <div>
           <h1 className="text-3xl font-bold font-logo text-primary">
@@ -76,9 +80,8 @@ export default function AccountDashboardPage() {
         <h2 className="text-2xl font-bold text-primary mb-4">Mes Challenges</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {userObject?.challenges?.map((challenge) => (
-            <a href={`/details/${challenge.id}`}>
+            <a key={challenge.id} href={`/details/${challenge.id}`}>
               <div
-                key={challenge.id}
                 className="bg-background rounded-lg p-4 shadow transform transition-transform hover:scale-105 hover:shadow-lg"
               >
                 <h3 className="text-xl font-semibold">{challenge.title}</h3>
@@ -88,11 +91,14 @@ export default function AccountDashboardPage() {
                 </p>
                 <p className="mt-2 text-noir">{challenge.description}</p>
                 {challenge.image_url && (
-                  <img
-                    src={challenge.image_url}
-                    alt={challenge.title}
-                    className="mt-2 w-full h-32 object-cover rounded"
-                  />
+                  <div className="relative mt-2 w-full h-32">
+                    <Image
+                      src={challenge.image_url}
+                      alt={challenge.title}
+                      fill
+                      className="object-cover rounded"
+                    />
+                  </div>
                 )}
                 {/* <span
                 className={`mt-2 inline-block px-2 py-1 text-xs rounded ${
@@ -116,9 +122,8 @@ export default function AccountDashboardPage() {
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {userObject?.participations?.map((part) => (
-            <a href={`/details/${part.challenge_id}`}>
+            <a key={part.id} href={`/details/${part.challenge_id}`}>
               <div
-                key={part.id}
                 className="bg-background rounded-lg p-4 shadow transform transition-transform hover:scale-105 hover:shadow-lg"
               >
                 <p className="text-white">{part.description}</p>

@@ -2,7 +2,7 @@
 
 const footer = () => {
   return (
-    <footer className="mt-auto border-t border-primary-600 py-4 px-8 z-50 bg-primary">
+    <footer className="mt-auto border-t border-secondary/50 py-4 px-8 z-50 bg-primary/50">
       <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
         <h1 className="text-blanc text-2xl font-bold font-logo">
           GamerChallenges

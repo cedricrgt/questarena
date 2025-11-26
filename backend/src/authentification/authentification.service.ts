@@ -53,7 +53,7 @@ export class AuthentificationService {
   }
 
   async signIn(data: SignInDto): Promise<any> {
-    const user = await this.usersService.findByEmailWithPassword(data.email);
+    const user = await this.usersService.findByEmailOrUsername(data.email);
     if (!user) {
       throw new NotFoundException();
     }

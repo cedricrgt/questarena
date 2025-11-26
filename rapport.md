@@ -63,7 +63,7 @@ La présence d’un dictionnaire des données, d’un plan de tests exhaustif (`
   export default function RootLayout({ children }: { children: ReactNode }) {
     return (
       <html lang="fr">
-        <body className="min-h-screen flex flex-col bg-white text-black dark:bg-black dark:text-white">
+        <body className="min-h-screen flex flex-col bg-secondary text-black dark:bg-black dark:text-white">
           <AuthProvider>
             <ThemeInitializer />
             <Header />
@@ -110,7 +110,7 @@ La présence d’un dictionnaire des données, d’un plan de tests exhaustif (`
       return match ? `https://www.youtube.com/embed/${match[1]}` : "";
     };
     return (
-      <div className="bg-white rounded-xl shadow-md overflow-hidden w-[95%] mx-auto max-w-sm min-h-[350px] text-black">
+      <div className="bg-secondary rounded-xl shadow-md overflow-hidden w-[95%] mx-auto max-w-sm min-h-[350px] text-black">
         <iframe className="absolute top-0 left-0 w-full h-full border-0" src={extractIdVideo(link)} />
         <p className="text-sm text-gray-600 px-2 mt-3 flex items-center">
           <VoteButton targetId={participationId} targetType="PARTICIPATION" />

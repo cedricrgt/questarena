@@ -4,25 +4,26 @@ import * as bcrypt from 'bcrypt';
 const prisma = new PrismaClient();
 
 async function main() {
-
+  const alicePassword = await bcrypt.hash("alice123", 10);
   const user1 = await prisma.user.upsert({
     where: { userName: 'alice' },
     update: {},
     create: {
       userName: "alice",
       email: "alice@example.com",
-      password_hash: "hashalice123",
+      password_hash: alicePassword,
       avatar_url: "https://randomuser.me/api/portraits/women/32.jpg",
     },
   });
 
+  const bobPassword = await bcrypt.hash("bob456", 10);
   const user2 = await prisma.user.upsert({
     where: { userName: 'bob' },
     update: {},
     create: {
       userName: "bob",
       email: "bob@example.com",
-      password_hash: "hashbob456",
+      password_hash: bobPassword,
       avatar_url: "https://randomuser.me/api/portraits/men/75.jpg",
     },
   });

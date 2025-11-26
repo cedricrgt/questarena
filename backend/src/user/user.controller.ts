@@ -16,6 +16,11 @@ import { UpdateUserDto } from './dto/update-user.dto';
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
+  @Get('search')
+  search(@Query('q') query: string) {
+    return this.userService.searchUsers(query);
+  }
+
    @Get('leaderboard')
   leaderboard(@Query('limit') limit?: string){
     const top = limit ? parseInt(limit) : 10;

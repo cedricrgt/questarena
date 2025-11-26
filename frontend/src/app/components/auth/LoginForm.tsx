@@ -35,13 +35,13 @@ export default function LoginForm({ onLoginSuccess, onSwitchToRegister }: LoginF
             <form onSubmit={handleSubmit} className="flex flex-col gap-4">
                 {error && <div className="text-red-500 text-sm text-center">{error}</div>}
                 <div>
-                    <label className="block text-xs text-gray-400 uppercase mb-1">Email</label>
+                    <label className="block text-xs text-gray-400 uppercase mb-1">Email ou Pseudo</label>
                     <input
-                        type="email"
+                        type="text"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                         className="w-full bg-primary/10 border border-primary/30 rounded px-4 py-2 text-white focus:outline-none focus:border-secondary focus:shadow-[0_0_10px_rgba(169,111,255,0.3)] transition-all"
-                        placeholder="exemple@email.com"
+                        placeholder="email ou pseudo"
                         required
                     />
                 </div>

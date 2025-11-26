@@ -9,6 +9,8 @@ type LeaderboardItemProps = {
   imageUser: string;
   username: string;
   score: number;
+  userId: string;
+  onUserClick: (userId: string) => void;
 };
 
 const LeaderboardItem = ({
@@ -16,6 +18,8 @@ const LeaderboardItem = ({
   imageUser,
   username,
   score,
+  userId,
+  onUserClick,
 }: LeaderboardItemProps) => {
   return (
     <tr key={index}>
@@ -47,7 +51,12 @@ const LeaderboardItem = ({
             className="rounded-full mr-3 object-cover"
           />
           <div>
-            <div className="text-sm font-medium">{username}</div>
+            <div
+              onClick={() => onUserClick(userId)}
+              className="text-sm font-medium cursor-pointer hover:text-secondary transition-colors"
+            >
+              {username}
+            </div>
           </div>
         </div>
       </td>

@@ -104,7 +104,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         //force logout
         removeToken();
         setUser(null);
-        router.push("/auth/signin");
+        router.push("/");
       }
       throw error;
     }
@@ -184,7 +184,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   function logout() {
     removeToken();
     setUser(null);
-    router.push("/auth/signin");
+    router.push("/");
   }
 
   async function updateUser(data: Partial<User>) {

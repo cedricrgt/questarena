@@ -27,13 +27,13 @@ const ChallengeCard = ({ id }: ChallengeCardProps) => {
     setLoading(true);
     apiFetch(`/challenge/${id}`)
       .then((data) => setChallenge(data))
-      
+
       .finally(() => setLoading(false));
   }, [id]);
 
   if (loading) {
     return (
-      <div className="bg-white rounded-xl shadow-md overflow-hidden w-[95%] mx-auto max-w-sm h-60 flex items-center justify-center">
+      <div className="bg-secondary rounded-xl shadow-md overflow-hidden w-[95%] mx-auto max-w-sm h-60 flex items-center justify-center">
         <span>Chargement...</span>
       </div>
     );
@@ -43,9 +43,9 @@ const ChallengeCard = ({ id }: ChallengeCardProps) => {
   }
 
   return (
-    <Link href={`/details/${challenge.id}`} className="block group">
-      <div className="bg-white rounded-xl shadow-md overflow-hidden w-[95%] mx-auto max-w-sm group-hover:shadow-lg transition-shadow">
-        <div className="relative h-40 w-full">
+    <Link href={`/details/${challenge.id}`}>
+      <div className="bg-secondary rounded-xl shadow-md overflow-hidden w-full mx-auto group-hover:shadow-lg transition-shadow">
+        <div className="relative h-40 w-full bg-yellow">
           <Image
             src={challenge.image_url || "/details/default_image.webp"}
             alt={challenge.title}

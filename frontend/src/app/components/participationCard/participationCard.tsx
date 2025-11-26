@@ -35,7 +35,7 @@ const ParticipationCard = ({
   };
 
   return (
-    <div className="bg-white rounded-xl shadow-md overflow-hidden w-[95%] mx-auto max-w-sm h-auto">
+    <div className="bg-secondary rounded-xl shadow-md overflow-hidden w-[95%] mx-auto max-w-sm h-auto">
       <div className="relative h-50 w-full">
         <div className="relative w-full pb-[56.25%] overflow-hidden">
           <iframe
