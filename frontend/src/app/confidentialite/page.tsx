@@ -10,7 +10,7 @@ export default function PrivacyPage() {
         <section>
           <p className="mb-4">
             La présente politique de confidentialité a pour but de vous informer sur la 
-            manière dont <strong className="text-blanc">GamerChallenges</strong> collecte, 
+            manière dont <strong className="text-blanc">QuestsArena</strong> collecte, 
             utilise et protège vos données personnelles, conformément au Règlement Général 
             sur la Protection des Données (RGPD) et à la loi Informatique et Libertés.
           </p>

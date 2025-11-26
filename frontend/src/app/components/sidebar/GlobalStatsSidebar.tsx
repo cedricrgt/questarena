@@ -62,7 +62,7 @@ export default function GlobalStatsSidebar({ onlineCount }: GlobalStatsSidebarPr
             {/* Header */}
             <header className="flex flex-col items-center gap-3 pt-4">
                 <h1 className="text-secondary text-3xl font-bold font-logo">
-                    GamerChallenges
+                    QuestsArena
                 </h1>
                 <p className="text-xs text-white text-shadow-secondary text-shadow-lg uppercase tracking-widest text-center">
                     Rejoins l&apos;arène
