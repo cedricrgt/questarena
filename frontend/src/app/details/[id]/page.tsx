@@ -3,47 +3,31 @@
 import { useEffect, useState } from "react";
 import { Users, CheckCircle, Info } from "lucide-react";
 import { useAuth } from "@/lib/auth-context";
-import { useParams, useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 import { apiFetch } from "@/lib/api";
 import type { Challenge } from "@/types";
-import { VoteButton } from "@/app/components/button/voteButton";
 import ChallengeDetailHeader from "@/app/components/challengeDetail/ChallengeDetailHeader";
 import ChallengeInfoBar from "@/app/components/challengeDetail/ChallengeInfoBar";
-import ChallengeTags from "@/app/components/challengeDetail/ChallengeTags";
-import ChallengeRules from "@/app/components/challengeDetail/ChallengeRules";
-import ParticipationBox from "@/app/components/challengeDetail/ParticipationBox";
 import ParticipationsGrid from "@/app/components/challengeDetail/ParticipationsGrid";
 import ParticipationForm from "@/app/components/challengeDetail/ParticipationForm";
-import Link from "next/link";
 import { useNavigation } from "@/lib/navigation-context";
 
 import BackButton from "@/app/components/backButton/backButton";
 
-const getEndDate = (startDate: string | undefined): string => {
-  if (!startDate) return "Date de fin non disponible";
-  const date = new Date(startDate);
-  date.setMonth(date.getMonth() + 1.5);
-  return date.toLocaleDateString("fr-FR", {
-    day: "numeric",
-    month: "long",
-    year: "numeric",
-  });
-};
+
 
 export default function ChallengeDetailPage() {
   const params = useParams();
   const challengeId = params.id as string;
   const [submitError, setSubmitError] = useState("");
   const [challenge, setChallenge] = useState<Challenge | null>(null);
-  const [votesCount, setVotesCount] = useState(0);
-  const [hasVoted, setHasVoted] = useState(false);
+
   const [isParticipationSubmitted, setIsParticipationSubmitted] =
     useState(false);
   const [hasUserParticipated, setHasUserParticipated] = useState(false);
 
   const { isLoggedIn, user, refreshProfile } = useAuth();
   const { setViewState } = useNavigation();
-  const router = useRouter();
 
   const fetchChallenge = () => {
     if (!challengeId) return;
@@ -52,7 +36,7 @@ export default function ChallengeDetailPage() {
         setChallenge(data);
         if (user && data.participations) {
           const userHasParticipated = data.participations.some(
-            (p: any) => p.user_id === user.id
+            (p: { user_id: string }) => p.user_id === user.id
           );
           setHasUserParticipated(userHasParticipated);
         } else {
@@ -92,9 +76,10 @@ export default function ChallengeDetailPage() {
       await refreshProfile(); // Update user stats (points)
       setIsParticipationSubmitted(true);
       return true;
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error("Erreur lors de la soumission de la participation:", err);
-      setSubmitError(err.message || "Erreur lors de la soumission");
+      const errorMessage = err instanceof Error ? err.message : "Erreur lors de la soumission";
+      setSubmitError(errorMessage);
       return false;
     }
   };

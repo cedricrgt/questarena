@@ -18,10 +18,10 @@ interface GameClientLayoutProps {
     children: ReactNode;
 }
 
-type ViewState = "home" | "login" | "register";
+
 
 export default function GameClientLayout({ children }: GameClientLayoutProps) {
-    const { isLoggedIn, user, logout } = useAuth();
+    const { isLoggedIn, user } = useAuth();
     const [socket, setSocket] = useState<Socket | null>(null);
     const [onlineUsers, setOnlineUsers] = useState<string[]>([]);
     const [onlineCount, setOnlineCount] = useState(0); // Total count including guests
@@ -60,6 +60,7 @@ export default function GameClientLayout({ children }: GameClientLayoutProps) {
         return () => {
             newSocket.disconnect();
         };
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [isLoggedIn, user]);
 
     const handleLoginSuccess = () => {
@@ -71,9 +72,9 @@ export default function GameClientLayout({ children }: GameClientLayoutProps) {
 
         switch (viewState) {
             case "login":
-                return <LoginForm onSuccess={handleLoginSuccess} />;
+                return <LoginForm onLoginSuccess={handleLoginSuccess} onSwitchToRegister={() => setViewState("register")} />;
             case "register":
-                return <RegisterForm onSuccess={handleLoginSuccess} />;
+                return <RegisterForm onRegisterSuccess={handleLoginSuccess} onSwitchToLogin={() => setViewState("login")} />;
             default:
                 return children;
         }
@@ -87,7 +88,7 @@ export default function GameClientLayout({ children }: GameClientLayoutProps) {
             {/* Left Sidebar - Desktop & Tablet */}
             <aside className="hidden lg:block w-64 h-full flex-shrink-0 z-10">
                 {isLoggedIn ? (
-                    <UserProfileSidebar user={user} onLogout={logout} />
+                    <UserProfileSidebar />
                 ) : (
                     <GlobalStatsSidebar onlineCount={onlineCount} />
                 )}
@@ -100,7 +101,7 @@ export default function GameClientLayout({ children }: GameClientLayoutProps) {
                 position="left"
             >
                 {isLoggedIn ? (
-                    <UserProfileSidebar user={user} onLogout={logout} />
+                    <UserProfileSidebar />
                 ) : (
                     <GlobalStatsSidebar onlineCount={onlineCount} />
                 )}
@@ -205,7 +206,7 @@ export default function GameClientLayout({ children }: GameClientLayoutProps) {
 
             {/* Create Challenge Modal */}
             {createModalOpen && (
-                <CreateChallengeModal onClose={() => setCreateModalOpen(false)} />
+                <CreateChallengeModal />
             )}
         </div>
     );
