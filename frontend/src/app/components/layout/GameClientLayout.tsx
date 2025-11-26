@@ -156,10 +156,10 @@ export default function GameClientLayout({ children }: GameClientLayoutProps) {
                 friendsOnlineCount={friendsOnlineCount}
             />
 
-            {/* Hamburger Menu Button - Mobile & Tablet */}
+            {/* Hamburger Menu Button - Mobile & Tablet (Left Sidebar) */}
             <button
                 onClick={() => setLeftDrawerOpen(true)}
-                className="fixed top-4 left-4 z-20 lg:hidden bg-noir/80 backdrop-blur-sm border border-primary/30 rounded-lg p-2 text-secondary hover:bg-primary/20 transition-colors"
+                className="fixed top-4 left-4 z-20 lg:hidden bg-noir/80 backdrop-blur-sm border border-primary/30 rounded-lg p-2 text-secondary hover:bg-primary/20 transition-colors shadow-lg"
                 aria-label="Open menu"
             >
                 <svg
@@ -175,6 +175,32 @@ export default function GameClientLayout({ children }: GameClientLayoutProps) {
                         d="M4 6h16M4 12h16M4 18h16"
                     />
                 </svg>
+            </button>
+
+            {/* Friends/Login Button - Tablet only (Right Sidebar) */}
+            <button
+                onClick={() => setRightDrawerOpen(true)}
+                className="fixed top-4 right-4 z-20 md:block xl:hidden bg-noir/80 backdrop-blur-sm border border-primary/30 rounded-lg p-2 text-secondary hover:bg-primary/20 transition-colors shadow-lg hidden"
+                aria-label="Open friends/login"
+            >
+                <svg
+                    className="w-6 h-6"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                >
+                    <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"
+                    />
+                </svg>
+                {friendsOnlineCount > 0 && (
+                    <span className="absolute -top-1 -right-1 bg-cta text-noir text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
+                        {friendsOnlineCount}
+                    </span>
+                )}
             </button>
 
             {/* Create Challenge Modal */}

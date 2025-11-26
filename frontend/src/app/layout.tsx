@@ -2,10 +2,10 @@ import "./globals.css";
 import type { ReactNode } from "react";
 import Header from "./components/header/header";
 import Footer from "./components/footer/footer";
+import CookieBanner from "./components/cookie/CookieBanner";
 import { AuthProvider } from "@/lib/auth-context";
 import { NavigationProvider } from "@/lib/navigation-context";
 import GameClientLayout from "./components/layout/GameClientLayout";
-import Head from "next/head";
 
 export const metadata = {
   title: "Mon site",
@@ -24,6 +24,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
               <div id="modal-root" />
             </GameClientLayout>
             <Footer />
+            <CookieBanner />
           </NavigationProvider>
         </AuthProvider>
       </body>
