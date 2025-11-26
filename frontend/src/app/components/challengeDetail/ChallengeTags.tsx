@@ -19,7 +19,7 @@ const ChallengeTags = ({ challenge }: ChallengeTagsProps) => {
   return (
     <div className="flex flex-wrap gap-3 mb-8 p-4">
       <p className="bg-red-500 text-white text-xs px-3 py-1 rounded-full flex items-center gap-1 font-semibold font-primary">
-        🔴 FIN LE {getEndDate(challenge?.createdat)}
+        🔴 FIN LE {getEndDate(challenge?.created_at)}
       </p>
       <p className="bg-secondary text-white text-xs px-3 py-1 rounded-full flex items-center gap-1 font-semibold font-primary">
         🎮 {challenge?.game || "Jeu non spécifié"}
