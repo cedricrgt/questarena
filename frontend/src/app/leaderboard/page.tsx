@@ -1,11 +1,19 @@
-
 import { LeaderboardType } from "@/types";
 import Leaderboard from "../components/leaderboard/leaderboard";
 import { apiFetch } from "@/lib/api";
 import BackButton from "../components/backButton/backButton";
 
-const leaderboard: LeaderboardType[] = await apiFetch("/user/leaderboard?limit=10");
-export default function LeaderboardPage() {
+export const dynamic = 'force-dynamic';
+
+export default async function LeaderboardPage() {
+  let leaderboard: LeaderboardType[] = [];
+  
+  try {
+    leaderboard = await apiFetch("/user/leaderboard?limit=10");
+  } catch (error) {
+    console.error("Failed to fetch leaderboard:", error);
+    // On error, leaderboard remains empty array
+  }
 
   return (
     <section className="py-16 bg-secondary relative min-h-screen">
