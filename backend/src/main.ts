@@ -11,6 +11,7 @@ async function bootstrap() {
       'http://localhost:5173',
       'http://cedricrgt45-server.eddi.cloud:5173',
       'http://cedricrgt45-server.eddi.cloud',
+      'https://questarena-frontend.onrender.com',
     ],
     credentials: true,
   });
