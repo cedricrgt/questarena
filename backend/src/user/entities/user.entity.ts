@@ -58,4 +58,11 @@ export class User {
     type: [Vote],
   })
   votes?: Vote[];
+
+  @ApiProperty({
+    description: "Rôle de l'utilisateur",
+    enum: ['USER', 'ADMIN'],
+    example: 'USER',
+  })
+  role: 'USER' | 'ADMIN';
 }
