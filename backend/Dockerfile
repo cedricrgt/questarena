@@ -29,4 +29,4 @@ COPY --from=builder /usr/src/app/node_modules/@prisma/client ./node_modules/@pri
 
 EXPOSE 3000
 
-CMD ["sh", "-c", "npx prisma migrate deploy && npm run start:prod"]
+CMD ["sh", "-c", "npx prisma db push --accept-data-loss && npm run start:prod"]
