@@ -10,7 +10,7 @@ export default function LegalPage() {
         <section>
           <h2 className="text-2xl font-bold text-cta mb-4">1. Éditeur du site</h2>
           <p className="mb-2">
-            Le site <strong className="text-blanc">GamerChallenges</strong> est édité par :
+            Le site <strong className="text-blanc">QuestsArena</strong> est édité par :
           </p>
           <ul className="list-none space-y-1 ml-4">
             <li><strong>Nom :</strong> Cédric RAGOT</li>

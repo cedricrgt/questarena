@@ -22,7 +22,7 @@ export default function Header() {
       <header className="bg-black border-b border-secondary/50 dark:bg-primary/50 relative z-50 flex justify-between items-center px-8 py-4">
         <h1>
           <Link href="/" className="text-secondary text-2xl font-bold font-logo">
-            GamerChallenges
+            QuestsArena
           </Link>
         </h1>
 

@@ -9,14 +9,19 @@ type ChallengeCardProps = {
   id: string;
 };
 
+type Participation = {
+  id: string;
+  user_id: string;
+  challenge_id: string;
+};
+
 type Challenge = {
   id: string;
   game: string;
   title: string;
-  participations: any[];
+  participations: Participation[];
   image_url: string | null;
   created_at: string;
-  participation: any[];
 };
 
 const ChallengeCard = ({ id }: ChallengeCardProps) => {
@@ -45,7 +50,7 @@ const ChallengeCard = ({ id }: ChallengeCardProps) => {
   return (
     <Link href={`/details/${challenge.id}`}>
       <div className="bg-secondary rounded-xl shadow-md overflow-hidden w-full mx-auto group-hover:shadow-lg transition-shadow">
-        <div className="relative h-40 w-full bg-yellow">
+        <div className="relative h-40 w-full">
           <Image
             src={challenge.image_url || "/details/default_image.webp"}
             alt={challenge.title}

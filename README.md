@@ -1,9 +1,9 @@
-# GamerChallenges
+# QuestsArena
 
 ## Présentation Générale
 
 - **Quoi ?** Une plateforme dédiée aux défis de jeux vidéo, permettant aux utilisateurs de proposer et relever des challenges sur différents jeux.
-- **Qui ?** GamerChallenges (fictif) vise à rassembler les passionnés de jeux vidéo autour d'une communauté dynamique et compétitive.
+- **Qui ?** QuestsArena (fictif) vise à rassembler les passionnés de jeux vidéo autour d'une communauté dynamique et compétitive.
 - **Pour qui ?** Pour tous les amateurs de jeux vidéo, quel que soit leur niveau, cherchant à se mesurer aux autres et à partager leurs expériences.
 - **Comment ?** En équipe à définir (positionnement via un formulaire de voeux) par l'équipe pédagogique. Organisation en méthode agile pour la gestion de projet.
 - **Quand ?** Pendant 4 semaines correspondant à 4 sprints (conception, code, déploiement, recettage, etc.).
@@ -13,7 +13,7 @@
 
 ### Besoins Fonctionnels (Minimum Viable Product - MVP)
 
-- **Page d'accueil** : présentation de GamerChallenges, des défis en cours et populaires.
+- **Page d'accueil** : présentation de QuestsArena, des défis en cours et populaires.
 - **Système d'inscription et de connexion** : gestion des utilisateurs.
 - **Proposition de challenge** : les utilisateurs peuvent soumettre des défis à réaliser.
 - **Page de détail d'un challenge** : description, règles et vidéos des participations

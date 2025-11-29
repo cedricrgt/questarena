@@ -1,8 +1,8 @@
-# Cahier des Charges - GamerChallenges
+# Cahier des Charges - QuestsArena
 
 ## 1. Présentation du Projet
 
-GamerChallenges est une plateforme web dédiée aux défis de jeux vidéo permettant aux utilisateurs de proposer, participer et voter pour des challenges variés. L'objectif est de créer une communauté dynamique et engageante où les joueurs de tous niveaux peuvent se mesurer les uns aux autres, partager leurs exploits vidéoludiques et gagner en reconnaissance au sein de la communauté.
+QuestsArena est une plateforme web dédiée aux défis de jeux vidéo permettant aux utilisateurs de proposer, participer et voter pour des challenges variés. L'objectif est de créer une communauté dynamique et engageante où les joueurs de tous niveaux peuvent se mesurer les uns aux autres, partager leurs exploits vidéoludiques et gagner en reconnaissance au sein de la communauté.
 
 La plateforme sera développée selon une architecture MVC en micro-services, avec un front-end React, un back-end NestJS et une base de données relationnelle gérée via Prisma. Cette architecture permettra une évolutivité optimale et une maintenance facilitée.
 
@@ -67,7 +67,7 @@ La plateforme sera développée selon une architecture MVC en micro-services, av
 
 Le MVP comprendra les fonctionnalités essentielles permettant aux utilisateurs de proposer, participer et voter pour des défis:
 
-1. Page d'accueil avec présentation de GamerChallenges et mise en avant des défis populaires
+1. Page d'accueil avec présentation de QuestsArena et mise en avant des défis populaires
 2. Système d'inscription et connexion (création de compte, authentification)
 3. Profil utilisateur basique (informations personnelles, avatar)
 4. Création de challenges (formulaire de soumission avec titre, description, règles, jeu concerné)

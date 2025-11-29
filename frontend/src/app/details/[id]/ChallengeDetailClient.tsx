@@ -9,18 +9,9 @@ import ChallengeDetailHeader from "@/app/components/challengeDetail/ChallengeDet
 import ChallengeInfoBar from "@/app/components/challengeDetail/ChallengeInfoBar";
 import ParticipationsGrid from "@/app/components/challengeDetail/ParticipationsGrid";
 import ParticipationForm from "@/app/components/challengeDetail/ParticipationForm";
-import LoginForm from "@/app/components/challengeDetail/LoginForm";
+import LoginForm from "../../components/auth/LoginForm";
 
-const getEndDate = (startDate: string | undefined): string => {
-  if (!startDate) return "Date de fin non disponible";
-  const date = new Date(startDate);
-  date.setMonth(date.getMonth() + 1.5);
-  return date.toLocaleDateString("fr-FR", {
-    day: "numeric",
-    month: "long",
-    year: "numeric",
-  });
-};
+
 
 export default function ChallengeDetailClient({
   challenge,
@@ -34,8 +25,7 @@ export default function ChallengeDetailClient({
   const [isParticipationSubmitted, setIsParticipationSubmitted] =
     useState(false);
   const [hasUserParticipated, setHasUserParticipated] = useState(false);
-  const { isLoggedIn, login, user } = useAuth();
-  const [loginError, setLoginError] = useState("");
+  const { isLoggedIn, user } = useAuth();
   const router = useRouter();
 
   const fetchChallenge = () => {
@@ -43,11 +33,11 @@ export default function ChallengeDetailClient({
     apiFetch(`/challenge/${challenge.id}`)
       .then((data) => {
         setCurrentChallenge(data);
-        if (user && data.participations) {
-          const userHasParticipated = data.participations.some(
-            (p: any) => p.user_id === user.id
-          );
-          setHasUserParticipated(userHasParticipated);
+          if (user && data.participations) {
+            const userHasParticipated = data.participations.some(
+              (p: { user_id: string }) => p.user_id === user.id
+            );
+            setHasUserParticipated(userHasParticipated);
         } else {
           setHasUserParticipated(false);
         }
@@ -62,20 +52,9 @@ export default function ChallengeDetailClient({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user, hasUserParticipated]);
 
-  const handleLoginSubmit = async (
-    emailOrUsername: string,
-    password: string
-  ) => {
-    setLoginError("");
-    try {
-      await login({ email: emailOrUsername, password });
-      console.log("Logged in successfully!");
-    } catch (err: any) {
-      console.error("Login failed:", err);
-      setLoginError(
-        err.message || "Login failed. Please check your credentials."
-      );
-    }
+  const handleLoginSuccess = () => {
+    console.log("Logged in successfully!");
+    // You might want to refresh the page or update state here
   };
 
   const handleParticipationSubmit = async (
@@ -97,8 +76,9 @@ export default function ChallengeDetailClient({
       fetchChallenge();
       setIsParticipationSubmitted(true);
       return true;
-    } catch (err: any) {
-      setSubmitError(err.message || "Erreur lors de la soumission");
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : "Erreur lors de la soumission";
+      setSubmitError(errorMessage);
       return false;
     }
   };
@@ -167,7 +147,7 @@ export default function ChallengeDetailClient({
                 submitError={submitError}
               />
             ) : (
-              <LoginForm onLogin={handleLoginSubmit} loginError={loginError} />
+              <LoginForm onLoginSuccess={handleLoginSuccess} onSwitchToRegister={() => router.push('/auth/register')} />
             )}
           </div>
         </div>

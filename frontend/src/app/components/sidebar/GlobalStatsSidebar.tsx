@@ -18,8 +18,8 @@ export default function GlobalStatsSidebar({ onlineCount }: GlobalStatsSidebarPr
                 setStats({ challenges: totalChallenges, participants: totalParticipants });
 
                 if (data.length > 0) {
-                    // Sort by createdAt descending to get the latest
-                    const sorted = [...data].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+                    // Sort by created_at descending to get the latest
+                    const sorted = [...data].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
                     const latest = sorted[0];
                     
                     // If creator is null, fetch user data
@@ -62,10 +62,10 @@ export default function GlobalStatsSidebar({ onlineCount }: GlobalStatsSidebarPr
             {/* Header */}
             <header className="flex flex-col items-center gap-3 pt-4">
                 <h1 className="text-secondary text-3xl font-bold font-logo">
-                    GamerChallenges
+                    QuestsArena
                 </h1>
                 <p className="text-xs text-white text-shadow-secondary text-shadow-lg uppercase tracking-widest text-center">
-                    Rejoins l'arène
+                    Rejoins l&apos;arène
                 </p>
             </header>
 
@@ -115,7 +115,7 @@ export default function GlobalStatsSidebar({ onlineCount }: GlobalStatsSidebarPr
                                         className="w-16 h-16 rounded object-cover border border-secondary/30"
                                     />
                                 )}
-                                <span className="text-[10px] text-gray-400 mt-auto">{timeAgo(lastChallenge.createdAt)}</span>
+                                <span className="text-[10px] text-gray-400 mt-auto">{timeAgo(lastChallenge.created_at)}</span>
                             </div>
                         </div>
                     </div>

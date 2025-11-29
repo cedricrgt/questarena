@@ -1,10 +1,7 @@
 import { getToken } from "@/lib/auth";
 
 export async function apiFetch(path: string, options: RequestInit = {}) {
-  const base =
-    typeof window === "undefined"
-      ? process.env.SERVER_API_URL
-      : process.env.NEXT_PUBLIC_API_URL;
+  const base = process.env.NEXT_PUBLIC_API_URL;
       
   if (!base) throw new Error("API base URL is not defined");
 

@@ -2,16 +2,15 @@ import { useAuth } from "@/lib/auth-context";
 import React, { useState } from "react";
 import { apiFetch } from "@/lib/api";
 import ParticipationForm from "./ParticipationForm";
-import LoginForm from "./LoginForm";
+
 
 type ParticipationBoxProps = {
   challengeId: string;
 };
 
 const ParticipationBox = ({ challengeId }: ParticipationBoxProps) => {
-  const { isLoggedIn, login, user } = useAuth();
+  const { isLoggedIn, user } = useAuth();
   const [submitError, setSubmitError] = useState("");
-  const [loginError, setLoginError] = useState("");
 
   const handleParticipationSubmit = async (
     videoUrl: string,
@@ -30,25 +29,14 @@ const ParticipationBox = ({ challengeId }: ParticipationBoxProps) => {
         }),
       });
       return true;
-    } catch (err: any) {
-      setSubmitError(err.message || "Erreur lors de la soumission");
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : "Erreur lors de la soumission";
+      setSubmitError(errorMessage);
       return false;
     }
   };
 
-  const handleLoginSubmit = async (
-    emailOrUsername: string,
-    password: string
-  ) => {
-    setLoginError("");
-    try {
-      await login({ email: emailOrUsername, password });
-    } catch (err: any) {
-      setLoginError(
-        err.message || "Login failed. Please check your credentials."
-      );
-    }
-  };
+
 
   return (
     <div className="mb-8">
@@ -61,7 +49,9 @@ const ParticipationBox = ({ challengeId }: ParticipationBoxProps) => {
           submitError={submitError}
         />
       ) : (
-        <LoginForm onLogin={handleLoginSubmit} loginError={loginError} />
+        <div className="text-center p-4 bg-primary/10 rounded border border-primary/30">
+          <p className="text-sm text-gray-300 mb-2">Connectez-vous pour participer</p>
+        </div>
       )}
     </div>
   );

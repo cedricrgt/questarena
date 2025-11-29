@@ -58,6 +58,9 @@ export class AuthentificationService {
       throw new NotFoundException();
     }
 
+    if (!user.password_hash) {
+      throw new NotFoundException();
+    }
     const isPasswordValid = await this.comparePasswords(data.password, user.password_hash);
     if (!isPasswordValid) {
       throw new NotFoundException();

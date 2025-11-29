@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Challenge } from '../../challenge/entities/challenge.entity';
 import { Participation } from '../../participation/entities/participation.entity';
-import { Role } from '@prisma/client';
+
 import { Vote } from '../../vote/entities/vote.entity';
 
 export class User {
@@ -27,7 +27,7 @@ export class User {
     description: "Mot de passe haché de l'utilisateur",
     example: '$2b$10$abcdefghijklmnopqrstuvwxyz123456789',
   })
-  password_hash: string;
+  password_hash?: string;
 
   @ApiProperty({
     description: "URL de l'avatar de l'utilisateur",
@@ -40,13 +40,6 @@ export class User {
     example: '2025-05-15T10:30:00Z',
   })
   created_at: Date;
-
-  @ApiProperty({
-    description: "Rôle de l'utilisateur",
-    enum: Role,
-    example: 'USER',
-  })
-  role: Role;
 
   @ApiProperty({
     description: "Challenges créés par l'utilisateur",
@@ -65,4 +58,11 @@ export class User {
     type: [Vote],
   })
   votes?: Vote[];
+
+  @ApiProperty({
+    description: "Rôle de l'utilisateur",
+    enum: ['USER', 'ADMIN'],
+    example: 'USER',
+  })
+  role: 'USER' | 'ADMIN';
 }

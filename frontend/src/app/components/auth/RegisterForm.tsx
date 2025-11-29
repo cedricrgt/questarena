@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Button from "../button/button";
+import { useAuth } from "@/lib/auth-context";
 
 interface RegisterFormProps {
     onRegisterSuccess: () => void;
@@ -12,12 +13,19 @@ export default function RegisterForm({ onRegisterSuccess, onSwitchToLogin }: Reg
     const [username, setUsername] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const { signup } = useAuth();
+    const [error, setError] = useState("");
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        // In a real app, perform API call here
+        setError("");
         console.log("Registering with", username, email, password);
-        onRegisterSuccess();
+        try {
+            await signup({ userName: username, email, password });
+            onRegisterSuccess();
+        } catch (err: any) {
+            setError(err.message || "Erreur d'inscription");
+        }
     };
 
     return (
@@ -27,6 +35,7 @@ export default function RegisterForm({ onRegisterSuccess, onSwitchToLogin }: Reg
             </h2>
 
             <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+                {error && <div className="text-red-500 text-sm text-center">{error}</div>}
                 <div>
                     <label className="block text-xs text-gray-400 uppercase mb-1">Pseudo</label>
                     <input
