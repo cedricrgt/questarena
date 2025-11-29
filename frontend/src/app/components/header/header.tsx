@@ -20,12 +20,12 @@ export default function Header() {
 
   return (
       <header className="bg-black border-b border-secondary/50 dark:bg-primary/50 relative z-50 flex justify-between items-center px-8 py-4">
-        <h1>
-          <Link href="/" className="text-secondary text-2xl font-bold font-logo">
-            QuestsArena
-          </Link>
-        </h1>
-
+        <div className="w-[85%] lg:w-full">
+          <h1>
+            <Link href="/" className="text-secondary text-2xl font-bold font-logo">
+              QuestsArena
+            </Link>
+          </h1>
         {/* Burger Menu Button */}
         <button
           className="lg:hidden text-blanc z-10"
@@ -194,6 +194,7 @@ export default function Header() {
               </>
             )}
           </div>
+        </div>
         </div>
       </header>
   );
