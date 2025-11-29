@@ -19,7 +19,7 @@ export default function Header() {
   }
 
   return (
-      <header className="bg-black border-b border-secondary/50 dark:bg-primary/50 relative z-50 flex justify-center lg:justify-between items-center px-8 py-4">
+      <header className="bg-black border-b border-secondary/50 dark:bg-primary/50 relative z-50 flex justify-between items-center px-8 py-4">
         <h1>
           <Link href="/" className="text-secondary text-2xl font-bold font-logo">
             QuestsArena
@@ -28,7 +28,7 @@ export default function Header() {
 
         {/* Burger Menu Button */}
         <button
-          className="md:hidden text-blanc z-10 absolute right-8"
+          className="lg:hidden text-blanc z-10"
           onClick={() => setIsMenuOpen(!isMenuOpen)}
         >
           <svg
@@ -56,7 +56,7 @@ export default function Header() {
         </button>
 
         {/* Desktop Navigation */}
-        <nav className="hidden md:flex space-x-6">
+        <nav className="hidden lg:flex space-x-6">
           <Link
             href="/"
             className="text-blanc hover:text-secondary"
@@ -73,7 +73,7 @@ export default function Header() {
         </nav>
 
         {/* Desktop Buttons or Profile */}
-        <div className="hidden md:flex items-center space-x-2 relative">
+        <div className="hidden lg:flex items-center space-x-2 relative">
           {isLoggedIn ? (
             <>
               <button
