@@ -134,7 +134,7 @@ export default function Header() {
         {/* Mobile Menu */}
         <div
           className={`${isMenuOpen ? "flex" : "hidden"
-            } md:hidden absolute top-full left-0 right-0 bg-primary flex-col items-center py-4 space-y-4 z-10 shadow-lg`}
+            } lg:hidden absolute top-full left-0 right-0 bg-primary flex-col items-center py-4 space-y-4 z-10 shadow-lg`}
         >
           <Link
             href="/"
