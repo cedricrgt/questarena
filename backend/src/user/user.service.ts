@@ -48,8 +48,6 @@ export class UserService {
         votes: true,
       },
     });
-    console.log(`Debug UserService.findOne(${id}):`, JSON.stringify(user, null, 2));
-
     if (!user) {
       throw new NotFoundException(`User with ID ${id} not found`);
     }
@@ -225,4 +223,39 @@ export class UserService {
 
     return users as unknown as UserEntity[];
   }
+
+  async changePassword(
+    userId: string,
+    currentPassword: string,
+    newPassword: string,
+  ): Promise<{ message: string }> {
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId },
+    });
+
+    if (!user) {
+      throw new NotFoundException('Utilisateur non trouvé');
+    }
+
+    // Verify current password
+    const isCurrentPasswordValid = await bcrypt.compare(
+      currentPassword,
+      user.password_hash,
+    );
+
+    if (!isCurrentPasswordValid) {
+      throw new BadRequestException('Mot de passe actuel incorrect');
+    }
+
+    // Hash and update new password
+    const hashedNewPassword = await bcrypt.hash(newPassword, 10);
+
+    await this.prisma.user.update({
+      where: { id: userId },
+      data: { password_hash: hashedNewPassword },
+    });
+
+    return { message: 'Mot de passe modifié avec succès' };
+  }
 }
+

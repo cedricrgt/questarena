@@ -5,6 +5,7 @@ import { apiFetch } from "@/lib/api";
 import type { User } from "@/types";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/lib/auth-context";
+import ChangePasswordModal from "@/app/components/auth/ChangePasswordModal";
 
 import Image from "next/image";
 
@@ -12,19 +13,18 @@ export default function AccountDashboardPage() {
   const { user, isLoading, logout } = useAuth();
   const [userObject, setUserObject] = useState<User | null>(null);
   const router = useRouter();
+  const [showChangePassword, setShowChangePassword] = useState(false);
 
   useEffect(() => {
     if (!isLoading && user === null) {
-      router.replace("/auth/signin");
+      router.replace("/");
       return;
     }
 
     if (user) {
       apiFetch(`/user/${user.id}`)
         .then(setUserObject)
-        .catch((err) => {
-          console.error("Erreur lors du chargement du userObject :", err);
-        });
+        .catch(() => {});
     }
   }, [isLoading, user, router]);
 
@@ -75,15 +75,34 @@ export default function AccountDashboardPage() {
         </div>
       </div>
 
+      {/* Settings Section */}
+      <section className="bg-gray-100 rounded-lg p-4">
+        <h2 className="text-lg font-bold text-primary mb-3">Paramètres</h2>
+        <div className="flex flex-wrap gap-3">
+          <button
+            onClick={() => setShowChangePassword(true)}
+            className="px-4 py-2 bg-secondary text-white rounded hover:bg-secondary/80 transition"
+          >
+            🔐 Modifier mon mot de passe
+          </button>
+          {user.role === "ADMIN" && (
+            <button
+              onClick={() => router.push("/admin")}
+              className="px-4 py-2 bg-purple-600 text-white rounded hover:bg-purple-700 transition"
+            >
+              ⚙️ Administration
+            </button>
+          )}
+        </div>
+      </section>
+
       {/* Mes Challenges */}
-      <section className="mt-8">
+      <section className="mt-4">
         <h2 className="text-2xl font-bold text-primary mb-4">Mes Challenges</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {userObject?.challenges?.map((challenge) => (
             <a key={challenge.id} href={`/details/${challenge.id}`}>
-              <div
-                className="bg-background rounded-lg p-4 shadow transform transition-transform hover:scale-105 hover:shadow-lg"
-              >
+              <div className="bg-background rounded-lg p-4 shadow transform transition-transform hover:scale-105 hover:shadow-lg">
                 <h3 className="text-xl font-semibold">{challenge.title}</h3>
 
                 <p className="text-sm text-secondary">
@@ -100,15 +119,6 @@ export default function AccountDashboardPage() {
                     />
                   </div>
                 )}
-                {/* <span
-                className={`mt-2 inline-block px-2 py-1 text-xs rounded ${
-                  challenge.validated
-                    ? 'bg-green-200 text-green-800'
-                    : 'bg-yellow-200 text-yellow-800'
-                }`}
-              >
-                {challenge.validated ? 'Validé' : 'En attente'}
-              </span> */}
               </div>
             </a>
           ))}
@@ -123,9 +133,7 @@ export default function AccountDashboardPage() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {userObject?.participations?.map((part) => (
             <a key={part.id} href={`/details/${part.challenge_id}`}>
-              <div
-                className="bg-background rounded-lg p-4 shadow transform transition-transform hover:scale-105 hover:shadow-lg"
-              >
+              <div className="bg-background rounded-lg p-4 shadow transform transition-transform hover:scale-105 hover:shadow-lg">
                 <p className="text-white">{part.description}</p>
 
                 <a
@@ -136,15 +144,6 @@ export default function AccountDashboardPage() {
                 >
                   Voir la vidéo
                 </a>
-                {/* <span
-                className={`mt-2 inline-block px-2 py-1 text-xs rounded ${
-                  part.validated
-                    ? 'bg-green-200 text-green-800'
-                    : 'bg-yellow-200 text-yellow-800'
-                }`}
-              >
-                {part.validated ? 'Validée' : 'En attente'}
-              </span> */}
               </div>
             </a>
           ))}
@@ -157,6 +156,15 @@ export default function AccountDashboardPage() {
       >
         Déconnexion
       </button>
+
+      {/* Change Password Modal */}
+      {showChangePassword && (
+        <ChangePasswordModal
+          userId={user.id}
+          onClose={() => setShowChangePassword(false)}
+        />
+      )}
     </main>
   );
 }
+

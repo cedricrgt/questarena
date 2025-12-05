@@ -8,6 +8,7 @@ import GlobalStatsSidebar from "../sidebar/GlobalStatsSidebar";
 import GuestRightSidebar from "../sidebar/GuestRightSidebar";
 import LoginForm from "../auth/LoginForm";
 import RegisterForm from "../auth/RegisterForm";
+import ForgotPasswordModal from "../auth/ForgotPasswordModal";
 import Drawer from "../drawer/Drawer";
 import BottomNavigation from "../navigation/BottomNavigation";
 import { useNavigation } from "@/lib/navigation-context";
@@ -15,70 +16,89 @@ import { useAuth } from "@/lib/auth-context";
 import CreateChallengeModal from "../createChallengeModal/createChallengeModal";
 
 interface GameClientLayoutProps {
-    children: ReactNode;
+  children: ReactNode;
 }
 
-
-
 export default function GameClientLayout({ children }: GameClientLayoutProps) {
-    const { isLoggedIn, user } = useAuth();
-    const [socket, setSocket] = useState<Socket | null>(null);
-    const [onlineUsers, setOnlineUsers] = useState<string[]>([]);
-    const [onlineCount, setOnlineCount] = useState(0); // Total count including guests
-    const { viewState, setViewState } = useNavigation();
-    
-    // Drawer states for mobile
-    const [leftDrawerOpen, setLeftDrawerOpen] = useState(false);
-    const [rightDrawerOpen, setRightDrawerOpen] = useState(false);
-    const [createModalOpen, setCreateModalOpen] = useState(false);
+  const { isLoggedIn, user } = useAuth();
+  const [socket, setSocket] = useState<Socket | null>(null);
+  const [onlineUsers, setOnlineUsers] = useState<string[]>([]);
+  const [onlineCount, setOnlineCount] = useState(0); // Total count including guests
+  const { viewState, setViewState } = useNavigation();
 
-    // WebSocket Connection
-    useEffect(() => {
-        // Disconnect previous socket if any
-        if (socket) {
-            socket.disconnect();
-        }
+  // Drawer states for mobile
+  const [leftDrawerOpen, setLeftDrawerOpen] = useState(false);
+  const [rightDrawerOpen, setRightDrawerOpen] = useState(false);
+  const [createModalOpen, setCreateModalOpen] = useState(false);
+  const [forgotPasswordOpen, setForgotPasswordOpen] = useState(false);
 
-        // If logged in, connect with userId. If not, connect without (or with guest ID if needed)
-        // For now, even guests connect to see online count
-        const query = isLoggedIn && user ? { userId: user.id } : {};
+  // WebSocket Connection
+  useEffect(() => {
+    // Disconnect previous socket if any
+    if (socket) {
+      socket.disconnect();
+    }
 
-        const newSocket = io(process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000", {
-            query,
-        });
-        setSocket(newSocket);
+    // If logged in, connect with userId. If not, connect without (or with guest ID if needed)
+    // For now, even guests connect to see online count
+    const query = isLoggedIn && user ? { userId: user.id } : {};
 
-        newSocket.on("connect", () => {
-            console.log(`Connected to WebSocket as ${isLoggedIn ? user?.name : "Guest"}`);
-        });
+    const newSocket = io(process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000", {
+      query,
+    });
+    setSocket(newSocket);
 
-        newSocket.on("onlineUsers", (data: { count: number; users: string[] }) => {
-            setOnlineUsers(data.users);
-            setOnlineCount(data.count); // Store the total count
-        });
+    newSocket.on("connect", () => {
+      // WebSocket connected successfully
+    });
 
-        return () => {
-            newSocket.disconnect();
-        };
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [isLoggedIn, user]);
+    newSocket.on("onlineUsers", (data: { count: number; users: string[] }) => {
+      setOnlineUsers(data.users);
+      setOnlineCount(data.count); // Store the total count
+    });
 
-    const handleLoginSuccess = () => {
-        setViewState("home");
+    return () => {
+      newSocket.disconnect();
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isLoggedIn, user]);
 
-    const renderMainContent = () => {
-        if (isLoggedIn) return children;
+  const handleLoginSuccess = () => {
+    setViewState("home");
+  };
 
-        switch (viewState) {
-            case "login":
-                return <LoginForm onLoginSuccess={handleLoginSuccess} onSwitchToRegister={() => setViewState("register")} />;
-            case "register":
-                return <RegisterForm onRegisterSuccess={handleLoginSuccess} onSwitchToLogin={() => setViewState("login")} />;
-            default:
-                return children;
-        }
-    };
+  const handleForgotPassword = () => {
+    setForgotPasswordOpen(true);
+  };
+
+  const handleCloseForgotPassword = () => {
+    setForgotPasswordOpen(false);
+  };
+
+  const renderMainContent = () => {
+    if (isLoggedIn) return children;
+
+    switch (viewState) {
+      case "login":
+        return (
+          <LoginForm
+            onLoginSuccess={handleLoginSuccess}
+            onSwitchToRegister={() => setViewState("register")}
+            onForgotPassword={handleForgotPassword}
+          />
+        );
+      case "register":
+        return (
+          <RegisterForm
+            onRegisterSuccess={handleLoginSuccess}
+            onSwitchToLogin={() => setViewState("login")}
+          />
+        );
+      default:
+        return children;
+    }
+  };
+
 
     // Count online friends (authenticated users only, not guests)
     const friendsOnlineCount = onlineUsers.length;
@@ -205,9 +225,13 @@ export default function GameClientLayout({ children }: GameClientLayoutProps) {
             </button>
 
             {/* Create Challenge Modal */}
-            {createModalOpen && (
-                <CreateChallengeModal />
+            {createModalOpen && <CreateChallengeModal />}
+
+            {/* Forgot Password Modal */}
+            {forgotPasswordOpen && (
+              <ForgotPasswordModal onClose={handleCloseForgotPassword} />
             )}
         </div>
     );
 }
+

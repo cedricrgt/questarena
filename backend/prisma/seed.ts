@@ -33,14 +33,17 @@ async function main() {
     where: { userName: 'admin' },
     update: {
       password_hash: adminPassword,
+      role: 'ADMIN',
     },
     create: {
       userName: 'admin',
       email: 'admin@example.com',
       password_hash: adminPassword,
       avatar_url: 'https://api.dicebear.com/7.x/bottts/svg?seed=admin',
+      role: 'ADMIN',
     },
   });
+
 
   const randomId = Math.floor(Math.random() * 50) + 1;
   const challenge1 = await prisma.challenge.create({

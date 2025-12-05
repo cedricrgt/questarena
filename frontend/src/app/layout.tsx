@@ -8,8 +8,8 @@ import { NavigationProvider } from "@/lib/navigation-context";
 import GameClientLayout from "./components/layout/GameClientLayout";
 
 export const metadata = {
-  title: "Mon site",
-  description: "Bienvenue sur mon site",
+  title: "QuestsArena - Défis Gaming",
+  description: "Plateforme de challenges de jeux vidéo - Participez, votez et montez dans le classement",
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {
