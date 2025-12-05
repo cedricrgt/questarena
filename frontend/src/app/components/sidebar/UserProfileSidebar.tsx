@@ -47,7 +47,7 @@ export default function UserProfileSidebar() {
     const participationsCount = user.participationsCount ?? (user.participations as any[])?.length ?? 0;
     const votesCount = user.votesCount ?? (user.votes as any[])?.length ?? 0;
 
-    console.log("Debug UserProfileSidebar:", {
+
         user,
         challengesCount,
         participationsCount,

@@ -53,7 +53,7 @@ export default function ChallengeDetailClient({
   }, [user, hasUserParticipated]);
 
   const handleLoginSuccess = () => {
-    console.log("Logged in successfully!");
+
     // You might want to refresh the page or update state here
   };
 

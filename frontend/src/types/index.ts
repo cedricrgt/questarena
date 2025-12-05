@@ -59,7 +59,7 @@ export type User = {
   role: string;
 }
 
-// export type LeaderboardEntry = {
+
 //   imageUser: string;
 //   username: string;
 //   score: number;

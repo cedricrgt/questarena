@@ -59,7 +59,7 @@ export default function ChallengeDetailPage() {
     description: string
   ): Promise<boolean> => {
     setSubmitError("");
-    console.log("Submitting participation:", { videoUrl, description });
+
     try {
       await apiFetch("/participation", {
         method: "POST",
@@ -71,7 +71,7 @@ export default function ChallengeDetailPage() {
           user_id: user?.id,
         }),
       });
-      console.log("Participation submitted successfully!");
+
       fetchChallenge();
       await refreshProfile(); // Update user stats (points)
       setIsParticipationSubmitted(true);
