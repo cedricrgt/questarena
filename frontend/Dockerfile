@@ -31,6 +31,6 @@ RUN npm install --production
 COPY --from=builder /app/.next ./.next
 COPY --from=builder /app/public ./public
 
-EXPOSE 5173
+EXPOSE 3000
 
-CMD ["npm", "run", "start", "--", "-p", "5173"]
+CMD ["npm", "start"]
