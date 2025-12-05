@@ -65,4 +65,11 @@ export class User {
     example: 'USER',
   })
   role: 'USER' | 'ADMIN';
+
+  @ApiProperty({
+    description: "Indique si l'utilisateur est bloqué",
+    example: false,
+  })
+  is_blocked?: boolean;
 }
+

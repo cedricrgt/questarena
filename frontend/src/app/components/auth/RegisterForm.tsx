@@ -19,7 +19,6 @@ export default function RegisterForm({ onRegisterSuccess, onSwitchToLogin }: Reg
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setError("");
-        console.log("Registering with", username, email, password);
         try {
             await signup({ userName: username, email, password });
             onRegisterSuccess();

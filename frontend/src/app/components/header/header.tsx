@@ -6,7 +6,7 @@ import { useState } from "react";
 import { useAuth } from "@/lib/auth-context";
 import { useNavigation } from "@/lib/navigation-context";
 import { useRouter } from "next/navigation";
-// import { FiUser } from "react-icons/fi"; // or any icon lib
+import Image from "next/image";
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -80,10 +80,12 @@ export default function Header() {
                 onClick={() => setIsMenuOpen(!isMenuOpen)}
                 className="flex items-center text-blanc focus:outline-none"
               >
-                <img
-                  src={user?.avatar_url}
+                <Image
+                  src={user?.avatar_url || "/default-avatar.png"}
                   alt="Avatar"
-                  className="w-8 h-8 rounded-full border-2 border-blanc"
+                  width={32}
+                  height={32}
+                  className="rounded-full border-2 border-blanc"
                 />
               </button>
               {isMenuOpen && (

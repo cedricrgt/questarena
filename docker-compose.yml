@@ -3,6 +3,9 @@ services:
     container_name: frontend
     build:
       context: ./frontend
+      args:
+        NEXT_PUBLIC_API_URL: http://localhost:3000
+        NEXT_PUBLIC_RAWG_API_KEY: b44ca9ea4b2e43d2b3e5b7aefd8c302c
     volumes:
       - ./frontend:/app/frontend
       - /app/frontend/node_modules
@@ -30,12 +33,14 @@ services:
         condition: service_healthy
     command:
       [
-        "bash",
+        "sh",
         "-c",
-        "./wait-for-it.sh database:5432 -- npx prisma generate && npx prisma db push --accept-data-loss && npm run seed && npm run start:dev",
+        "npx prisma generate && npx prisma db push --accept-data-loss && npm run start:prod",
       ]
     env_file:
       - docker.env
+    environment:
+      - JWT_SECRET=supersecret_key_change_me_in_prod
 
   database:
     image: postgres:17-alpine

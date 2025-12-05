@@ -1,22 +1,29 @@
-import { UserService } from '../user/user.service'
+import { UserService } from '../user/user.service';
 import * as bcrypt from 'bcrypt';
 import { CreateUserDto } from 'src/user/dto/create-user.dto';
 import { SignInDto } from './dto/sign-in.dto';
-import { BadRequestException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import {
+  BadRequestException,
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
+import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()
 export class AuthentificationService {
   constructor(
     private usersService: UserService,
     private jwtService: JwtService,
-  ) { }
+    private prisma: PrismaService,
+  ) {}
 
   async comparePasswords(
     password: string,
     hashedPassword: string,
   ): Promise<boolean> {
-
     return await bcrypt.compare(password, hashedPassword);
   }
 
@@ -25,7 +32,7 @@ export class AuthentificationService {
     if (!emailRegex.test(email)) {
       throw new BadRequestException('Email incorrect');
     }
-    return true
+    return true;
   }
 
   checkPasswordFormat(password: string) {
@@ -35,18 +42,26 @@ export class AuthentificationService {
         'Mot de passe trop court ou qui ne correspond pas au format',
       );
     }
-    return true
+    return true;
   }
 
   async signUp(data: CreateUserDto): Promise<any> {
-
-    this.checkEmailFormat(data.email)
-    this.checkPasswordFormat(data.password)
+    this.checkEmailFormat(data.email);
+    this.checkPasswordFormat(data.password);
 
     const newUser = { ...data };
     const user = await this.usersService.create(newUser);
     const apiUser = await this.usersService.findByEmail(data.email);
-    const payload = { id: apiUser?.id, name: user.userName, email: user.email, created_at: user.created_at, avatar_url: user.avatar_url, challenges: user.challenges, participations: user.participations, votes: user.votes };
+    const payload = {
+      id: apiUser?.id,
+      name: user.userName,
+      email: user.email,
+      created_at: user.created_at,
+      avatar_url: user.avatar_url,
+      challenges: user.challenges,
+      participations: user.participations,
+      votes: user.votes,
+    };
     return {
       accessToken: await this.jwtService.signAsync(payload),
     };
@@ -55,17 +70,36 @@ export class AuthentificationService {
   async signIn(data: SignInDto): Promise<any> {
     const user = await this.usersService.findByEmailOrUsername(data.email);
     if (!user) {
-      throw new NotFoundException();
+      throw new NotFoundException('Identifiants incorrects');
+    }
+
+    // Check if user is blocked
+    if (user.is_blocked) {
+      throw new ForbiddenException(
+        'Votre compte a été bloqué. Contactez un administrateur.',
+      );
     }
 
     if (!user.password_hash) {
-      throw new NotFoundException();
+      throw new NotFoundException('Identifiants incorrects');
     }
-    const isPasswordValid = await this.comparePasswords(data.password, user.password_hash);
+    const isPasswordValid = await this.comparePasswords(
+      data.password,
+      user.password_hash,
+    );
     if (!isPasswordValid) {
-      throw new NotFoundException();
+      throw new NotFoundException('Identifiants incorrects');
     }
-    const payload = { id: user.id, name: user.userName, email: user.email, created_at: user.created_at, avatar_url: user.avatar_url, challenges: user.challenges, participations: user.participations, votes: user.votes };
+    const payload = {
+      id: user.id,
+      name: user.userName,
+      email: user.email,
+      created_at: user.created_at,
+      avatar_url: user.avatar_url,
+      challenges: user.challenges,
+      participations: user.participations,
+      votes: user.votes,
+    };
     return {
       accessToken: await this.jwtService.signAsync(payload),
     };
@@ -78,38 +112,55 @@ export class AuthentificationService {
       if (!user) {
         throw new NotFoundException('User not found');
       }
-      // Return fresh user data, ensuring relations are included (findOne does this)
-      // Exclude password_hash
-      const { password_hash, ...result } = user;
-      // Map userName to name to match the expected frontend interface if needed, 
-      // but frontend AuthContext maps name: json.name. 
-      // The previous payload had name: user.userName.
-      // So we should probably return name: user.userName to be consistent with previous payload structure
-      // OR update frontend to use userName.
-      // Let's stick to returning the user object. 
-      // Wait, the previous payload had:
-      // { id, name: userName, email, ... }
-      // The frontend expects:
-      // name: json.name
-      // The User entity has userName.
-      // So if I return the entity, it has userName, not name.
-      // I should map it to match what the frontend expects OR update frontend.
-      // The frontend AuthContext does: name: json.name.
-      // If I return { ...user, name: user.userName }, it will work.
 
-      const response = {
-        ...result,
-        name: user.userName, // Map userName to name for frontend compatibility
+      return {
+        id: user.id,
+        userName: user.userName,
+        email: user.email,
+        avatar_url: user.avatar_url,
+        created_at: user.created_at,
+        name: user.userName,
         challengesCount: user.challenges?.length || 0,
         participationsCount: user.participations?.length || 0,
         votesCount: user.votes?.length || 0,
         role: user.role,
       };
-      console.log('Debug decodeToken response:', JSON.stringify(response, null, 2));
-      return response;
     } catch (err) {
       if (err instanceof NotFoundException) throw err;
       throw new UnauthorizedException('Invalid or expired token');
     }
+  }
+
+  // Request password reset (creates a request for admin to approve)
+  async requestPasswordReset(email: string) {
+    const user = await this.prisma.user.findUnique({
+      where: { email },
+    });
+
+    if (!user) {
+      // Don't reveal if email exists or not for security
+      return { message: 'Si cet email existe, une demande a été envoyée.' };
+    }
+
+    // Check if there's already a pending request
+    const existingRequest = await this.prisma.passwordResetRequest.findFirst({
+      where: {
+        user_id: user.id,
+        status: 'PENDING',
+      },
+    });
+
+    if (existingRequest) {
+      return { message: 'Une demande est déjà en cours de traitement.' };
+    }
+
+    // Create the password reset request
+    await this.prisma.passwordResetRequest.create({
+      data: {
+        user_id: user.id,
+      },
+    });
+
+    return { message: 'Votre demande a été envoyée à l\'administrateur.' };
   }
 }

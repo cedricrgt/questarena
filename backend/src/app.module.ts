@@ -11,6 +11,8 @@ import { JwtModule } from '@nestjs/jwt';
 import { PrismaModule } from './prisma/prisma.module';
 import { AppGateway } from './gateway/app.gateway';
 import { FriendModule } from './friend/friend.module';
+import { AdminModule } from './admin/admin.module';
+
 
 @Module({
   imports: [
@@ -21,6 +23,7 @@ import { FriendModule } from './friend/friend.module';
     VoteModule,
     FriendModule,
     AuthentificationModule,
+    AdminModule,
     ConfigModule.forRoot({ isGlobal: true }),
     JwtModule.registerAsync({
       global: true,
