@@ -19,7 +19,7 @@ export default function Header() {
   }
 
   return (
-      <header className="bg-black border-b border-secondary/50 dark:bg-primary/50 relative z-50 flex justify-center items-center px-8 py-4">
+      <header className="bg-black border-b border-secondary/50 dark:bg-primary/50 relative z-10 flex justify-center items-center px-8 py-4">
         <div className="w-[85%] lg:w-full flex justify-between items-center">
           <h1>
             <Link href="/" className="text-secondary text-2xl font-bold font-logo">
@@ -134,7 +134,7 @@ export default function Header() {
         {/* Mobile Menu */}
         <div
           className={`${isMenuOpen ? "flex" : "hidden"
-            } md:hidden absolute top-full left-0 right-0 bg-primary flex-col items-center py-4 space-y-4 z-10 shadow-lg`}
+            } lg:hidden absolute top-full left-0 right-0 bg-primary flex-col items-center py-4 space-y-4 z-10 shadow-lg`}
         >
           <Link
             href="/"
