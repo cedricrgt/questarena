@@ -11,6 +11,19 @@ RUN npx prisma generate
 RUN npm run build
 
 
+# ---------- DEV ----------
+FROM node:20-alpine AS dev
+
+WORKDIR /usr/src/app
+
+COPY package*.json ./
+RUN npm install
+
+COPY . .
+
+CMD ["npm", "run", "start:dev"]
+
+
 # ---------- RUNNER ----------
 FROM node:20-alpine AS runner
 

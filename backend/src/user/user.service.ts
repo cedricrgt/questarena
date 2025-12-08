@@ -26,6 +26,10 @@ export class UserService {
       return result as UserEntity;
     }
     catch (error) {
+      if (error.code === 'P2002') {
+        const target = error.meta?.target?.[0] || 'Unknown';
+        throw new BadRequestException(`Pseudo ou email déjà utilisé (${target})`);
+      }
       throw new BadRequestException('Invalid Data');
     }
   }

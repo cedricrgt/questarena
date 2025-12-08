@@ -6,6 +6,7 @@ import {
   IsUrl,
   MinLength,
   IsEnum,
+  IsOptional,
 } from 'class-validator';
 
 enum Roles {
@@ -45,8 +46,8 @@ export class CreateUserDto {
     example: 'https://example.com/avatar.jpg/johndoe.png',
   })
   @IsUrl()
-  @IsNotEmpty()
-  avatar_url: string;
+  @IsOptional()
+  avatar_url?: string;
 
   @ApiProperty({
     description: 'Rôle de l\'utilisateur',
@@ -54,6 +55,6 @@ export class CreateUserDto {
     example: 'USER',
   })
   @IsEnum(Roles)
-  @IsNotEmpty()
-  role: Roles;
+  @IsOptional()
+  role?: Roles;
 }
