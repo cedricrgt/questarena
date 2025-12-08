@@ -3,28 +3,31 @@ services:
     container_name: frontend
     build:
       context: ./frontend
+      target: dev
       args:
-        NEXT_PUBLIC_API_URL: http://localhost:3000
-        NEXT_PUBLIC_RAWG_API_KEY: b44ca9ea4b2e43d2b3e5b7aefd8c302c
+        NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:3000}
+        NEXT_PUBLIC_RAWG_API_KEY: ${NEXT_PUBLIC_RAWG_API_KEY}
     volumes:
-      - ./frontend:/app/frontend
-      - /app/frontend/node_modules
+      - ./frontend:/app
+      - /app/node_modules
     ports:
-      - 5173:3000
+      - 5173:5173
     depends_on:
       - backend
     tty: true
     env_file:
       - docker.env
+    command: npm run dev
 
   backend:
     container_name: backend
     build:
       context: ./backend
       dockerfile: Dockerfile
+      target: dev
     volumes:
-      - ./backend:/usr/src/backend
-      - /usr/src/backend/node_modules
+      - ./backend:/usr/src/app
+      - /usr/src/app/node_modules
     ports:
       - 3000:3000
     tty: true
@@ -35,12 +38,12 @@ services:
       [
         "sh",
         "-c",
-        "npx prisma generate && npx prisma db push --accept-data-loss && npm run start:prod",
+        "npx prisma generate && npx prisma db push --accept-data-loss && npm run start:dev",
       ]
     env_file:
       - docker.env
     environment:
-      - JWT_SECRET=supersecret_key_change_me_in_prod
+      - JWT_SECRET=${JWT_SECRET}
 
   database:
     image: postgres:17-alpine

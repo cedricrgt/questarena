@@ -6,8 +6,6 @@ import UserProfileSidebar from "../sidebar/UserProfileSidebar";
 import FriendsListSidebar from "../sidebar/FriendsListSidebar";
 import GlobalStatsSidebar from "../sidebar/GlobalStatsSidebar";
 import GuestRightSidebar from "../sidebar/GuestRightSidebar";
-import LoginForm from "../auth/LoginForm";
-import RegisterForm from "../auth/RegisterForm";
 import ForgotPasswordModal from "../auth/ForgotPasswordModal";
 import Drawer from "../drawer/Drawer";
 import BottomNavigation from "../navigation/BottomNavigation";
@@ -27,10 +25,18 @@ export default function GameClientLayout({ children }: GameClientLayoutProps) {
   const { viewState, setViewState } = useNavigation();
 
   // Drawer states for mobile
+  // Drawer states for mobile
   const [leftDrawerOpen, setLeftDrawerOpen] = useState(false);
   const [rightDrawerOpen, setRightDrawerOpen] = useState(false);
   const [createModalOpen, setCreateModalOpen] = useState(false);
   const [forgotPasswordOpen, setForgotPasswordOpen] = useState(false);
+
+  // Auto-open right drawer when switching to login/register on mobile/tablet
+  useEffect(() => {
+    if (viewState === "login" || viewState === "register") {
+      setRightDrawerOpen(true);
+    }
+  }, [viewState]);
 
   // WebSocket Connection
   useEffect(() => {
@@ -75,30 +81,6 @@ export default function GameClientLayout({ children }: GameClientLayoutProps) {
     setForgotPasswordOpen(false);
   };
 
-  const renderMainContent = () => {
-    if (isLoggedIn) return children;
-
-    switch (viewState) {
-      case "login":
-        return (
-          <LoginForm
-            onLoginSuccess={handleLoginSuccess}
-            onSwitchToRegister={() => setViewState("register")}
-            onForgotPassword={handleForgotPassword}
-          />
-        );
-      case "register":
-        return (
-          <RegisterForm
-            onRegisterSuccess={handleLoginSuccess}
-            onSwitchToLogin={() => setViewState("login")}
-          />
-        );
-      default:
-        return children;
-    }
-  };
-
 
     // Count online friends (authenticated users only, not guests)
     const friendsOnlineCount = onlineUsers.length;
@@ -133,7 +115,7 @@ export default function GameClientLayout({ children }: GameClientLayoutProps) {
                 <div className="sticky top-0 left-0 right-0 z-10 flex justify-center pointer-events-none">
                     <div className="w-3/4 h-1 bg-gradient-to-r from-transparent via-secondary to-transparent shadow-[0_0_20px_rgba(169,111,255,0.8),0_0_40px_rgba(169,111,255,0.4)]" />
                 </div>
-                {renderMainContent()}
+                {children}
             </main>
 
             {/* Right Sidebar - Desktop */}
@@ -145,8 +127,7 @@ export default function GameClientLayout({ children }: GameClientLayoutProps) {
                     />
                 ) : (
                     <GuestRightSidebar
-                        onLogin={() => setViewState("login")}
-                        onRegister={() => setViewState("register")}
+                        onForgotPassword={handleForgotPassword}
                     />
                 )}
             </aside>
@@ -164,8 +145,7 @@ export default function GameClientLayout({ children }: GameClientLayoutProps) {
                     />
                 ) : (
                     <GuestRightSidebar
-                        onLogin={() => setViewState("login")}
-                        onRegister={() => setViewState("register")}
+                        onForgotPassword={handleForgotPassword}
                     />
                 )}
             </Drawer>
