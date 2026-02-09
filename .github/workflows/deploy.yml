@@ -13,12 +13,114 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Whitelist Runner IP on o2switch
+      - name: Manage SSH Whitelist on o2switch
         run: |
-          RUNNER_IP=$(curl -s https://ifconfig.me)
-          echo "Whitelisting IP: $RUNNER_IP"
-          curl -k -H "Authorization: cpanel ${{ secrets.SSH_USER }}:${{ secrets.CPANEL_API_TOKEN }}" \
-            "https://${{ secrets.SSH_HOST }}:2083/execute/SshWhitelist/add?address=$RUNNER_IP&port=22"
+          RUNNER_IP=$(curl -4 -s https://ifconfig.me)
+          echo "Current Runner IP: $RUNNER_IP"
+
+          # Get the list of all whitelisted IPs
+          echo "Fetching current whitelist..."
+          WHITELIST_RESPONSE=$(curl -k -s -H "Authorization: cpanel ${{ secrets.SSH_USER }}:${{ secrets.CPANEL_API_TOKEN }}" \
+            "https://${{ secrets.SSH_HOST }}:2083/execute/SshWhitelist/list")
+
+          echo "Current whitelist response: $WHITELIST_RESPONSE"
+
+          # Check if the current IP is already whitelisted
+          if echo "$WHITELIST_RESPONSE" | grep -q "\"address\":\"$RUNNER_IP\""; then
+            echo "IP $RUNNER_IP is already whitelisted. Skipping whitelist management."
+          else
+            echo "IP $RUNNER_IP is not whitelisted. Managing whitelist..."
+            
+            # Extract unique IP addresses (remove duplicates from in/out directions)
+            WHITELISTED_IPS=$(echo "$WHITELIST_RESPONSE" | grep -oP '"address":"\K[^"]+' | sort -u || echo "")
+            
+            if [ ! -z "$WHITELISTED_IPS" ]; then
+              echo "Found unique whitelisted IPs:"
+              echo "$WHITELISTED_IPS"
+              
+              # Count unique IPs
+              IP_COUNT=$(echo "$WHITELISTED_IPS" | wc -l)
+              echo "Total unique whitelisted IPs: $IP_COUNT"
+              
+              # Remove old IPs to make room (keep only the 2 most recent unique IPs, remove the rest)
+              if [ "$IP_COUNT" -ge 3 ]; then
+                echo "Removing old IPs to prevent limit issues..."
+                IPS_TO_REMOVE=$(echo "$WHITELISTED_IPS" | head -n -2)
+                
+                for OLD_IP in $IPS_TO_REMOVE; do
+                  echo "Removing IP: $OLD_IP (both in and out directions)"
+                  
+                  # Remove outbound direction
+                  REMOVE_OUT=$(curl -k -s -H "Authorization: cpanel ${{ secrets.SSH_USER }}:${{ secrets.CPANEL_API_TOKEN }}" \
+                    "https://${{ secrets.SSH_HOST }}:2083/execute/SshWhitelist/remove?address=$OLD_IP&port=22&direction=out")
+                  echo "Remove OUT response: $REMOVE_OUT"
+                  
+                  # Remove inbound direction
+                  REMOVE_IN=$(curl -k -s -H "Authorization: cpanel ${{ secrets.SSH_USER }}:${{ secrets.CPANEL_API_TOKEN }}" \
+                    "https://${{ secrets.SSH_HOST }}:2083/execute/SshWhitelist/remove?address=$OLD_IP&port=22&direction=in")
+                  echo "Remove IN response: $REMOVE_IN"
+                  
+                  sleep 2
+                done
+              fi
+            fi
+            
+            # Now add the new IP (both directions)
+            echo "Adding new IP: $RUNNER_IP (both in and out directions)"
+            
+            # Add outbound direction
+            ADD_OUT=$(curl -k -s -H "Authorization: cpanel ${{ secrets.SSH_USER }}:${{ secrets.CPANEL_API_TOKEN }}" \
+              "https://${{ secrets.SSH_HOST }}:2083/execute/SshWhitelist/add?address=$RUNNER_IP&port=22&direction=out")
+            echo "Add OUT Response: $ADD_OUT"
+            
+            # Add inbound direction
+            ADD_IN=$(curl -k -s -H "Authorization: cpanel ${{ secrets.SSH_USER }}:${{ secrets.CPANEL_API_TOKEN }}" \
+              "https://${{ secrets.SSH_HOST }}:2083/execute/SshWhitelist/add?address=$RUNNER_IP&port=22&direction=in")
+            echo "Add IN Response: $ADD_IN"
+            
+            # Check if there are errors in the response
+            if echo "$ADD_OUT $ADD_IN" | grep -q '"errors":\['; then
+              ERROR_MSG=$(echo "$ADD_OUT $ADD_IN" | grep -oP '"errors":\[\K[^\]]+' | head -1)
+              if echo "$ERROR_MSG" | grep -q "limite"; then
+                echo "ERROR: SSH whitelist limit still reached after cleanup."
+                echo "Please manually remove old IPs from cPanel: Security > SSH Access"
+                exit 1
+              else
+                echo "ERROR: Failed to whitelist IP: $ERROR_MSG"
+                exit 1
+              fi
+            fi
+            
+            echo "IP whitelisted successfully. Waiting for changes to propagate..."
+            sleep 20
+          fi
+
+      - name: Setup SSH key
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_KEY }}" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+
+          # Set default port to 22 if SSH_PORT is not set
+          SSH_PORT="${{ secrets.SSH_PORT }}"
+          if [ -z "$SSH_PORT" ]; then
+            SSH_PORT="22"
+          fi
+          echo "Using SSH port: $SSH_PORT"
+
+          # Configure SSH to use the key
+          cat >> ~/.ssh/config <<EOF
+          Host ${{ secrets.SSH_HOST }}
+            HostName ${{ secrets.SSH_HOST }}
+            User ${{ secrets.SSH_USER }}
+            Port $SSH_PORT
+            IdentityFile ~/.ssh/deploy_key
+            StrictHostKeyChecking no
+          EOF
+          chmod 600 ~/.ssh/config
+
+          echo "SSH config created:"
+          cat ~/.ssh/config
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -45,23 +147,27 @@ jobs:
         working-directory: backend
 
       - name: Copy files to o2switch via SSH
+        env:
+          SSH_PORT: ${{ secrets.SSH_PORT || '22' }}
         uses: appleboy/scp-action@master
         with:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_KEY }}
-          passphrase: ${{ secrets.SSH_PASSPHRASE }}
+          port: ${{ env.SSH_PORT }}
           source: "backend/dist,backend/package.json,backend/package-lock.json,backend/prisma,backend/app.js,backend/.env"
           target: ${{ secrets.BACKEND_DEPLOY_PATH }}
           strip_components: 1
 
       - name: Post-deployment commands
+        env:
+          SSH_PORT: ${{ secrets.SSH_PORT || '22' }}
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_KEY }}
-          passphrase: ${{ secrets.SSH_PASSPHRASE }}
+          port: ${{ env.SSH_PORT }}
           script: |
             cd ${{ secrets.BACKEND_DEPLOY_PATH }}
             npm install --production
@@ -75,12 +181,114 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Whitelist Runner IP on o2switch
+      - name: Manage SSH Whitelist on o2switch
         run: |
-          RUNNER_IP=$(curl -s https://ifconfig.me)
-          echo "Whitelisting IP: $RUNNER_IP"
-          curl -k -H "Authorization: cpanel ${{ secrets.SSH_USER }}:${{ secrets.CPANEL_API_TOKEN }}" \
-            "https://${{ secrets.SSH_HOST }}:2083/execute/SshWhitelist/add?address=$RUNNER_IP&port=22"
+          RUNNER_IP=$(curl -4 -s https://ifconfig.me)
+          echo "Current Runner IP: $RUNNER_IP"
+
+          # Get the list of all whitelisted IPs
+          echo "Fetching current whitelist..."
+          WHITELIST_RESPONSE=$(curl -k -s -H "Authorization: cpanel ${{ secrets.SSH_USER }}:${{ secrets.CPANEL_API_TOKEN }}" \
+            "https://${{ secrets.SSH_HOST }}:2083/execute/SshWhitelist/list")
+
+          echo "Current whitelist response: $WHITELIST_RESPONSE"
+
+          # Check if the current IP is already whitelisted
+          if echo "$WHITELIST_RESPONSE" | grep -q "\"address\":\"$RUNNER_IP\""; then
+            echo "IP $RUNNER_IP is already whitelisted. Skipping whitelist management."
+          else
+            echo "IP $RUNNER_IP is not whitelisted. Managing whitelist..."
+            
+            # Extract unique IP addresses (remove duplicates from in/out directions)
+            WHITELISTED_IPS=$(echo "$WHITELIST_RESPONSE" | grep -oP '"address":"\K[^"]+' | sort -u || echo "")
+            
+            if [ ! -z "$WHITELISTED_IPS" ]; then
+              echo "Found unique whitelisted IPs:"
+              echo "$WHITELISTED_IPS"
+              
+              # Count unique IPs
+              IP_COUNT=$(echo "$WHITELISTED_IPS" | wc -l)
+              echo "Total unique whitelisted IPs: $IP_COUNT"
+              
+              # Remove old IPs to make room (keep only the 2 most recent unique IPs, remove the rest)
+              if [ "$IP_COUNT" -ge 3 ]; then
+                echo "Removing old IPs to prevent limit issues..."
+                IPS_TO_REMOVE=$(echo "$WHITELISTED_IPS" | head -n -2)
+                
+                for OLD_IP in $IPS_TO_REMOVE; do
+                  echo "Removing IP: $OLD_IP (both in and out directions)"
+                  
+                  # Remove outbound direction
+                  REMOVE_OUT=$(curl -k -s -H "Authorization: cpanel ${{ secrets.SSH_USER }}:${{ secrets.CPANEL_API_TOKEN }}" \
+                    "https://${{ secrets.SSH_HOST }}:2083/execute/SshWhitelist/remove?address=$OLD_IP&port=22&direction=out")
+                  echo "Remove OUT response: $REMOVE_OUT"
+                  
+                  # Remove inbound direction
+                  REMOVE_IN=$(curl -k -s -H "Authorization: cpanel ${{ secrets.SSH_USER }}:${{ secrets.CPANEL_API_TOKEN }}" \
+                    "https://${{ secrets.SSH_HOST }}:2083/execute/SshWhitelist/remove?address=$OLD_IP&port=22&direction=in")
+                  echo "Remove IN response: $REMOVE_IN"
+                  
+                  sleep 2
+                done
+              fi
+            fi
+            
+            # Now add the new IP (both directions)
+            echo "Adding new IP: $RUNNER_IP (both in and out directions)"
+            
+            # Add outbound direction
+            ADD_OUT=$(curl -k -s -H "Authorization: cpanel ${{ secrets.SSH_USER }}:${{ secrets.CPANEL_API_TOKEN }}" \
+              "https://${{ secrets.SSH_HOST }}:2083/execute/SshWhitelist/add?address=$RUNNER_IP&port=22&direction=out")
+            echo "Add OUT Response: $ADD_OUT"
+            
+            # Add inbound direction
+            ADD_IN=$(curl -k -s -H "Authorization: cpanel ${{ secrets.SSH_USER }}:${{ secrets.CPANEL_API_TOKEN }}" \
+              "https://${{ secrets.SSH_HOST }}:2083/execute/SshWhitelist/add?address=$RUNNER_IP&port=22&direction=in")
+            echo "Add IN Response: $ADD_IN"
+            
+            # Check if there are errors in the response
+            if echo "$ADD_OUT $ADD_IN" | grep -q '"errors":\['; then
+              ERROR_MSG=$(echo "$ADD_OUT $ADD_IN" | grep -oP '"errors":\[\K[^\]]+' | head -1)
+              if echo "$ERROR_MSG" | grep -q "limite"; then
+                echo "ERROR: SSH whitelist limit still reached after cleanup."
+                echo "Please manually remove old IPs from cPanel: Security > SSH Access"
+                exit 1
+              else
+                echo "ERROR: Failed to whitelist IP: $ERROR_MSG"
+                exit 1
+              fi
+            fi
+            
+            echo "IP whitelisted successfully. Waiting for changes to propagate..."
+            sleep 20
+          fi
+
+      - name: Setup SSH key
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_KEY }}" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+
+          # Set default port to 22 if SSH_PORT is not set
+          SSH_PORT="${{ secrets.SSH_PORT }}"
+          if [ -z "$SSH_PORT" ]; then
+            SSH_PORT="22"
+          fi
+          echo "Using SSH port: $SSH_PORT"
+
+          # Configure SSH to use the key
+          cat >> ~/.ssh/config <<EOF
+          Host ${{ secrets.SSH_HOST }}
+            HostName ${{ secrets.SSH_HOST }}
+            User ${{ secrets.SSH_USER }}
+            Port $SSH_PORT
+            IdentityFile ~/.ssh/deploy_key
+            StrictHostKeyChecking no
+          EOF
+          chmod 600 ~/.ssh/config
+
+          echo "SSH config created:"
+          cat ~/.ssh/config
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -105,23 +313,27 @@ jobs:
         working-directory: frontend
 
       - name: Copy Next.js app to o2switch via SSH
+        env:
+          SSH_PORT: ${{ secrets.SSH_PORT || '22' }}
         uses: appleboy/scp-action@master
         with:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_KEY }}
-          passphrase: ${{ secrets.SSH_PASSPHRASE }}
+          port: ${{ env.SSH_PORT }}
           source: "frontend/.next,frontend/package.json,frontend/package-lock.json,frontend/public,frontend/.env,frontend/next.config.ts"
           target: ${{ secrets.FRONTEND_DEPLOY_PATH }}
           strip_components: 1
 
       - name: Post-deployment commands for frontend
+        env:
+          SSH_PORT: ${{ secrets.SSH_PORT || '22' }}
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_KEY }}
-          passphrase: ${{ secrets.SSH_PASSPHRASE }}
+          port: ${{ env.SSH_PORT }}
           script: |
             cd ${{ secrets.FRONTEND_DEPLOY_PATH }}
             npm install --production
