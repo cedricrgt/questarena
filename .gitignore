@@ -43,4 +43,5 @@ package-lock.json
 /db
 
 # Env Var Docker
-docker.env
+docker.envconception/*.md
+.github/workflows/*.bak
