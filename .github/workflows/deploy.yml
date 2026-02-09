@@ -50,6 +50,7 @@ jobs:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_KEY }}
+          passphrase: ${{ secrets.SSH_PASSPHRASE }}
           source: "backend/dist,backend/package.json,backend/package-lock.json,backend/prisma,backend/app.js,backend/.env"
           target: ${{ secrets.BACKEND_DEPLOY_PATH }}
           strip_components: 1
@@ -60,6 +61,7 @@ jobs:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_KEY }}
+          passphrase: ${{ secrets.SSH_PASSPHRASE }}
           script: |
             cd ${{ secrets.BACKEND_DEPLOY_PATH }}
             npm install --production
@@ -108,6 +110,7 @@ jobs:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_KEY }}
+          passphrase: ${{ secrets.SSH_PASSPHRASE }}
           source: "frontend/.next,frontend/package.json,frontend/package-lock.json,frontend/public,frontend/.env,frontend/next.config.ts"
           target: ${{ secrets.FRONTEND_DEPLOY_PATH }}
           strip_components: 1
@@ -118,6 +121,7 @@ jobs:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_KEY }}
+          passphrase: ${{ secrets.SSH_PASSPHRASE }}
           script: |
             cd ${{ secrets.FRONTEND_DEPLOY_PATH }}
             npm install --production
