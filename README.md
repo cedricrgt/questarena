@@ -2,12 +2,11 @@
 
 ## Présentation Générale
 
-- **Quoi ?** Une plateforme dédiée aux défis de jeux vidéo, permettant aux utilisateurs de proposer et relever des challenges sur différents jeux.
-- **Qui ?** QuestsArena (fictif) vise à rassembler les passionnés de jeux vidéo autour d'une communauté dynamique et compétitive.
+- **Quoi ?** Une plateforme web dédiée aux défis de jeux vidéo, permettant aux utilisateurs de proposer et relever des challenges sur différents jeux.
+- **Qui ?** QuestsArena est un projet visant à rassembler les passionnés de jeux vidéo autour d'une communauté dynamique et compétitive.
 - **Pour qui ?** Pour tous les amateurs de jeux vidéo, quel que soit leur niveau, cherchant à se mesurer aux autres et à partager leurs expériences.
-- **Comment ?** En équipe à définir (positionnement via un formulaire de voeux) par l'équipe pédagogique. Organisation en méthode agile pour la gestion de projet.
-- **Quand ?** Pendant 4 semaines correspondant à 4 sprints (conception, code, déploiement, recettage, etc.).
-- **Pourquoi ?** Pour la réalisation d'un projet fictif à but pédagogique visant l'obtention du Titre Professionnel.
+- **Comment ?** Développement solo en méthodologie agile, avec itérations progressives et déploiement continu.
+- **Pourquoi ?** Pour répondre à un besoin identifié dans la communauté gaming : un espace centralisé pour créer, partager et participer à des défis créatifs cross-plateformes.
 
 ## Présentation du Projet de Développement
 
@@ -56,11 +55,33 @@
 - Ne pas hésiter à utiliser des contenus “lorem ipsum” au moins le temps d'avoir un MVP fonctionnel.
 - Inspiration graphique : à mi chemin entre des sites de communautés de gamers, plateformes de partage de contenu comme [YouTube](https://www.youtube.com) ou [Twitch](https://www.twitch.tv) et forums de jeux vidéo.
 
-## Pour terminer
+## Méthodologie de Développement
 
-- Le projet est libre d'interprétation, l'équipe peut proposer ses propres choix techniques et fonctionnels. Il est donc évolutif et il ne faut pas hésiter à se l'approprier.
-- L'accent doit être mis sur l'apprentissage et la mise en pratique des compétences acquises pendant la formation (objectif TP).
-- L'équipe pédagogique assure l'accompagnement et conseille tout au long du projet. Elle interviendra aussi lors de la validation des choix techniques et fonctionnels. Elle sera garante de l'évaluation de la progression en vue de se préparer au mieux pour le TP.
-- L'équipe pédagogique n'est en aucun cas positionnée en tant que représentante du client fictif du projet proposé.
+### Approche itérative
 
-:arrow_right: [Attendus sur le sprint 0](../.github/ISSUE_TEMPLATE/sp0-suivi-conception.md), dédié à la conception.
+- Développement en cycles courts avec déploiements fréquents
+- Priorisation stricte des fonctionnalités selon la valeur business
+- Validation continue avec des utilisateurs beta-testeurs
+
+### Phases du projet
+
+1. **Conception** : analyse du besoin, architecture, maquettes, modélisation des données
+2. **MVP** : développement des fonctionnalités core (auth, challenges, participations, votes)
+3. **Enrichissement** : ajout progressif des fonctionnalités secondaires
+4. **Optimisation** : performance, SEO, accessibilité, tests
+5. **Déploiement** : mise en production, monitoring, maintenance
+
+### Principes de développement
+
+- **Clean Code** : code lisible, maintenable, documenté
+- **DRY** : éviter la duplication de code
+- **SOLID** : principes de conception orientée objet
+- **Tests** : TDD quand applicable, couverture minimale de 70%
+- **Documentation** : README détaillé, commentaires pertinents, documentation API (Swagger)
+
+### Stack technique justifiée
+
+- **Frontend** : React + TypeScript (typage fort, écosystème riche)
+- **Backend** : NestJS (architecture modulaire, scalable)
+- **Database** : PostgreSQL + Prisma (fiabilité, type-safety)
+- **DevOps** : Docker, GitHub Actions, Render/Vercel

@@ -4,7 +4,6 @@ const isGithubPages =
   process.env.GITHUB_ACTIONS || process.env.DEPLOY_TARGET === "GH_PAGES";
 
 const nextConfig: NextConfig = {
-  output: 'export',
   images: {
     unoptimized: true,
     remotePatterns: [

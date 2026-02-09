@@ -93,18 +93,37 @@ jobs:
         run: npm ci
         working-directory: frontend
 
-      - name: Build and Export Next.js
-        run: npm run export
+      - name: Build Next.js
+        run: npm run build
         working-directory: frontend
         env:
           NEXT_PUBLIC_API_URL: ${{ secrets.NEXT_PUBLIC_API_URL }}
+          NEXT_PUBLIC_RAWG_API_KEY: ${{ secrets.NEXT_PUBLIC_RAWG_API_KEY }}
 
-      - name: Copy static files to o2switch via SSH
+      - name: Create .env for production
+        run: |
+          echo "NEXT_PUBLIC_API_URL=${{ secrets.NEXT_PUBLIC_API_URL }}" >> .env
+          echo "NEXT_PUBLIC_RAWG_API_KEY=${{ secrets.NEXT_PUBLIC_RAWG_API_KEY }}" >> .env
+        working-directory: frontend
+
+      - name: Copy Next.js app to o2switch via SSH
         uses: appleboy/scp-action@master
         with:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_KEY }}
-          source: "frontend/out/*"
+          source: "frontend/.next,frontend/package.json,frontend/package-lock.json,frontend/public,frontend/.env,frontend/next.config.ts"
           target: ${{ secrets.FRONTEND_DEPLOY_PATH }}
-          strip_components: 2
+          strip_components: 1
+
+      - name: Post-deployment commands for frontend
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_KEY }}
+          script: |
+            cd ${{ secrets.FRONTEND_DEPLOY_PATH }}
+            npm install --production
+            mkdir -p tmp
+            touch tmp/restart.txt

@@ -1,29 +1,84 @@
 # Cahier des Charges - QuestsArena
 
-## 1. Présentation du Projet
+## 1. Contexte et Opportunité Business
 
-QuestsArena est une plateforme web dédiée aux défis de jeux vidéo permettant aux utilisateurs de proposer, participer et voter pour des challenges variés. L'objectif est de créer une communauté dynamique et engageante où les joueurs de tous niveaux peuvent se mesurer les uns aux autres, partager leurs exploits vidéoludiques et gagner en reconnaissance au sein de la communauté.
+### Contexte du marché
 
-La plateforme sera développée selon une architecture MVC en micro-services, avec un front-end React, un back-end NestJS et une base de données relationnelle gérée via Prisma. Cette architecture permettra une évolutivité optimale et une maintenance facilitée.
+Le marché du gaming représente plus de 180 milliards de dollars en 2024, avec une communauté mondiale de plus de 3 milliards de joueurs. Les plateformes de streaming (Twitch, YouTube Gaming) et les réseaux sociaux gaming connaissent une croissance exponentielle.
 
-## 2. Définition des Besoins et Objectifs
+Cependant, il existe un manque d'outils dédiés permettant aux joueurs de :
 
-### Besoins identifiés
+- Créer et partager des défis créatifs cross-plateformes
+- Prouver leurs compétences au-delà des systèmes de succès intégrés aux jeux
+- Être reconnus pour leurs exploits dans une communauté centralisée
 
-- Les joueurs cherchent à démontrer leurs compétences au-delà des systèmes intégrés aux jeux
-- Manque d'espace centralisé pour proposer et relever des défis cross-jeux
+### Opportunité identifiée
+
+QuestsArena vise à combler ce vide en créant une plateforme web dédiée aux défis de jeux vidéo, permettant aux utilisateurs de proposer, participer et voter pour des challenges variés. L'objectif est de créer une communauté dynamique et engageante où les joueurs de tous niveaux peuvent se mesurer les uns aux autres, partager leurs exploits et gagner en reconnaissance.
+
+### Positionnement
+
+**QuestsArena se positionne comme :**
+
+- Un hub centralisé pour les défis gaming cross-plateformes
+- Une alternative créative aux systèmes de succès traditionnels
+- Un espace de valorisation des compétences gaming
+- Une plateforme communautaire avec gamification poussée
+
+### Approche technique
+
+La plateforme sera développée selon une architecture moderne et scalable :
+
+- **Frontend** : React + TypeScript pour une expérience utilisateur réactive
+- **Backend** : NestJS avec architecture modulaire micro-services
+- **Database** : PostgreSQL + Prisma pour la fiabilité et le type-safety
+- **Infrastructure** : Docker, CI/CD, déploiement cloud
+
+Cette stack permettra une évolutivité optimale, une maintenance facilitée et un développement efficace en solo.
+
+## 2. Analyse du Besoin et Objectifs Business
+
+### Problématiques utilisateurs identifiées
+
+**Pain points des joueurs :**
+
+- Frustration de ne pas pouvoir prouver leurs compétences au-delà des systèmes de succès intégrés aux jeux
+- Absence d'espace centralisé pour proposer et relever des défis cross-plateformes
 - Difficulté à trouver des challenges créatifs et originaux
-- Besoin de reconnaissance et de valorisation pour les performances de jeu
-- Manque d'outils pour partager facilement des exploits vidéos
+- Manque de reconnaissance pour les performances exceptionnelles
+- Complexité pour partager et valoriser des exploits vidéo
 
-### Objectifs du projet
+**Besoins non satisfaits :**
 
-- Créer une plateforme intuitive et responsive pour proposer et relever des défis
-- Établir un système de validation par vidéo des challenges réalisés
-- Mettre en place un mécanisme de votation transparent et équitable
-- Développer une communauté active et bienveillante de joueurs
-- Offrir une visibilité aux créateurs de contenus via un tableau des leaders
-- Assurer une expérience utilisateur fluide sur tous les appareils
+- Validation sociale des compétences gaming
+- Espace de créativité pour inventer des défis uniques
+- Système de réputation gaming cross-jeux
+- Communauté engagée autour de la compétition saine
+
+### Objectifs Business
+
+**Objectifs court terme (MVP - 3 mois) :**
+
+- Lancer une plateforme fonctionnelle avec les features core
+- Acquérir 100 utilisateurs beta-testeurs actifs
+- Valider le product-market fit
+- Obtenir un taux d'engagement > 40% (utilisateurs revenant chaque semaine)
+
+**Objectifs moyen terme (6-12 mois) :**
+
+- Atteindre 1000 utilisateurs actifs mensuels
+- Générer 50+ nouveaux challenges par mois
+- Établir des partenariats avec des streamers/créateurs de contenu
+- Implémenter la monétisation (premium features, publicité non-intrusive)
+
+### Objectifs Produit
+
+- **UX** : Créer une plateforme intuitive et responsive, temps d'onboarding < 2 minutes
+- **Validation** : Établir un système de validation par vidéo fiable et rapide
+- **Engagement** : Mettre en place un mécanisme de votation transparent et gamifié
+- **Communauté** : Développer une communauté active et bienveillante (modération efficace)
+- **Visibilité** : Offrir une reconnaissance via tableau des leaders, badges, statistiques
+- **Performance** : Assurer une expérience fluide sur tous les appareils (< 3s de chargement)
 
 ## 3. Fonctionnalités du Projet
 
@@ -95,26 +150,47 @@ Fonctionnalités prévues pour les phases ultérieures:
 11. Système de clans/équipes pour défis collaboratifs
 12. Support multilingue (français, anglais minimum)
 
-## 6. Architecture du Projet
+## 6. Architecture Technique
 
-### Architecture MVC en micro-services
+### Choix d'architecture : Modulaire et Évolutive
 
-L'architecture choisie est une architecture MVC (Modèle-Vue-Contrôleur) implémentée via des micro-services, permettant:
+L'architecture choisie est une **architecture modulaire** inspirée des micro-services, adaptée pour un développement solo tout en préservant la scalabilité future.
 
-- Séparation des préoccupations: isoler la logique métier, la présentation et le contrôle
-- Scalabilité horizontale: possibilité de déployer et scaler indépendamment les différents services
-- Maintenance facilitée: modification d'un service sans impacter les autres
-- Résilience: tolérance aux pannes et isolation des problèmes
-- Déploiement continu: mise à jour des services sans interruption globale
+**Avantages de cette approche :**
 
-### Structure des micro-services
+- **Séparation des préoccupations** : isolation de la logique métier, présentation et contrôle
+- **Scalabilité progressive** : possibilité d'extraire des modules en micro-services indépendants plus tard
+- **Maintenance facilitée** : modification d'un module sans impacter les autres
+- **Développement solo efficace** : monorepo avec modules découplés, déploiement simplifié
+- **Évolutivité** : migration facile vers une architecture distribuée si besoin
 
-1. Service Authentification: gestion des utilisateurs, sessions, et sécurité
-2. Service Challenges: gestion des défis (création, modification, recherche)
-3. Service Participations: gestion des soumissions et vidéos
-4. Service Votation: système de votes et classements
-5. Service Médias: stockage et traitement des fichiers médias
-6. API Gateway: point d'entrée unifié pour le front-end
+### Structure Modulaire (Phase MVP)
+
+**Backend NestJS - Architecture modulaire :**
+
+1. **Module Auth** : authentification, autorisation, gestion des sessions JWT
+2. **Module Users** : profils utilisateurs, statistiques, préférences
+3. **Module Challenges** : CRUD des défis, catégorisation, recherche
+4. **Module Participations** : soumissions vidéo, validation, historique
+5. **Module Votes** : système de votes, classements, anti-fraude
+6. **Module Media** : upload, validation, optimisation des fichiers
+7. **Module Notifications** : système de notifications (email, in-app)
+
+**Frontend React - Architecture par features :**
+
+- Composants réutilisables (design system)
+- Pages organisées par fonctionnalité
+- State management (Context API / Zustand)
+- API layer centralisé (Axios + React Query)
+
+### Évolution vers Micro-services (Phase 2)
+
+Si la croissance le justifie, migration progressive :
+
+1. Extraction du service Media (traitement vidéo intensif)
+2. Extraction du service Notifications (scalabilité indépendante)
+3. API Gateway pour orchestration
+4. Message broker (RabbitMQ/Redis) pour communication asynchrone
 
 ## 7. Technologies Utilisées
 
