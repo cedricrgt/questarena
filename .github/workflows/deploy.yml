@@ -18,7 +18,7 @@ jobs:
           RUNNER_IP=$(curl -s https://ifconfig.me)
           echo "Whitelisting IP: $RUNNER_IP"
           curl -k -H "Authorization: cpanel ${{ secrets.SSH_USER }}:${{ secrets.CPANEL_API_TOKEN }}" \
-            "https://${{ secrets.SSH_HOST }}:2083/execute/SshWhitelist/add?ip=$RUNNER_IP&port=22"
+            "https://${{ secrets.SSH_HOST }}:2083/execute/SshWhitelist/add?address=$RUNNER_IP&port=22"
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -78,7 +78,7 @@ jobs:
           RUNNER_IP=$(curl -s https://ifconfig.me)
           echo "Whitelisting IP: $RUNNER_IP"
           curl -k -H "Authorization: cpanel ${{ secrets.SSH_USER }}:${{ secrets.CPANEL_API_TOKEN }}" \
-            "https://${{ secrets.SSH_HOST }}:2083/execute/SshWhitelist/add?ip=$RUNNER_IP&port=22"
+            "https://${{ secrets.SSH_HOST }}:2083/execute/SshWhitelist/add?address=$RUNNER_IP&port=22"
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
