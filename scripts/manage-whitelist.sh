@@ -64,13 +64,12 @@ else
     
     echo "Found $IP_COUNT existing whitelisted IPs."
     
-    # If we have many IPs (e.g. > 10), cleanup implies we want to remove old ones.
-    # To be safe and avoid removing our own static IPs if any, we only remove if list is getting full.
-    # O2Switch often has a limit (e.g. 50? 20?).
-    # Strategy: If count > 10, remove the first few (oldest usually).
+    # If we have many IPs, cleanup implies we want to remove old ones.
+    # O2Switch has a strict limit of 10 exceptions.
+    # Strategy: If count >= 8, remove the existing IPs to make room.
     
-    if [ "$IP_COUNT" -gt 10 ]; then
-        echo "Whitelist has > 10 IPs. Cleaning up..."
+    if [ "$IP_COUNT" -ge 8 ]; then
+        echo "Whitelist has >= 8 IPs. Cleaning up..."
         
         # Determine IPs to remove.
         # If we have jq, we can iterate.
