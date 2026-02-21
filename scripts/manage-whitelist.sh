@@ -1,103 +1,87 @@
 #!/bin/bash
 
-# Configuration
-# Arguments:
-# 1: CPANEL_HOST (e.g., nodeXYZ.o2switch.net or your domain)
-# 2: CPANEL_USER
-# 3: CPANEL_TOKEN
-# 4: SSH_PORT (optional, defaults to 22)
-
-CPANEL_HOST="${1}"
-CPANEL_USER="${2}"
-CPANEL_TOKEN="${3}"
-SSH_PORT="${4:-22}"
-
-if [ -z "$CPANEL_HOST" ] || [ -z "$CPANEL_USER" ] || [ -z "$CPANEL_TOKEN" ]; then
-    echo "Usage: $0 <host> <user> <token> [port]"
-    exit 1
-fi
+# Script to manage SSH whitelist on o2switch for GitHub Actions
+# Usage: ./manage-whitelist.sh <SSH_HOST> <CPANEL_USER> <CPANEL_API_TOKEN>
 
 set -e
 
-# Function to make API calls with timeout
-cpanel_api() {
-    local endpoint="$1"
-    local params="$2"
-    
-    # Using --max-time to prevent indefinite hanging
-    # Using --connect-timeout to fail fast if host is unreachable
-    response=$(curl -k -s --max-time 30 --connect-timeout 10 \
-        -H "Authorization: cpanel $CPANEL_USER:$CPANEL_TOKEN" \
-        "https://$CPANEL_HOST:2083/execute/SshWhitelist/$endpoint?$params")
-        
-    echo "$response"
-}
+SSH_HOST="$1"
+CPANEL_USER="$2"
+CPANEL_TOKEN="$3"
 
-# Get current runner IP
-echo "Detecting runner IP..."
-RUNNER_IP=$(curl -4 -s --max-time 10 https://ifconfig.me)
-
-if [ -z "$RUNNER_IP" ]; then
-    echo "Error: Could not determine runner IP"
-    exit 1
+if [ -z "$SSH_HOST" ] || [ -z "$CPANEL_USER" ] || [ -z "$CPANEL_TOKEN" ]; then
+  echo "Error: Missing required arguments"
+  echo "Usage: $0 <SSH_HOST> <CPANEL_USER> <CPANEL_API_TOKEN>"
+  exit 1
 fi
+
+echo "Detecting runner IP..."
+RUNNER_IP=$(curl -4 -s https://ifconfig.me)
 echo "Current Runner IP: $RUNNER_IP"
 
-# 1. Fetch current whitelist to manage limits
+# API Configuration
+API_URL="https://${SSH_HOST}:2083/execute/SshWhitelist"
+AUTH_HEADER="Authorization: cpanel ${CPANEL_USER}:${CPANEL_TOKEN}"
+
 echo "Fetching current whitelist..."
-WHITELIST_JSON=$(cpanel_api "list" "")
+WHITELIST_RESPONSE=$(curl -k -sm 45 -H "$AUTH_HEADER" "${API_URL}/list" 2>&1)
 
-# Check if JSON is valid (basic check)
-if ! echo "$WHITELIST_JSON" | grep -q "\"status\":1"; then
-    echo "Warning: Failed to fetch whitelist or invalid response. Response: $WHITELIST_JSON"
-    # Proceeding to try adding IP anyway as a fallback
-else
-    # Check number of IPs
-    # Using jq if available, otherwise simple grep count (less accurate but sufficient for simple limit check)
-    if command -v jq &> /dev/null; then
-        IP_COUNT=$(echo "$WHITELIST_JSON" | jq '.data.list | length')
-        EXISTING_IPS=$(echo "$WHITELIST_JSON" | jq -r '.data.list[].address')
-    else
-        IP_COUNT=$(echo "$WHITELIST_JSON" | grep -o "\"address\"" | wc -l)
-        EXISTING_IPS="" 
-    fi
-    
-    echo "Found $IP_COUNT existing whitelisted IPs."
-    
-    # If we have many IPs, cleanup implies we want to remove old ones.
-    # O2Switch has a strict limit of 10 exceptions.
-    # Strategy: If count >= 8, remove the existing IPs to make room.
-    
-    if [ "$IP_COUNT" -ge 8 ]; then
-        echo "Whitelist has >= 8 IPs. Cleaning up..."
-        
-        # Determine IPs to remove.
-        # If we have jq, we can iterate.
-        if [ -n "$EXISTING_IPS" ]; then
-            for IP in $EXISTING_IPS; do
-                # Don't remove the current runner IP if it's already there
-                if [ "$IP" != "$RUNNER_IP" ]; then
-                    echo "Removing old IP: $IP"
-                    # We continue even if removal fails
-                    cpanel_api "remove" "address=$IP" > /dev/null || true
-                fi
-            done
-        fi
-    fi
+if [ $? -ne 0 ]; then
+  echo "Error: Failed to connect to cPanel API"
+  echo "Response: $WHITELIST_RESPONSE"
+  exit 1
 fi
 
-# 2. Add current runner IP
+# Check if IP is already whitelisted
+if echo "$WHITELIST_RESPONSE" | grep -q "\"address\":\"$RUNNER_IP\""; then
+  echo "✓ IP $RUNNER_IP is already whitelisted."
+  exit 0
+fi
+
+# Count existing IPs (unique addresses only)
+IP_COUNT=$(echo "$WHITELIST_RESPONSE" | grep -oP '"address":"\K[^"]+' | sort -u | wc -l)
+echo "Found $IP_COUNT existing whitelisted IPs."
+
+# If limit reached (5 IPs), remove all before adding new one
+if [ "$IP_COUNT" -ge 5 ]; then
+  echo "Limit reached. Removing all old IPs..."
+  
+  REMOVE_ALL_RESPONSE=$(curl -k -sm 45 -H "$AUTH_HEADER" "${API_URL}/remove_all" 2>&1)
+  
+  if echo "$REMOVE_ALL_RESPONSE" | grep -q '"status":1'; then
+    echo "✓ All old IPs removed successfully."
+    sleep 10  # Wait for firewall to update
+  else
+    echo "Warning: Failed to remove old IPs."
+    echo "Response: $REMOVE_ALL_RESPONSE"
+  fi
+fi
+
+# Add new IP (both directions: in and out)
 echo "Whitelisting runner IP ($RUNNER_IP)..."
-ADD_RES=$(cpanel_api "add" "address=$RUNNER_IP&port=$SSH_PORT")
 
-if echo "$ADD_RES" | grep -q "\"status\":1"; then
-    echo "Success: $RUNNER_IP added to whitelist."
-else
-    # Check for "already exists" error which is actually a success state for us
-    if echo "$ADD_RES" | grep -q "already"; then
-         echo "Success: $RUNNER_IP was already whitelisted."
-    else
-         echo "Error adding IP to whitelist: $ADD_RES"
-         exit 1
-    fi
+# Add outbound direction
+ADD_OUT_RESPONSE=$(curl -k -sm 45 -H "$AUTH_HEADER" \
+  "${API_URL}/add?address=${RUNNER_IP}&port=22&direction=out" 2>&1)
+
+if ! echo "$ADD_OUT_RESPONSE" | grep -q '"status":1'; then
+  echo "Error adding IP (outbound):"
+  echo "$ADD_OUT_RESPONSE"
+  exit 1
 fi
+
+# Add inbound direction
+ADD_IN_RESPONSE=$(curl -k -sm 45 -H "$AUTH_HEADER" \
+  "${API_URL}/add?address=${RUNNER_IP}&port=22&direction=in" 2>&1)
+
+if ! echo "$ADD_IN_RESPONSE" | grep -q '"status":1'; then
+  echo "Error adding IP (inbound):"
+  echo "$ADD_IN_RESPONSE"
+  exit 1
+fi
+
+echo "✓ Success: $RUNNER_IP added to whitelist."
+echo "Waiting 20 seconds for firewall to update..."
+sleep 20
+
+exit 0
