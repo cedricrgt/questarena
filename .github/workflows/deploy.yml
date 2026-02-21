@@ -13,11 +13,25 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Manage SSH Whitelist on o2switch
+      - name: Get runner's public IP
+        id: ip
+        uses: haythem/public-ip@v1.3
+
+      - name: Removing all whitelisted IPs
         run: |
-          chmod +x ./scripts/manage-whitelist.sh
-          ./scripts/manage-whitelist.sh "${{ secrets.SSH_HOST }}" "${{ secrets.SSH_USER }}" "${{ secrets.CPANEL_API_TOKEN }}"
-        shell: bash
+          curl -sm 45 -H'Authorization: cpanel ${{ secrets.SSH_USER }}:${{ secrets.CPANEL_API_TOKEN }}' \
+          'https://${{ secrets.SSH_HOST }}:2083/execute/SshWhitelist/remove_all'
+
+      - name: Whitelisting the runner IP
+        run: |
+          curl -sm 45 -H'Authorization: cpanel ${{ secrets.SSH_USER }}:${{ secrets.CPANEL_API_TOKEN }}' \
+          'https://${{ secrets.SSH_HOST }}:2083/execute/SshWhitelist/add?address=${{ steps.ip.outputs.ipv4 }}&port=22'
+
+      - name: Verify IP is whitelisted
+        run: |
+          sleep 10
+          curl -sm 45 -H'Authorization: cpanel ${{ secrets.SSH_USER }}:${{ secrets.CPANEL_API_TOKEN }}' \
+          'https://${{ secrets.SSH_HOST }}:2083/execute/SshWhitelist/list' | grep ${{ steps.ip.outputs.ipv4 }}
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -42,41 +56,38 @@ jobs:
           echo "JWT_SECRET=${{ secrets.JWT_SECRET }}" >> .env
         working-directory: backend
 
-      - name: Compress backend files
+      - name: Installing SSH Key
         run: |
-          tar -czf backend.tar.gz dist package.json package-lock.json prisma app.js .env
-        working-directory: backend
+          eval $(ssh-agent -s)
+          mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
+          echo "${{ secrets.SSH_KEY }}" > ~/.ssh/id_rsa
+          chmod 0400 ~/.ssh/id_rsa
 
-      - name: Copy backend archive to o2switch
-        env:
-          SSH_PORT: ${{ secrets.SSH_PORT || '22' }}
-        uses: appleboy/scp-action@master
-        with:
-          host: ${{ secrets.SSH_HOST }}
-          username: ${{ secrets.SSH_USER }}
-          key: ${{ secrets.SSH_KEY }}
-          port: ${{ env.SSH_PORT }}
-          source: "backend/backend.tar.gz"
-          target: ${{ secrets.BACKEND_DEPLOY_PATH }}
-          strip_components: 1
+      - name: Deploy Backend with rsync
+        run: |
+          rsync --timeout=60 -e "ssh -o StrictHostKeyChecking=no -p ${{ secrets.SSH_PORT || '22' }} -i ~/.ssh/id_rsa" \
+          --exclude="node_modules" --exclude=".git" -av \
+          backend/dist backend/package.json backend/package-lock.json backend/prisma backend/app.js backend/.env \
+          ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:${{ secrets.BACKEND_DEPLOY_PATH }}/
 
-      - name: Extract and install backend
-        env:
-          SSH_PORT: ${{ secrets.SSH_PORT || '22' }}
+      - name: Install dependencies and restart backend
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_KEY }}
-          port: ${{ env.SSH_PORT }}
+          port: ${{ secrets.SSH_PORT || '22' }}
           script: |
             cd ${{ secrets.BACKEND_DEPLOY_PATH }}
-            tar -xzf backend.tar.gz
-            rm backend.tar.gz
             npm install --production
             npx prisma migrate deploy
             mkdir -p tmp
             touch tmp/restart.txt
+
+      - name: Cleaning SSH keys
+        if: always()
+        run: rm -fr ~/.ssh
 
   deploy-frontend:
     runs-on: ubuntu-latest
@@ -85,11 +96,25 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Manage SSH Whitelist on o2switch
+      - name: Get runner's public IP
+        id: ip
+        uses: haythem/public-ip@v1.3
+
+      - name: Removing all whitelisted IPs
         run: |
-          chmod +x ./scripts/manage-whitelist.sh
-          ./scripts/manage-whitelist.sh "${{ secrets.SSH_HOST }}" "${{ secrets.SSH_USER }}" "${{ secrets.CPANEL_API_TOKEN }}"
-        shell: bash
+          curl -sm 45 -H'Authorization: cpanel ${{ secrets.SSH_USER }}:${{ secrets.CPANEL_API_TOKEN }}' \
+          'https://${{ secrets.SSH_HOST }}:2083/execute/SshWhitelist/remove_all'
+
+      - name: Whitelisting the runner IP
+        run: |
+          curl -sm 45 -H'Authorization: cpanel ${{ secrets.SSH_USER }}:${{ secrets.CPANEL_API_TOKEN }}' \
+          'https://${{ secrets.SSH_HOST }}:2083/execute/SshWhitelist/add?address=${{ steps.ip.outputs.ipv4 }}&port=22'
+
+      - name: Verify IP is whitelisted
+        run: |
+          sleep 10
+          curl -sm 45 -H'Authorization: cpanel ${{ secrets.SSH_USER }}:${{ secrets.CPANEL_API_TOKEN }}' \
+          'https://${{ secrets.SSH_HOST }}:2083/execute/SshWhitelist/list' | grep ${{ steps.ip.outputs.ipv4 }}
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -113,37 +138,34 @@ jobs:
           echo "NEXT_PUBLIC_RAWG_API_KEY=${{ secrets.NEXT_PUBLIC_RAWG_API_KEY }}" >> .env
         working-directory: frontend
 
-      - name: Compress frontend files
+      - name: Installing SSH Key
         run: |
-          tar -czf frontend.tar.gz .next package.json package-lock.json public .env next.config.ts
-        working-directory: frontend
+          eval $(ssh-agent -s)
+          mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
+          echo "${{ secrets.SSH_KEY }}" > ~/.ssh/id_rsa
+          chmod 0400 ~/.ssh/id_rsa
 
-      - name: Copy frontend archive to o2switch
-        env:
-          SSH_PORT: ${{ secrets.SSH_PORT || '22' }}
-        uses: appleboy/scp-action@master
-        with:
-          host: ${{ secrets.SSH_HOST }}
-          username: ${{ secrets.SSH_USER }}
-          key: ${{ secrets.SSH_KEY }}
-          port: ${{ env.SSH_PORT }}
-          source: "frontend/frontend.tar.gz"
-          target: ${{ secrets.FRONTEND_DEPLOY_PATH }}
-          strip_components: 1
+      - name: Deploy Frontend with rsync
+        run: |
+          rsync --timeout=60 -e "ssh -o StrictHostKeyChecking=no -p ${{ secrets.SSH_PORT || '22' }} -i ~/.ssh/id_rsa" \
+          --exclude="node_modules" --exclude=".git" -av \
+          frontend/.next frontend/package.json frontend/package-lock.json frontend/public frontend/.env frontend/next.config.ts \
+          ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:${{ secrets.FRONTEND_DEPLOY_PATH }}/
 
-      - name: Extract and install frontend
-        env:
-          SSH_PORT: ${{ secrets.SSH_PORT || '22' }}
+      - name: Install dependencies and restart frontend
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_KEY }}
-          port: ${{ env.SSH_PORT }}
+          port: ${{ secrets.SSH_PORT || '22' }}
           script: |
             cd ${{ secrets.FRONTEND_DEPLOY_PATH }}
-            tar -xzf frontend.tar.gz
-            rm frontend.tar.gz
             npm install --production
             mkdir -p tmp
             touch tmp/restart.txt
+
+      - name: Cleaning SSH keys
+        if: always()
+        run: rm -fr ~/.ssh
