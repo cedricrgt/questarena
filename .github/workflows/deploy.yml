@@ -7,18 +7,11 @@ on:
       - feat/deploy
 
 jobs:
-  # Job unique pour gérer le whitelist une seule fois
   manage-whitelist:
     runs-on: ubuntu-latest
-    outputs:
-      runner-ip: ${{ steps.ip.outputs.ipv4 }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-
-      - name: Get runner's public IP
-        id: ip
-        uses: haythem/public-ip@v1.3
 
       - name: Manage SSH Whitelist on o2switch
         run: |
