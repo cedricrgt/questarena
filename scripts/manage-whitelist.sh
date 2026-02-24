@@ -1,17 +1,17 @@
 #!/bin/bash
 
 # Script to manage SSH whitelist on o2switch for GitHub Actions
-# Usage: ./manage-whitelist.sh <SSH_HOST> <CPANEL_USER> <CPANEL_API_TOKEN>
+# Usage: ./manage-whitelist.sh <SSH_HOST> <CPANEL_USERNAME> <CPANEL_API_TOKEN>
 
 set -e
 
 SSH_HOST="$1"
-CPANEL_USER="$2"
+CPANEL_USERNAME="$2"
 CPANEL_TOKEN="$3"
 
-if [ -z "$SSH_HOST" ] || [ -z "$CPANEL_USER" ] || [ -z "$CPANEL_TOKEN" ]; then
+if [ -z "$SSH_HOST" ] || [ -z "$CPANEL_USERNAME" ] || [ -z "$CPANEL_TOKEN" ]; then
   echo "Error: Missing required arguments"
-  echo "Usage: $0 <SSH_HOST> <CPANEL_USER> <CPANEL_API_TOKEN>"
+  echo "Usage: $0 <SSH_HOST> <CPANEL_USERNAME> <CPANEL_API_TOKEN>"
   exit 1
 fi
 
@@ -21,7 +21,7 @@ echo "Current Runner IP: $RUNNER_IP"
 
 # API Configuration
 API_URL="https://${SSH_HOST}:2083/execute/SshWhitelist"
-AUTH_HEADER="Authorization: cpanel ${CPANEL_USER}:${CPANEL_TOKEN}"
+AUTH_HEADER="Authorization: cpanel ${CPANEL_USERNAME}:${CPANEL_TOKEN}"
 
 echo "Fetching current whitelist..."
 WHITELIST_RESPONSE=$(curl -k -sm 45 -H "$AUTH_HEADER" "${API_URL}/list" 2>&1)
