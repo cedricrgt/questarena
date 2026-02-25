@@ -116,7 +116,7 @@ jobs:
 
       - name: Compress frontend files
         run: |
-          tar -czf frontend.tar.gz .next package.json package-lock.json public .env next.config.ts app.js
+          tar -czf frontend.tar.gz .next package.json package-lock.json public .env next.config.js app.js
         working-directory: frontend
 
       - name: Copy frontend archive to o2switch
