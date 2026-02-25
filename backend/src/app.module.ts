@@ -12,16 +12,10 @@ import { PrismaModule } from './prisma/prisma.module';
 import { AppGateway } from './gateway/app.gateway';
 import { FriendModule } from './friend/friend.module';
 import { AdminModule } from './admin/admin.module';
-import { ServeStaticModule } from '@nestjs/serve-static';
-import { join } from 'path';
 
 
 @Module({
   imports: [
-    ServeStaticModule.forRoot({
-      rootPath: join(__dirname, '..', 'public'),
-      exclude: ['/api/(.*)'],
-    }),
     ConfigModule.forRoot({
       isGlobal: true, // Makes the config available globally
     }),
