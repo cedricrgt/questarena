@@ -6,12 +6,15 @@ import { ExcludePasswordInterceptor } from './interceptors/exclude-password.inte
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
+  app.setGlobalPrefix('api');
+
   app.enableCors({
     origin: [
       'http://localhost:5173',
       'http://cedricrgt45-server.eddi.cloud:5173',
       'http://cedricrgt45-server.eddi.cloud',
       'https://questarena-frontend.onrender.com',
+      'https://sc1yefa3951.universe.wf',
     ],
     credentials: true,
   });
@@ -26,7 +29,7 @@ async function bootstrap() {
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api', app, document);
+  SwaggerModule.setup('api/docs', app, document);
 
   await app.listen(process.env.PORT || 3000, '0.0.0.0');
 }
