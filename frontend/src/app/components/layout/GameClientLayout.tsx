@@ -49,7 +49,10 @@ export default function GameClientLayout({ children }: GameClientLayoutProps) {
     // For now, even guests connect to see online count
     const query = isLoggedIn && user ? { userId: user.id } : {};
 
-    const newSocket = io(process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000", {
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000/api";
+    const baseUrl = apiUrl.replace(/\/api$/, "");
+    const newSocket = io(baseUrl, {
+      path: "/api/socket.io",
       query,
     });
     setSocket(newSocket);
