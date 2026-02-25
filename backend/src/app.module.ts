@@ -26,6 +26,7 @@ import { join } from 'path';
       isGlobal: true, // Makes the config available globally
     }),
     JwtModule.registerAsync({
+      global: true,
       imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => ({
         secret: configService.get<string>('JWT_SECRET'),
