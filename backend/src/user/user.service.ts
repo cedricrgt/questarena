@@ -27,8 +27,14 @@ export class UserService {
     }
     catch (error) {
       if (error.code === 'P2002') {
-        const target = error.meta?.target?.[0] || 'Unknown';
-        throw new BadRequestException(`Pseudo ou email déjà utilisé (${target})`);
+        const target = error.meta?.target?.[0] || '';
+        if (target === 'email') {
+          throw new BadRequestException('Cet email est déjà utilisé');
+        }
+        if (target === 'userName') {
+          throw new BadRequestException('Ce pseudo est déjà utilisé');
+        }
+        throw new BadRequestException('Email ou pseudo déjà utilisé');
       }
       throw new BadRequestException('Invalid Data');
     }

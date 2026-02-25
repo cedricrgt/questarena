@@ -39,7 +39,7 @@ export class AuthentificationService {
     const regex = /^(?=.*\d).{8,}$/;
     if (!regex.test(password)) {
       throw new BadRequestException(
-        'Mot de passe trop court ou qui ne correspond pas au format',
+        'Le mot de passe doit contenir au moins 8 caractères et au moins 1 chiffre',
       );
     }
     return true;

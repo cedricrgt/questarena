@@ -69,6 +69,7 @@ export default function RegisterForm({ onRegisterSuccess, onSwitchToLogin }: Reg
                         placeholder="••••••••"
                         required
                     />
+                    <p className="text-xs text-gray-500 mt-1">8 caractères minimum, dont au moins 1 chiffre</p>
                 </div>
 
                 <Button

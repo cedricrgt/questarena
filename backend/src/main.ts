@@ -2,11 +2,14 @@ import { NestFactory } from '@nestjs/core';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { AppModule } from './app.module';
 import { ExcludePasswordInterceptor } from './interceptors/exclude-password.interceptor';
+import { ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
   app.setGlobalPrefix('api');
+
+  app.useGlobalPipes(new ValidationPipe({ whitelist: true }));
 
   app.enableCors({
     origin: [
@@ -15,6 +18,7 @@ async function bootstrap() {
       'http://cedricrgt45-server.eddi.cloud',
       'https://questarena-frontend.onrender.com',
       'https://sc1yefa3951.universe.wf',
+      'http://sc1yefa3951.universe.wf',
     ],
     credentials: true,
   });
