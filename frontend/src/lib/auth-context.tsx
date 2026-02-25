@@ -159,7 +159,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     });
     if (!res.ok) {
       const err = await res.json();
-      throw new Error(err.message || "Signup failed");
+      const msg = Array.isArray(err.message) ? err.message.join(', ') : (err.message || "Signup failed");
+      throw new Error(msg);
     }
     const { accessToken } = await res.json();
     setToken(accessToken);
