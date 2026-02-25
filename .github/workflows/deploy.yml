@@ -44,7 +44,8 @@ jobs:
 
       - name: Compress backend files
         run: |
-          tar -czf backend.tar.gz dist package.json package-lock.json prisma app.js .env
+          cp -r node_modules/.prisma prisma_generated_prisma
+          tar -czf backend.tar.gz dist package.json package-lock.json prisma app.js .env prisma_generated_prisma
         working-directory: backend
 
       - name: Copy backend archive to o2switch
@@ -74,8 +75,9 @@ jobs:
             cd ${{ secrets.BACKEND_DEPLOY_PATH }}
             tar -xzf backend.tar.gz
             rm backend.tar.gz
-            npm install --production
-            npx prisma generate
+            npm install --production --ignore-scripts
+            cp -r prisma_generated_prisma ${{ secrets.NODEVENV_BACKEND_PATH }}/lib/node_modules/.prisma
+            rm -rf prisma_generated_prisma
             npx prisma migrate deploy
             mkdir -p tmp
             touch tmp/restart.txt
