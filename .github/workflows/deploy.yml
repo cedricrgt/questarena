@@ -70,6 +70,7 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           port: ${{ env.SSH_PORT }}
           script: |
+            source ${{ secrets.NODEVENV_BACKEND_PATH }}/bin/activate
             cd ${{ secrets.BACKEND_DEPLOY_PATH }}
             tar -xzf backend.tar.gz
             rm backend.tar.gz
@@ -141,6 +142,7 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           port: ${{ env.SSH_PORT }}
           script: |
+            source ${{ secrets.NODEVENV_FRONTEND_PATH }}/bin/activate
             cd ${{ secrets.FRONTEND_DEPLOY_PATH }}
             tar -xzf frontend.tar.gz
             rm frontend.tar.gz
