@@ -1,28 +1,24 @@
-#!/usr/bin/env node
+'use strict';
 
-const { spawn } = require('child_process');
-const path = require('path');
+const { createServer } = require('http');
+const { parse } = require('url');
+const next = require('next');
 
-const port = process.env.PORT || 3000;
+const port = parseInt(process.env.PORT || '3000', 10);
+const dev = process.env.NODE_ENV !== 'production';
 
-console.log(`Starting Next.js on port ${port}`);
+const app = next({ dev });
+const handle = app.getRequestHandler();
 
-const next = spawn('node', [
-  path.join(__dirname, 'node_modules', 'next', 'dist', 'bin', 'next'),
-  'start',
-  '-p',
-  port.toString()
-], {
-  cwd: __dirname,
-  stdio: 'inherit'
-});
-
-next.on('error', (err) => {
-  console.error('Failed to start Next.js:', err);
+app.prepare().then(() => {
+  createServer((req, res) => {
+    const parsedUrl = parse(req.url, true);
+    handle(req, res, parsedUrl);
+  }).listen(port, (err) => {
+    if (err) throw err;
+    console.log(`> Ready on port ${port}`);
+  });
+}).catch((err) => {
+  console.error('Error starting Next.js:', err);
   process.exit(1);
-});
-
-next.on('exit', (code) => {
-  console.log(`Next.js exited with code ${code}`);
-  process.exit(code);
 });
