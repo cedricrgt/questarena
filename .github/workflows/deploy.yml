@@ -75,6 +75,7 @@ jobs:
             tar -xzf backend.tar.gz
             rm backend.tar.gz
             npm install --production
+            npx prisma generate
             npx prisma migrate deploy
             mkdir -p tmp
             touch tmp/restart.txt
