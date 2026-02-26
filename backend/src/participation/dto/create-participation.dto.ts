@@ -49,5 +49,7 @@ export class CreateParticipationDto {
     example:
       "a4a52400-22b7-4318-b04d-3dc5a75c63f4",
   })
+  @IsString()
+  @IsNotEmpty()
   user_id: string;
 }

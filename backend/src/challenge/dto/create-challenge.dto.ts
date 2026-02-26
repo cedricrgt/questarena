@@ -59,8 +59,12 @@ export class CreateChallengeDto {
   validated: boolean = false;
 
   @ApiProperty({ description: 'ID of the creator' })
+  @IsString()
+  @IsNotEmpty()
   user_id: string;
 
   @ApiProperty({ description: 'Url image of the Challenge' })
+  @IsString()
+  @IsOptional()
   image_url?: string;
 }
