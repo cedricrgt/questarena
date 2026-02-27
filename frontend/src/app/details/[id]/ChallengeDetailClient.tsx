@@ -32,18 +32,26 @@ export default function ChallengeDetailClient({
     if (!challenge?.id) return;
     apiFetch(`/challenge/${challenge.id}`)
       .then((data) => {
+        if (!data) {
+          // No data returned, treat as not found
+          setCurrentChallenge(null);
+          setHasUserParticipated(false);
+          return;
+        }
         setCurrentChallenge(data);
-          if (user && data.participations) {
-            const userHasParticipated = data.participations.some(
-              (p: { user_id: string }) => p.user_id === user.id
-            );
-            setHasUserParticipated(userHasParticipated);
+        if (user && data.participations) {
+          const userHasParticipated = data.participations.some(
+            (p: { user_id: string }) => p.user_id === user.id,
+          );
+          setHasUserParticipated(userHasParticipated);
         } else {
           setHasUserParticipated(false);
         }
       })
       .catch((err) => {
         console.error("Erreur lors du chargement du challenge :", err);
+        setCurrentChallenge(null);
+        setHasUserParticipated(false);
       });
   };
 

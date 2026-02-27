@@ -9,10 +9,15 @@ export default async function LeaderboardPage() {
   let leaderboard: LeaderboardType[] = [];
   
   try {
-    leaderboard = await apiFetch("/user/leaderboard?limit=10");
+    const data = await apiFetch("/user/leaderboard?limit=10");
+    if (Array.isArray(data)) {
+      leaderboard = data;
+    } else {
+      leaderboard = [];
+    }
   } catch (error) {
     console.error("Failed to fetch leaderboard:", error);
-    // On error, leaderboard remains empty array
+    leaderboard = [];
   }
 
   return (
