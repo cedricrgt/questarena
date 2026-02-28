@@ -1,24 +1,25 @@
+"use client";
+
+import { useEffect, useState } from "react";
 import { LeaderboardType } from "@/types";
 import Leaderboard from "../components/leaderboard/leaderboard";
 import { apiFetch } from "@/lib/api";
 import BackButton from "../components/backButton/backButton";
 
-export const dynamic = 'force-dynamic';
+export default function LeaderboardPage() {
+  const [leaderboard, setLeaderboard] = useState<LeaderboardType[]>([]);
+  const [loading, setLoading] = useState(true);
 
-export default async function LeaderboardPage() {
-  let leaderboard: LeaderboardType[] = [];
-  
-  try {
-    const data = await apiFetch("/user/leaderboard?limit=10");
-    if (Array.isArray(data)) {
-      leaderboard = data;
-    } else {
-      leaderboard = [];
-    }
-  } catch (error) {
-    console.error("Failed to fetch leaderboard:", error);
-    leaderboard = [];
-  }
+  useEffect(() => {
+    apiFetch("/user/leaderboard?limit=10")
+      .then((data) => {
+        setLeaderboard(Array.isArray(data) ? data : []);
+      })
+      .catch((error) => {
+        console.error("Failed to fetch leaderboard:", error);
+      })
+      .finally(() => setLoading(false));
+  }, []);
 
   return (
     <section className="py-16 bg-secondary relative min-h-screen">
@@ -40,7 +41,11 @@ export default async function LeaderboardPage() {
           <BackButton />
         </div>
         <h2 className="text-3xl font-bold  text-center text-white mb-8">Top Challengers</h2>
-        <Leaderboard leaderboard={leaderboard} color={"text-white"} backgroundColor={"bg-transparent"} centered={true} />
+        {loading ? (
+          <div className="text-center py-10 text-white/70 animate-pulse">Chargement du classement...</div>
+        ) : (
+          <Leaderboard leaderboard={leaderboard} color={"text-white"} backgroundColor={"bg-transparent"} centered={true} />
+        )}
       </div>
     </section>
   );

@@ -50,7 +50,8 @@ export default function ChallengeDetailPage() {
 
   useEffect(() => {
     fetchChallenge();
-  }, [challengeId, user, hasUserParticipated, challenge]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [challengeId, user]);
 
 
 
