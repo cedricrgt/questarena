@@ -82,6 +82,15 @@ jobs:
             mkdir -p tmp
             touch tmp/restart.txt
 
+      - name: Clean SSH Whitelist
+        if: always()
+        run: |
+          API_URL="https://${{ secrets.SSH_HOST }}:2083/execute/SshWhitelist"
+          AUTH_HEADER="Authorization: cpanel ${{ secrets.CPANEL_USERNAME }}:${{ secrets.CPANEL_API_TOKEN }}"
+          curl -k -sm 45 -H "$AUTH_HEADER" "${API_URL}/remove_all"
+          echo "✓ Whitelist cleared"
+        shell: bash
+
   deploy-frontend:
     runs-on: ubuntu-latest
     needs: deploy-backend
@@ -152,3 +161,12 @@ jobs:
             npm install --production
             mkdir -p tmp
             touch tmp/restart.txt
+
+      - name: Clean SSH Whitelist
+        if: always()
+        run: |
+          API_URL="https://${{ secrets.SSH_HOST }}:2083/execute/SshWhitelist"
+          AUTH_HEADER="Authorization: cpanel ${{ secrets.CPANEL_USERNAME }}:${{ secrets.CPANEL_API_TOKEN }}"
+          curl -k -sm 45 -H "$AUTH_HEADER" "${API_URL}/remove_all"
+          echo "✓ Whitelist cleared"
+        shell: bash
