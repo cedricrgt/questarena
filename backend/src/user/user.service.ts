@@ -51,7 +51,7 @@ export class UserService {
 
   async findOne(id: string): Promise<UserEntity> {
     const user = await this.prisma.user.findUnique({
-      where: { id },
+      where: { id: String(id) },
       include: {
         challenges: true,
         participations: true,
@@ -88,7 +88,7 @@ export class UserService {
       }
 
       const updatedUser = await this.prisma.user.update({
-        where: { id },
+        where: { id: String(id) },
         data,
       });
 
@@ -104,7 +104,7 @@ export class UserService {
     await this.findOne(id);
 
     const user = await this.prisma.user.delete({
-      where: { id },
+      where: { id: String(id) },
     });
 
     const { password_hash, ...result } = user;
@@ -113,7 +113,7 @@ export class UserService {
 
   async findByEmail(email: string): Promise<UserEntity | null> {
     const user = await this.prisma.user.findUnique({
-      where: { email },
+      where: { email: String(email) },
     });
 
     if (!user) {
@@ -124,16 +124,16 @@ export class UserService {
     return result as UserEntity;
   }
   async findByEmailWithPassword(email: string): Promise<UserEntity | null> {
-    return this.prisma.user.findUnique({ where: { email } });
+    return this.prisma.user.findUnique({ where: { email: String(email) } });
   }
 
   async findByEmailOrUsername(identifier: string): Promise<UserEntity | null> {
     // Try to find by email first
-    let user = await this.prisma.user.findUnique({ where: { email: identifier } });
+    let user = await this.prisma.user.findUnique({ where: { email: String(identifier) } });
 
     // If not found by email, try username
     if (!user) {
-      user = await this.prisma.user.findUnique({ where: { userName: identifier } });
+      user = await this.prisma.user.findUnique({ where: { userName: String(identifier) } });
     }
 
     return user;
@@ -240,7 +240,7 @@ export class UserService {
     newPassword: string,
   ): Promise<{ message: string }> {
     const user = await this.prisma.user.findUnique({
-      where: { id: userId },
+      where: { id: String(userId) },
     });
 
     if (!user) {
@@ -261,7 +261,7 @@ export class UserService {
     const hashedNewPassword = await bcrypt.hash(newPassword, 10);
 
     await this.prisma.user.update({
-      where: { id: userId },
+      where: { id: String(userId) },
       data: { password_hash: hashedNewPassword },
     });
 
