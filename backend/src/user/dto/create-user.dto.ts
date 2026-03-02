@@ -1,0 +1,60 @@
+import { ApiProperty } from '@nestjs/swagger';
+import {
+  IsEmail,
+  IsNotEmpty,
+  IsString,
+  IsUrl,
+  MinLength,
+  IsEnum,
+  IsOptional,
+} from 'class-validator';
+
+enum Roles {
+  ADMIN = 'ADMIN',
+  USER = 'USER',
+}
+
+export class CreateUserDto {
+  @ApiProperty({
+    description: "Le nom d'utilisateur unique",
+    example: 'johndoe',
+  })
+  @IsString()
+  @IsNotEmpty()
+  userName: string;
+
+  @ApiProperty({
+    description: "L\'adresse email unique de l\'utilisateur'",
+    example: 'john.doe@example.com',
+  })
+  @IsEmail()
+  @IsNotEmpty()
+  email: string;
+
+  @ApiProperty({
+    description: "Le mot de passe de l\'uilisateur",
+    example: 'password123',
+    minLength: 8,
+  })
+  @IsString()
+  @IsNotEmpty()
+  @MinLength(8)
+  password: string;
+
+  @ApiProperty({
+    description: "L\URL de l\avatar de l\'utilisateur",
+    example: 'https://example.com/avatar.jpg/johndoe.png',
+  })
+  @IsUrl()
+  @IsOptional()
+  avatar_url?: string;
+
+  @ApiProperty({
+    description: 'Rôle de l\'utilisateur',
+    enum: Roles,
+    example: 'USER',
+  })
+  @IsEnum(Roles)
+  @IsOptional()
+  role?: Roles;
+}

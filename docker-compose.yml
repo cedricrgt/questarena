@@ -1,0 +1,74 @@
+services:
+  frontend:
+    container_name: frontend
+    build:
+      context: ./frontend
+      target: dev
+      args:
+        NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:3000}
+        NEXT_PUBLIC_RAWG_API_KEY: ${NEXT_PUBLIC_RAWG_API_KEY}
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    ports:
+      - 5173:5173
+    depends_on:
+      - backend
+    tty: true
+    env_file:
+      - docker.env
+    command: npm run dev
+
+  backend:
+    container_name: backend
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+      target: dev
+    volumes:
+      - ./backend:/usr/src/app
+      - /usr/src/app/node_modules
+    ports:
+      - 3000:3000
+    tty: true
+    depends_on:
+      database:
+        condition: service_healthy
+    command:
+      [
+        "sh",
+        "-c",
+        "npx prisma generate && npx prisma db push --accept-data-loss && npm run start:dev",
+      ]
+    env_file:
+      - docker.env
+    environment:
+      - JWT_SECRET=${JWT_SECRET}
+
+  database:
+    image: postgres:17-alpine
+    container_name: database
+    volumes:
+      - ./db:/var/lib/postgresql/data
+    ports:
+      - 5432:5432
+    env_file:
+      - docker.env
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U gamer -d gamerchallenge"]
+      start_period: 15s
+      interval: 15s
+      timeout: 5s
+      retries: 5
+
+  prismastudio:
+    image: timothyjmiller/prisma-studio
+    container_name: prismastudio
+    restart: unless-stopped
+    ports:
+      - 5555:5555
+    env_file:
+      - docker.env
+    depends_on:
+      database:
+        condition: service_healthy

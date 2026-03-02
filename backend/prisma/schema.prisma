@@ -1,0 +1,109 @@
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "rhel-openssl-1.1.x", "debian-openssl-1.0.x"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("POSTGRES_URL")
+}
+
+enum Difficulty {
+  EASY
+  MEDIUM
+  HARD
+}
+
+enum TargetType {
+  CHALLENGE
+  PARTICIPATION
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+enum PasswordResetStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+model User {
+  id             String          @id @default(uuid())
+  userName       String          @unique
+  email          String          @unique
+  password_hash  String
+  avatar_url     String
+  role           Role            @default(USER)
+  is_blocked     Boolean         @default(false)
+  created_at     DateTime        @default(now())
+  challenges     Challenge[]     @relation("CreatedChallenges")
+  participations Participation[]
+  votes          Vote[]
+  friends        Friendship[]    @relation("UserFriends")
+  friendOf       Friendship[]    @relation("FriendOfUser")
+  passwordResetRequests PasswordResetRequest[]
+}
+
+model PasswordResetRequest {
+  id          String              @id @default(uuid())
+  user_id     String
+  status      PasswordResetStatus @default(PENDING)
+  created_at  DateTime            @default(now())
+  resolved_at DateTime?
+  user        User                @relation(fields: [user_id], references: [id], onDelete: Cascade)
+}
+
+model Challenge {
+  id          String     @id @default(uuid())
+  title       String
+  description String
+  rules       String
+  game        String
+  difficulty  Difficulty
+  user_id      String
+  validated   Boolean
+  created_at  DateTime   @default(now())
+  creator     User       @relation("CreatedChallenges", fields: [user_id], references: [id], onDelete: Cascade)
+  votes       Vote[]    
+  participations Participation[]
+  image_url String?
+}
+
+model Participation {
+  id           String   @id @default(uuid())
+  user_id      String
+  challenge_id String
+  video_url    String
+  description  String
+  validated    Boolean
+  created_at   DateTime @default(now())
+  user         User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  challenge    Challenge     @relation(fields: [challenge_id], references: [id], onDelete: Cascade)
+  votes        Vote[]  
+}
+
+model Vote {
+  id               String         @id @default(uuid())
+  user_id           String
+  challenge_id     String?
+  participation_id String?
+  target_type      TargetType
+  created_at       DateTime       @default(now())
+  user             User           @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  challenge        Challenge?     @relation(fields: [challenge_id], references: [id], onDelete: Cascade)
+  participation    Participation? @relation(fields: [participation_id], references: [id], onDelete: Cascade)
+}
+
+model Friendship {
+  id         String   @id @default(uuid())
+  user_id    String
+  friend_id  String
+  created_at DateTime @default(now())
+  user       User     @relation("UserFriends", fields: [user_id], references: [id], onDelete: Cascade)
+  friend     User     @relation("FriendOfUser", fields: [friend_id], references: [id], onDelete: Cascade)
+
+  @@unique([user_id, friend_id])
+}

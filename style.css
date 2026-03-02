@@ -1,0 +1,15 @@
+@page { margin: 2.5cm; }
+body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif; color:#111; line-height:1.5; }
+h1, h2, h3, h4 { color:#3B0054; margin-top:1.2em; }
+h2 { border-bottom: 2px solid #E7B87D; padding-bottom: .2em; }
+a { color:#3B0054; text-decoration:none; }
+code, pre { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace; }
+pre { background:#f3f3f3; border:1px solid #e5e5e5; padding:12px; border-radius:8px; overflow:auto; }
+table { border-collapse: collapse; width:100%; }
+th, td { border:1px solid #ddd; padding:8px; }
+th { background:#faf5ff; color:#3B0054; }
+hr { border:0; border-top:1px solid #eee; margin:2em 0; }
+.cover { text-align:center; margin-top:5rem; }
+.subtitle { color:#E7B87D; font-size:1.2rem; margin-top:.5rem; }
+.pagebreak { page-break-after: always; }
+.footer { color:#888; font-size:.9rem; margin-top:2rem; text-align:center; }
