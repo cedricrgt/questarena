@@ -1,4 +1,17 @@
 @startuml activity
+
+' --- Style moderne (couleurs CSS QuestsArena) ---
+skinparam shadowing false
+skinparam roundCorner 15
+skinparam defaultFontName "Raleway, sans-serif"
+
+skinparam activity {
+    BackgroundColor #e5fcff
+    BorderColor #a96fff
+    ArrowColor #e9b872
+    FontColor #0e060c
+}
+' --------------------------------------------
 start
 
 :Accéder à la page d'accueil;

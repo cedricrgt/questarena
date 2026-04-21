@@ -1,5 +1,39 @@
 @startuml architecture_diagram
 
+' --- Style moderne (couleurs CSS QuestsArena) ---
+skinparam shadowing false
+skinparam roundCorner 15
+skinparam defaultFontName "Raleway, sans-serif"
+
+skinparam rectangle {
+    BackgroundColor transparent
+    BorderColor #4a2040
+    BorderThickness 2
+    FontColor #4a2040
+    FontSize 16
+    FontStyle bold
+}
+
+skinparam component {
+    BackgroundColor #e5fcff
+    BorderColor #a96fff
+    ArrowColor #e9b872
+    FontColor #0e060c
+}
+
+skinparam database {
+    BackgroundColor #a96fff
+    BorderColor #4a2040
+    FontColor #0e060c
+}
+
+skinparam node {
+    BackgroundColor transparent
+    BorderColor #4a2040
+    FontColor #4a2040
+}
+' --------------------------------------------
+
 rectangle "Frontend" {
   [React] as react
   [Tailwind CSS] as tailwind
