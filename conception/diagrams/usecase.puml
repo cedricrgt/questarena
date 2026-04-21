@@ -2,12 +2,45 @@
 
 left to right direction
 
+' --- Style moderne (couleurs CSS QuestsArena) ---
+skinparam shadowing false
+skinparam roundCorner 15
+skinparam defaultFontName "Raleway, sans-serif"
+
+skinparam actor {
+    BackgroundColor #a96fff
+    BorderColor #4a2040
+    FontColor #0e060c
+    FontSize 14
+    FontStyle bold
+}
+
+skinparam usecase {
+    BackgroundColor #e5fcff
+    BorderColor #a96fff
+    ArrowColor #e9b872
+    BorderThickness 2
+    FontColor #0e060c
+}
+
+skinparam rectangle {
+    BackgroundColor transparent
+    BorderColor #4a2040
+    BorderThickness 2
+    FontColor #4a2040
+    FontSize 16
+    FontStyle bold
+}
+' --------------------------------------------
+
 actor "Utilisateur non connecté" as Visitor
 actor "Utilisateur connecté" as User
+actor "administrateur" as Administrator
 
 User --|> Visitor
+Administrator --|> User
 
-rectangle "Site Web Gamer Challenge" {
+rectangle "<size:28><font:Pacifico>Site Web QuestsArena</font></size>" {
     usecase "Accéder à la page d'accueil" as UC1
     usecase "Consulter le classement des utilisateurs les plus votés" as UC2
     usecase "Accéder à la page détails des défis" as UC3
@@ -16,6 +49,10 @@ rectangle "Site Web Gamer Challenge" {
     usecase "Poster un challenge" as UC6
     usecase "Voter pour un défi" as UC7
     usecase "Soumettre une participation vidéo" as UC8
+    usecase "Modifier les challenges" as UC9
+    usecase "Supprimer un utiisateur" as UC10
+    usecase "Modifier les rôles" as UC11
+    usecase "Réinitialiser un mot de passe" as UC12
 }
 
 
@@ -23,11 +60,15 @@ Visitor --> UC1
 Visitor --> UC2
 Visitor --> UC3
 Visitor --> UC5
-Visitor --> UC4
 
 
 User --> UC6
 User --> UC7
 User --> UC8
+
+Administrator --> UC9
+Administrator --> UC10
+Administrator --> UC11
+
 
 @enduml
