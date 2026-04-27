@@ -1,5 +1,25 @@
 @startuml erd
 
+' --- Style moderne (couleurs CSS QuestsArena) ---
+skinparam shadowing false
+skinparam roundCorner 15
+skinparam defaultFontName "Raleway, sans-serif"
+
+skinparam entity {
+    BackgroundColor #e5fcff
+    BorderColor #4a2040
+    ArrowColor #e9b872
+    FontColor #0e060c
+}
+skinparam class {
+    BackgroundColor #e5fcff
+    BorderColor #4a2040
+    ArrowColor #e9b872
+    FontColor #0e060c
+    HeaderBackgroundColor #a96fff
+}
+' --------------------------------------------
+
 entity User{
     *id: string 
     --- 

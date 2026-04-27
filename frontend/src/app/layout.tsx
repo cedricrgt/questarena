@@ -10,6 +10,9 @@ import GameClientLayout from "./components/layout/GameClientLayout";
 export const metadata = {
   title: "QuestsArena - Défis Gaming",
   description: "Plateforme de challenges de jeux vidéo - Participez, votez et montez dans le classement",
+  icons: {
+    icon: '/favicon.ico',
+  },
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {
